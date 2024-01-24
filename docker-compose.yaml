@@ -13,6 +13,11 @@ services:
       - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
     volumes:
       - db:/var/lib/postgres
+    stdin_open: true
+    tty: true
+    networks:
+      project-network:
+        ipv4_address: 192.168.41.4
   app:
     depends_on:
       - postgresdb
@@ -30,9 +35,20 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./data/app:/app
-      - /app/node_modules 
-      - /app/.next
+      - ./data/app:/src/app
+      - /node_modules 
+      - /prisma
+    networks:
+      project-network:
+        ipv4_address: 192.168.41.2
+
 
 volumes: 
   db:
+
+networks:
+  project-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.41.0/24
