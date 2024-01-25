@@ -1,14 +1,43 @@
 "use client";
 
-import React from "react";
-import { useRouter } from 'next/navigation'
+import React, {FormEvent} from "react";
+import { useRouter } from 'next/navigation';
+
 
 const Login = () => {
   const router = useRouter()
 
+  /*
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     router.push('/pages/dummy1');    
+  }; 
+  */
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    const target = event.target as typeof event.target & {
+      userName: {value: string};
+      password: {value: string};
+    };
+
+    const response = await fetch('/pages/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userName: target.userName.value,
+        password: target.password.value,
+      }),
+    });
+
+    if (response.ok) {
+      router.push('/pages/dummy1');
+    } else {
+      console.error('Incorrect login');
+    }
   };
 
   return (
