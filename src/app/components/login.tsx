@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation'
 
 const Login = () => {
-  const navigate = useNavigate();
+  const router = useRouter()
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    navigate('/Dummy1');    
+    router.push('/pages/dummy1');    
   };
 
   return (
