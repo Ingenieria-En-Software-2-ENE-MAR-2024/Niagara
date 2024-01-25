@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Rubik+Bubbles&family=Silkscreen&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -16,15 +17,10 @@
   }
 }
 
-body {
+/* body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+  background: #818cf8;
+} */
 
 @layer utilities {
   .text-balance {
