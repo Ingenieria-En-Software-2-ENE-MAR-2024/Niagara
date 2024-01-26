@@ -11,9 +11,9 @@ datasource db {
 
 model UserTest {
   id        Int      @id @default(autoincrement())
-  name      String
+  username      String
   email  String?
-  role      String?
+  password      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?

@@ -14,9 +14,9 @@ export async function POST(request: NextRequest) {
 
    const newUser = await prisma.userTest.create({
     data : {
-        name : body.name,
+        username : body.name, 
         email : body.email,
-        role : body.password
+        password : body.password 
         }
    })
 
