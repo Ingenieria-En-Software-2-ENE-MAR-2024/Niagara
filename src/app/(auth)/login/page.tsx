@@ -40,7 +40,7 @@ export default function Login() {
             required
           />
         </div>
-        <Button type="submit" color="cyan" className="mt-8 w-full">
+        <Button type="submit" className="bg-primary mt-8 w-full">
           Sign in to account
         </Button>
       </form>

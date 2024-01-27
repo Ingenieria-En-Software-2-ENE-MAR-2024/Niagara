@@ -36,6 +36,9 @@ export default {
       },
       colors: ({ colors }) => ({
         gray: colors.neutral,
+        'primary': '#1e1b4b', // Dark blue
+        'secondary': '#edf2f7', // Light grey
+        'tertiary': '#818cf8', // Light blue
       }),
       fontFamily: {
         sans: 'var(--font-inter)',
