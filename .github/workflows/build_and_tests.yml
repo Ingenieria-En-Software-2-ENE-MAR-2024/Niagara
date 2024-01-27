@@ -39,10 +39,10 @@ jobs:
             - name: Install dependencies for CI
               run : npm ci
 
-            #- name: Linter
-            #  run : |
-            #    chmod +x ./.github/scripts/strict-linter.sh
-            #    ./.github/scripts/strict-linter.sh
+            - name: Linter
+              run : |
+                chmod +x ./.github/scripts/strict-linter.sh
+                ./.github/scripts/strict-linter.sh
 
             - name: Run Jest tests
               run : npm run test
