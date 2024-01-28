@@ -1,7 +1,13 @@
 import {z} from "zod"
 
-export const create_user_validator = z.object({
+const user_object_body = z.object({
     name : z.string(),
     email : z.string().email(),
     role : z.string(),
+    password :z.string().min(8)
 })
+
+export const validator_user_create = (body: unknown) =>{
+    const its_valdiate = user_object_body.parse(body);
+    return its_valdiate;
+}
