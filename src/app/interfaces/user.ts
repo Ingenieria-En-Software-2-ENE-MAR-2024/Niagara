@@ -9,3 +9,10 @@ export interface filters{
     search_field?: string;
     search_text?: string;
 }
+
+
+export interface user_body_update{
+    name: string;
+    role? :  string;
+   
+}

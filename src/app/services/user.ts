@@ -1,5 +1,5 @@
 
-import { user_body_create,filters} from "../interfaces/user";
+import { user_body_create,user_body_update} from "../interfaces/user";
 import prisma from "../../../prisma/prisma";
 import { add_property } from "../utils/utils";
 import { add_object_to_array } from "../utils/utils";
@@ -88,6 +88,36 @@ export const  delete_my_user = async (id:number)=>{
         } 
 
         return  delete_user;
+    }catch(error){
+        throw error
+    }
+   
+}
+
+
+export const  update_my_user = async (id:number,body:user_body_update )=>{
+   
+    try{
+
+        const read_user = await prisma.userTest.findFirst({
+            where:{
+                id: id}})
+
+        if(!read_user){
+            throw new Error("User does not exists")
+        } 
+        
+
+        const update_user = await prisma.userTest.update({
+            where:{
+                id: id},
+            data:{
+                name:body.name,
+                role:body.role
+            }})
+
+
+        return  update_user;
     }catch(error){
         throw error
     }
