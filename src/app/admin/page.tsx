@@ -209,75 +209,75 @@ export default function AdminPage () {
         setSuspending(true);
     };
 
-    /**
-     * Create the component that contains the actions on the users
-     *
-     * @param {*} user user to whom the actions will be performed
-     * @returns A component that contains the actions on the users
-     */
-    const createActionsComponent: React.FC<{ user: UserNoActions }> = ({ user }) => {
-        return (
-            <Grid container justifyContent="center" columns={4} spacing={1.5}>
-                <Grid item xs={1} justifyContent="right">
-                    <Tooltip title="Modify user" arrow>
-                        <IconButton
-                            color="primary"
-                            onClick={() => modifyUser(user)}
-                        >
-                            <Edit />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-                <Grid item xs={1} justifyContent="center">
-                    <Tooltip
-                        title={true /*user.suspended*/ ? "Resume user" : "Suspend user"}
-                        arrow
-                    >
-                        <IconButton
-                            color="primary"
-                        >
-                            {true /**user.suspended */ ? <LockOpen /> : <Lock />}
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-                <Grid item xs={0} justifyContent="left">
-                    <Tooltip title="Delete user" arrow>
-                        <IconButton
-                            color="primary"
-                            onClick={() => handleRemoveUser(user.Name)}
-                        >
-                            <Delete />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-            </Grid>
-        );
-    };
-
-    const fetchUsers = async (page: number, pageSize: number) => {
-        try {
-            const startIndex = page * pageSize;
-            const endIndex = startIndex + pageSize;
-            const allUsers = dummyUsers.slice(startIndex, endIndex);
-            const userList = allUsers.map((user: UserNoActions) => {
-                return createData(
-                    user.Name,
-                    user.Email,
-                    user.Role,
-                    user.CreatedAt,
-                    user.UpdatedAt,
-                    user.DeletedAt,
-                    createActionsComponent({ user })
-                );
-            });
-            setUsers(userList);
-            setFilteredRows(userList);
-        } catch (e) {
-            return;
-        }
-    };
-
     useEffect(() => {
+        const fetchUsers = async (page: number, pageSize: number) => {
+            try {
+                const startIndex = page * pageSize;
+                const endIndex = startIndex + pageSize;
+                const allUsers = dummyUsers.slice(startIndex, endIndex);
+                const userList = allUsers.map((user: UserNoActions) => {
+                    return createData(
+                        user.Name,
+                        user.Email,
+                        user.Role,
+                        user.CreatedAt,
+                        user.UpdatedAt,
+                        user.DeletedAt,
+                        createActionsComponent({ user })
+                    );
+                });
+                setUsers(userList);
+                setFilteredRows(userList);
+            } catch (e) {
+                return;
+            }
+        };
+
+        /**
+         * Create the component that contains the actions on the users
+         *
+         * @param {*} user user to whom the actions will be performed
+         * @returns A component that contains the actions on the users
+         */
+        const createActionsComponent: React.FC<{ user: UserNoActions }> = ({ user }) => {
+            return (
+                <Grid container justifyContent="center" columns={4} spacing={1.5}>
+                    <Grid item xs={1} justifyContent="right">
+                        <Tooltip title="Modify user" arrow>
+                            <IconButton
+                                color="primary"
+                                onClick={() => modifyUser(user)}
+                            >
+                                <Edit />
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
+                    <Grid item xs={1} justifyContent="center">
+                        <Tooltip
+                            title={true /*user.suspended*/ ? "Resume user" : "Suspend user"}
+                            arrow
+                        >
+                            <IconButton
+                                color="primary"
+                            >
+                                {true /**user.suspended */ ? <LockOpen /> : <Lock />}
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
+                    <Grid item xs={0} justifyContent="left">
+                        <Tooltip title="Delete user" arrow>
+                            <IconButton
+                                color="primary"
+                                onClick={() => handleRemoveUser(user.Name)}
+                            >
+                                <Delete />
+                            </IconButton>
+                        </Tooltip>
+                    </Grid>
+                </Grid>
+            );
+        };
+    
         fetchUsers(page, pageSize);
     }, [page, pageSize]);
 
