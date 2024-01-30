@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
 import Link from 'next/link'
 
 import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
 import { TextField } from '@/components/Fields'
-import { type Metadata } from 'next'
+// import { type Metadata } from 'next'
 import { signIn, useSession } from 'next-auth/react'
 
 // export const metadata: Metadata = {
@@ -13,18 +13,22 @@ import { signIn, useSession } from 'next-auth/react'
 // }
 
 export default function Login() {
-
   const { data: session } = useSession()
 
   const handleSubmit = async (event: any) => {
     event.preventDefault()
-
-    const result = await signIn('credentials', {
+    const target = event.target as typeof event.target & {
+      email: { value: string }
+      password: { value: string }
+    }
+    const email = target.email.value
+    const password = target.password.value
+    await signIn('credentials', {
+      email,
+      password,
       redirect: true,
-      email: event.target.email.value,
-      password: event.target.password.value,
-      callbackUrl: "/",
-    })  
+      callbackUrl: '/',
+    })
   }
 
   // console.log(session?.user)
@@ -59,10 +63,7 @@ export default function Login() {
             required
           />
         </div>
-        <Button
-          type="submit"
-          className="mt-8 w-full bg-primary"
-        >
+        <Button type="submit" className="mt-8 w-full bg-primary">
           Sign in to account
         </Button>
       </form>

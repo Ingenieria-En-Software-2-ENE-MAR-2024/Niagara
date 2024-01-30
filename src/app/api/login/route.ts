@@ -31,19 +31,25 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const passwordMatches = await bcrypt.compare(body.password, user.password)
+  if (body.password && user.password) {
+    const passwordMatches = await bcrypt.compare(body.password, user.password)
 
-  if (user && passwordMatches) {
-    const { password, ...userWithoutPass } = user
-    const accessToken = signJwtAccessToken(userWithoutPass)
-    const result = {
-      ...userWithoutPass,
-      accessToken,
-    }
-    return new NextResponse(JSON.stringify(result))
-  } else
-    return NextResponse.json(
-      { message: 'Incorrect username or password' },
-      { status: 401 },
-    )
+    if (user && passwordMatches) {
+      const { password, ...userWithoutPass } = user
+      const accessToken = signJwtAccessToken(userWithoutPass)
+      const result = {
+        ...userWithoutPass,
+        accessToken,
+      }
+      return new NextResponse(JSON.stringify(result))
+    } else
+      return NextResponse.json(
+        { message: 'Incorrect username or password' },
+        { status: 401 },
+      )
+  } else {
+    console.log('One argument is undefined')
+  }
+
+  return NextResponse.json({ message: 'An unexpected error occurred.' }, { status: 500 });
 }

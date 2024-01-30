@@ -7,6 +7,7 @@ z.object({
   name: z.string(),
   email: z.string().email(),
   password: z.string(),
+  role: z.string(),
 })
 
 export async function POST(request: NextRequest) {
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
       name: body.name,
       email: body.email,
       password: await bcrypt.hash(body.password, 10),
+      role: body.role,
     },
   });
 

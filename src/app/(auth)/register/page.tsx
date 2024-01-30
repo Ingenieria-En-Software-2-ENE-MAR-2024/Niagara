@@ -1,15 +1,53 @@
+'use client'
+
 import Link from 'next/link'
 
 import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
 import { SelectField, TextField } from '@/components/Fields'
-import { type Metadata } from 'next'
+import { useRouter } from 'next/navigation'
+// import { type Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Sign Up',
-}
+// export const metadata: Metadata = {
+//   title: 'Sign Up',
+// }
 
 export default function Register() {
+
+  const router = useRouter()
+
+  // handle submit
+  const handleSubmit = async (event: any) => {
+    event.preventDefault()
+
+    const target = event.target as typeof event.target & {
+      name: { value: string }
+      email: { value: string }
+      password: { value: string }
+      role: { value: string }
+    }
+
+    const name = target.name.value
+    const email = target.email.value
+    const password = target.password.value
+    const role = target.role.value
+
+    const response = await fetch('http://localhost:3000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password, role }),
+    })
+
+    if (response.ok) {
+      console.log('User created')
+      router.push('/login')
+    } else {
+      console.error('Failed to create user')
+    }
+  }
+
   return (
     <AuthLayout
       title="Sign up for an account"
@@ -23,20 +61,14 @@ export default function Register() {
         </>
       }
     >
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-6">
           <TextField
-            label="First name"
-            name="first_name"
+            className="col-span-full"
+            label="Full name"
+            name="name"
             type="text"
             autoComplete="given-name"
-            required
-          />
-          <TextField
-            label="Last name"
-            name="last_name"
-            type="text"
-            autoComplete="family-name"
             required
           />
           <TextField
@@ -57,16 +89,15 @@ export default function Register() {
           />
           <SelectField
             className="col-span-full"
-            label="How did you hear about us?"
-            name="referral_source"
+            label="What's your role?"
+            name="role"
           >
-            <option>AltaVista search</option>
-            <option>Super Bowl commercial</option>
-            <option>Our route 34 city bus ad</option>
-            <option>The “Never Use This” podcast</option>
+            <option>Admin</option>
+            <option>Client</option>
+            <option>Doctor</option>
           </SelectField>
         </div>
-        <Button type="submit" color="cyan" className="mt-8 w-full">
+        <Button type="submit" className="mt-8 w-full bg-primary">
           Get started today
         </Button>
       </form>
