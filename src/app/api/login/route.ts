@@ -19,14 +19,14 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json(
-      { message: 'Incorrect username or password' },
+      { message: 'Incorrect email or password' },
       { status: 401 },
     )
   }
 
   if (user?.password === null) {
     return NextResponse.json(
-      { message: 'Incorrect username or password' },
+      { message: 'Incorrect email or password' },
       { status: 401 },
     )
   }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       return new NextResponse(JSON.stringify(result))
     } else
       return NextResponse.json(
-        { message: 'Incorrect username or password' },
+        { message: 'Incorrect email or password' },
         { status: 401 },
       )
   } else {
