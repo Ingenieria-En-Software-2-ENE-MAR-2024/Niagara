@@ -6,7 +6,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { Button } from '@/components/Button'
 import { Container } from '@/components/Container'
-import { Logo } from '@/components/Logo'
 import { NavLinks } from '@/components/NavLinksNiagara'
 
 function MenuIcon(props: React.ComponentPropsWithoutRef<'svg'>) {
