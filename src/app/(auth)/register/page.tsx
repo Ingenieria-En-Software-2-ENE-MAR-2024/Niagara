@@ -42,7 +42,7 @@ export default function Register() {
 
     if (response.ok) {
       console.log('User created')
-      router.push('/login')
+      router.push('/')
     } else {
       console.error('Failed to create user')
     }
@@ -54,7 +54,7 @@ export default function Register() {
       subtitle={
         <>
           Already registered?{' '}
-          <Link href="/login" className="text-cyan-600">
+          <Link href="/" className="text-cyan-600">
             Sign in
           </Link>{' '}
           to your account.
