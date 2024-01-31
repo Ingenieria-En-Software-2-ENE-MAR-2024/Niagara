@@ -16,7 +16,10 @@ services:
   app:
     depends_on:
       - postgresdb
-    build: .
+    build: 
+      context: .
+      target: dev
+    command: npm start
     restart: unless-stopped
     env_file: ./.env
     ports:
@@ -30,8 +33,8 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./data/app:/app
-      - /app/node_modules 
+      - .:/app
+      - /app/node_modules
       - /app/.next
 
 volumes: 
