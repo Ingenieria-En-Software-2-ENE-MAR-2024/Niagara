@@ -36,7 +36,7 @@ interface ModalUserProps {
     data: User;
 }
 
-const baseUrl = 'http://localhost:3000/api/';
+const baseUrl = 'http://localhost:3000/api';
 
 /**
  * Create the user creation modal
@@ -383,7 +383,7 @@ const ModalUserDelete: React.FC<ModalUserProps>  = ({ open, setOpen, data }) => 
 
     const handleDelete = async (data: any) => {
         try {
-            const response = await fetch(`${baseUrl}/users/${data.id}`, {
+            const response = await fetch(`${baseUrl}/users/${data.userId}`, {
                 method: 'DELETE',
                 headers: {
                   'Content-Type': 'application/json',

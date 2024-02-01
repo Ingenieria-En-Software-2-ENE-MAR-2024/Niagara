@@ -20,6 +20,7 @@ import TableFilter from '../../components/userTable/TableFilter'
 import { Edit, Delete } from '@mui/icons-material'
 
 export interface UserNoActions {
+    id: number;
   name: string
   email: string
   role: string
@@ -48,6 +49,8 @@ const columns: string[] = [
   'Actions',
 ]
 const columnsToFilter: string[] = [columns[0], columns[1], columns[2]]
+
+const baseUrl = 'http://localhost:3000/api';
 
 export default function AdminPage() {
   const [creating, setCreating] = useState<boolean>(false)
@@ -84,15 +87,15 @@ export default function AdminPage() {
    *
    * @param {*} userName user's username
    */
-  const handleRemoveUser = (userName: string) => {
-    setDataModal({ userName })
+  const handleRemoveUser = (userId: number) => {
+    setDataModal({ userId })
     setRemoving(true)
   }
 
   useEffect(() => {
     const fetchUsers = async (page: number, pageSize: number) => {
       try {
-        const response = await fetch('http://localhost:3000/api/users', {
+        const response = await fetch(`${baseUrl}/users`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -109,7 +112,6 @@ export default function AdminPage() {
         const allUsers = await response.json()
         const usersSliced = allUsers.slice(startIndex, endIndex)
         const userList = usersSliced.map((user: UserNoActions) => {
-          console.log({ user })
           return createData(
             user.name,
             user.email,
@@ -121,7 +123,6 @@ export default function AdminPage() {
           )
         })
         setUsers(userList)
-        console.log({ UserListPage: userList })
         setFilteredRows(userList)
       } catch (e) {
         return
@@ -150,7 +151,7 @@ export default function AdminPage() {
             <Tooltip title="Delete user" arrow>
               <IconButton
                 color="primary"
-                onClick={() => handleRemoveUser(user.name)}
+                onClick={() => handleRemoveUser(user.id)}
               >
                 <Delete />
               </IconButton>

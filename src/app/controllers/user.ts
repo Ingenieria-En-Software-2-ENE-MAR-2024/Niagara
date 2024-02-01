@@ -89,7 +89,7 @@ export const update_user = async(req:NextRequest,{params} : {params: {id:string}
 
 export const delete_user = async(req:NextRequest,{params} : {params: {id:string}})=>{
   try{
-
+    console.log({params})
     let user;
     let prams_id = params.id
     let id = parseInt(prams_id);
