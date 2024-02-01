@@ -8,7 +8,6 @@ export const post_user = async (req:NextRequest) =>{
     try{
 
         const body = await req.json()
-        console.log({body})
         const data = validator_user_create(body)
         const new_user =await create_user(data)
 

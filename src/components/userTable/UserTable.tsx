@@ -13,13 +13,13 @@ import UserTableRowStyle from "./UserTableRowStyle";
 import UserTableCellStyle from "./UserTableCellStyle";
 
 export interface User {
-    Name: string;
-    Email: string;
-    Role: string;
-    CreatedAt: string;
-    UpdatedAt: string;
-    DeletedAt: string;
-    Actions: any;
+    name: string;
+    email: string;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string;
+    actions: any;
 }
 
 interface UserTableProps {
@@ -98,27 +98,29 @@ export const UserTable: React.FC<UserTableProps> = ({
                     <TableBody>
                         {filteredRows &&
                             filteredRows.map((row, key) => (
+                                
                                 <UserTableRowStyle key={key}>
                                     <UserTableCellStyle align="left">
-                                        {row.Name}
+                                        
+                                        {row.name}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.Email}
+                                        {row.email}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.Role}
+                                        {row.role}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.CreatedAt}
+                                        {row.createdAt}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.UpdatedAt}
+                                        {row.updatedAt}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.DeletedAt}
+                                        {row.deletedAt}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.Actions}
+                                        {row.actions}
                                     </UserTableCellStyle>
                                 </UserTableRowStyle>
                             ))}
