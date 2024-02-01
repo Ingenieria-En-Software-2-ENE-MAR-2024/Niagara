@@ -6,7 +6,7 @@ import { error_object } from "../interfaces/error";
 import { validator_user_update } from "@/app/validators/user";
 export const post_user = async (req:NextRequest) =>{
     try{
-
+        console.log("Llego al controlador")
         const body = await req.json()
         const data = validator_user_create(body)
         const new_user =await create_user(data)

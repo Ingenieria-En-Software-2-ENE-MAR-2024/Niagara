@@ -214,21 +214,17 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
             return;
         }
 
-        let request;
-        request = {
-            name: name,
-            email: email,
-            role: role,
-            password: password,
-        };
+       
+
+        console.log({ name, email, role, password})
 
         try {
-            const response = await fetch('http://localhost:3000/api/users/', {
+            const response = await fetch(`${baseUrl}/users`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, email, role, password }),
+                body: JSON.stringify({ name, email, role, password})
               })
 
             if (!response.ok) {
