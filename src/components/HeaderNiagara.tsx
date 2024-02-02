@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import {signOut} from 'next-auth/react'
 import { Popover } from '@headlessui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -50,6 +51,11 @@ function MobileNavLink(
 }
 
 export function HeaderNiagara() {
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' })
+  }
+
   return (
     <header>
       <nav>
@@ -120,7 +126,7 @@ export function HeaderNiagara() {
                 </>
               )}
             </Popover>
-            <Button href="#" className="hidden lg:block">
+            <Button onClick={handleLogout} className="hidden lg:block">
               Log out
             </Button>
           </div>
