@@ -27,8 +27,8 @@ const TableFilter: React.FC<TableFilterProps> = ({ columns, rows, setFilteredRow
         } else {
             const filteredRows = rows.filter(
                 (row) =>
-                    row[filterColumn] &&
-                    row[filterColumn]
+                    row[filterColumn.toLowerCase()] &&
+                    row[filterColumn.toLowerCase()]
                         .toLowerCase()
                         .includes(filterText.toLowerCase())
             );

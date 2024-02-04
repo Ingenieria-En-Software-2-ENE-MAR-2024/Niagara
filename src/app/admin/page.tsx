@@ -20,7 +20,7 @@ import TableFilter from '../../components/userTable/TableFilter'
 import { Edit, Delete } from '@mui/icons-material'
 
 export interface UserNoActions {
-    id: number;
+  id: number
   name: string
   email: string
   role: string
@@ -37,7 +37,7 @@ const createData = (
   deletedAt: string,
   actions: any,
 ): User => {
-  return { name, email, role, createdAt, updatedAt, deletedAt,actions }
+  return { name, email, role, createdAt, updatedAt, deletedAt, actions }
 }
 
 const columns: string[] = [
@@ -50,7 +50,7 @@ const columns: string[] = [
 ]
 const columnsToFilter: string[] = [columns[0], columns[1], columns[2]]
 
-const baseUrl = 'http://localhost:3000/api';
+const baseUrl = 'http://localhost:3000/api'
 
 export default function AdminPage() {
   const [creating, setCreating] = useState<boolean>(false)
@@ -95,7 +95,7 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchUsers = async (page: number, pageSize: number) => {
       try {
-        const response = await fetch(`${baseUrl}/users`, {
+        const response = await fetch('http://localhost:3000/api/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -105,6 +105,7 @@ export default function AdminPage() {
         if (!response.ok) {
           const errorText = await response.text()
           console.log('an error ocurred fetching the users')
+          console.log(errorText)
           return
         }
         const startIndex = page * pageSize
@@ -118,7 +119,7 @@ export default function AdminPage() {
             user.role,
             user.createdAt,
             user.updatedAt,
-            "",
+            '',
             createActionsComponent({ user }),
           )
         })
@@ -171,16 +172,23 @@ export default function AdminPage() {
           open={creating}
           setOpen={setCreating}
           data={dataModal}
+          onChangedUsers={async () => setPageSize(pageSize + 1)}
         />
       )}
       {editing && (
-        <ModalUserEdit open={editing} setOpen={setEditing} data={dataModal} />
+        <ModalUserEdit
+          open={editing}
+          setOpen={setEditing}
+          data={dataModal}
+          onChangedUsers={async () => setPageSize(pageSize + 1)}
+        />
       )}
       {removing && (
         <ModalUserDelete
           open={removing}
           setOpen={setRemoving}
           data={dataModal}
+          onChangedUsers={async () => setPageSize(pageSize + 1)}
         />
       )}
       <Box className="box-content">

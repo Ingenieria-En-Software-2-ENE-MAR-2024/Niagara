@@ -34,6 +34,7 @@ interface ModalUserProps {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     data: User;
+    onChangedUsers: any;
 }
 
 const baseUrl = 'http://localhost:3000/api';
@@ -51,6 +52,7 @@ const ModalUserEdit: React.FC<ModalUserProps> = ({
     open,
     setOpen,
     data,
+    onChangedUsers = undefined,
 }) => {
     //form fields states
     const [name, setName] = useState(data.name);
@@ -76,6 +78,7 @@ const ModalUserEdit: React.FC<ModalUserProps> = ({
                 return;
             }
             console.log('User edited')
+            if (onChangedUsers != undefined) onChangedUsers();
         } catch (e) {
             console.log('An error ocurred editing the user')
             return;
@@ -202,6 +205,7 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
     open,
     setOpen,
     data,
+    onChangedUsers = undefined,
 }) => {
     //form fields states
     const [name, setName] = useState("");
@@ -211,6 +215,7 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
 
     const handleSubmitDialog = async () => {
         if (name === "" || email === "" || role === "" || password === "") {
+            console.log("Faltaron datos.")
             return;
         }
 
@@ -228,10 +233,12 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
               })
 
             if (!response.ok) {
+                console.log(response)
                 console.log('User could not be created')
                 return;
             }
             console.log('User created')
+            if (onChangedUsers != undefined) onChangedUsers();
         } catch (e) {
             console.log('An error ocurred creating the user')
             return;
@@ -375,7 +382,7 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
  * @param {*} data Data of the user to delete
  * @returns A dialog component with the form to delete a user
  */
-const ModalUserDelete: React.FC<ModalUserProps>  = ({ open, setOpen, data }) => {
+const ModalUserDelete: React.FC<ModalUserProps>  = ({ open, setOpen, data, onChangedUsers = undefined }) => {
 
     const handleDelete = async (data: any) => {
         try {
@@ -393,6 +400,7 @@ const ModalUserDelete: React.FC<ModalUserProps>  = ({ open, setOpen, data }) => 
                 return;
             }
             console.log('User deleted')
+            if (onChangedUsers != undefined) onChangedUsers();
         } catch (e) {
             console.log('An error ocurred deleting the user')
             return;

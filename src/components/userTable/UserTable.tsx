@@ -111,13 +111,10 @@ export const UserTable: React.FC<UserTableProps> = ({
                                         {row.role}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.createdAt}
+                                        {row.createdAt.substring(0, 10)}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.updatedAt}
-                                    </UserTableCellStyle>
-                                    <UserTableCellStyle align="left">
-                                        {row.deletedAt}
+                                        {row.updatedAt.substring(0, 10)}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
                                         {row.actions}
