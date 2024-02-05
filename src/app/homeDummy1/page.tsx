@@ -3,8 +3,7 @@
 import { HeaderNiagara } from '@/components/HeaderNiagara'
 import { getSession } from 'next-auth/react'
 
-export default async function Home() {
-  console.log(await getSession())
+export default function Home() {
   return (
     <>
       <HeaderNiagara />
