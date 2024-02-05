@@ -6,6 +6,7 @@ import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
 import { SelectField, TextField } from '@/components/Fields'
 import { useRouter } from 'next/navigation'
+import { env } from 'process'
 // import { type Metadata } from 'next'
 
 // export const metadata: Metadata = {
@@ -32,7 +33,8 @@ export default function Register() {
     const password = target.password.value
     const role = target.role.value
 
-    const response = await fetch('http://localhost:3000/api/users', {
+    
+    const response = await fetch( new URL('api/users',process.env.NEXT_PUBLIC_BASE_URL), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

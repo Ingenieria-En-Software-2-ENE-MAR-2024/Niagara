@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import jwt from 'jsonwebtoken'
+import { env } from 'process'
 
 const handler = NextAuth({
   providers: [
@@ -14,7 +15,7 @@ const handler = NextAuth({
 
       async authorize(credentials, req) {
         try {
-          const res = await fetch('http://localhost:3000/api/login', {
+          const res = await fetch( new URL('api/login', process.env.NEXT_PUBLIC_BASE_URL), {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -24,7 +25,6 @@ const handler = NextAuth({
               password: credentials?.password,
             }),
           })
-
           if (!res.ok) {
             const errorBody = await res.json()
             console.error(
@@ -34,14 +34,15 @@ const handler = NextAuth({
           }
 
           const user = await res.json()
-
+          console.log("user: ",user);
           if (user) {
             return user
           } else {
             return null
           }
         } catch (error) {
-          console.error(error)
+          console.error("error! \n",error)
+          throw(error)
         }
       },
     }),
