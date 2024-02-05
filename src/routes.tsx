@@ -43,6 +43,10 @@ export const routesInfo: RoutesInfo = {
     roles: [],
     test: public_route_test,
   },
+  '/admin': {
+    roles: ['Admin'],
+    test: fulfills_any_role,
+  },
   '/homeAuth': {
     roles: ['Admin'],
     test: fulfills_any_role,

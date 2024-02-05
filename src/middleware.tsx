@@ -8,12 +8,21 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ req, token }) =>
-        check_privileges(req.nextUrl, token?.role as string | null) === 'authorized',
+        check_privileges(req.nextUrl, token?.role as string | null) ===
+        'authorized',
     },
   },
 )
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/login/:path*', '/homeAuth/:path*', '/homeDummy1/:path*', '/homeDummy2/:path*', '/homeDummy3/:path*', '/niagarahome/:path*'],
+  matcher: [
+    '/login/:path*',
+    '/homeAuth/:path*',
+    '/homeDummy1/:path*',
+    '/homeDummy2/:path*',
+    '/homeDummy3/:path*',
+    '/niagarahome/:path*',
+    '/admin/:path*',
+  ],
 }
