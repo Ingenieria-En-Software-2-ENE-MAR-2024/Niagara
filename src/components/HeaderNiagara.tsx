@@ -109,15 +109,15 @@ export function HeaderNiagara() {
                         >
                           <div className="space-y-4">
                             <MobileNavLink href="/#servicies">
-                              Servicies
+                              Servicios
                             </MobileNavLink>
                             <MobileNavLink href="/#spelcialties">
-                              Specialties
+                              Especialidades
                             </MobileNavLink>
                             <MobileNavLink href="/#appointments">
-                              Appointments
+                              Citas
                             </MobileNavLink>
-                            <MobileNavLink href="/#faqs">FAQs</MobileNavLink>
+                            <MobileNavLink href="/#faqs">Preguntas Frecuentes</MobileNavLink>
                           </div>
                         </Popover.Panel>
                       </>

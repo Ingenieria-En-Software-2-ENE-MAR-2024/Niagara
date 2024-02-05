@@ -43,23 +43,22 @@ export default function Register() {
     })
 
     if (response.ok) {
-      console.log('User created')
+      console.log('Usuario creado correctamente')
       router.push('/')
     } else {
-      console.error('Failed to create user')
+      console.error('Fallo en la creación de usuario')
     }
   }
 
   return (
     <AuthLayout
-      title="Sign up for an account"
+      title="Registro"
       subtitle={
         <>
-          Already registered?{' '}
+          ¿Ya tienes cuenta?{' '}
           <Link href="/" className="text-cyan-600">
-            Sign in
+            Inicia de Sesión.
           </Link>{' '}
-          to your account.
         </>
       }
     >
@@ -67,7 +66,7 @@ export default function Register() {
         <div className="grid grid-cols-2 gap-6">
           <TextField
             className="col-span-full"
-            label="Full name"
+            label="Nombre Completo"
             name="name"
             type="text"
             autoComplete="given-name"
@@ -75,7 +74,7 @@ export default function Register() {
           />
           <TextField
             className="col-span-full"
-            label="Email address"
+            label="Correo electrónico"
             name="email"
             type="email"
             autoComplete="email"
@@ -84,23 +83,23 @@ export default function Register() {
           <TextField
             className="col-span-full"
             label="Password"
-            name="password"
+            name="Contraseña"
             type="password"
             autoComplete="new-password"
             required
           />
           <SelectField
             className="col-span-full"
-            label="What's your role?"
+            label="Tipo de Usuario"
             name="role"
           >
             <option>Admin</option>
-            <option>Client</option>
+            <option>Paciente</option>
             <option>Doctor</option>
           </SelectField>
         </div>
         <Button type="submit" className="mt-8 w-full bg-primary">
-          Get started today
+          Regístrate
         </Button>
       </form>
     </AuthLayout>

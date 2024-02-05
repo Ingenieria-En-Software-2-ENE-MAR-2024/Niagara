@@ -60,11 +60,10 @@ export default function Home() {
       title="Sign in to account"
       subtitle={
         <>
-          Don’t have an account?{' '}
+          ¿No tienes cuenta todavía?{' '}
           <Link href="/register" className="text-cyan-600">
-            Sign up
+          Regístrate
           </Link>{' '}
-          for a free trial.
         </>
       }
     >
@@ -74,9 +73,9 @@ export default function Home() {
             name="email"
             control={control}
             defaultValue=""
-            rules={{ required: 'Email is required' }}
+            rules={{ required: 'Se require un correo electrónico' }}
             render={({ field }) => (
-              <TextField {...field} label="Email address" type="email" />
+              <TextField {...field} label="Correo electrónico" type="email" />
             )}
           />
           {errors.email && (
@@ -89,11 +88,11 @@ export default function Home() {
             name="password"
             control={control}
             defaultValue=""
-            rules={{ required: 'Password is required' }}
+            rules={{ required: 'Se requiere contraseña' }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Password"
+                label="Contraseña"
                 type="password"
                 className="mt-6"
               />
@@ -111,7 +110,7 @@ export default function Home() {
           )}
         </div>
         <Button type="submit" className="mt-6 w-full bg-primary" >
-          Sign in to account
+          Inciar Sesión
         </Button>
       </form>
     </AuthLayout>
