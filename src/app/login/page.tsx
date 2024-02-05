@@ -6,7 +6,7 @@ import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
 import { TextField } from '@/components/Fields'
 // import { type Metadata } from 'next'
-import { signIn, useSession} from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { useForm, Controller } from 'react-hook-form'
 import React from 'react'
 import { useRouter } from 'next/navigation'
@@ -35,12 +35,9 @@ export default function Home() {
       email,
       password,
       redirect: false,
-    });
+    })
 
-    console.log("result: ", result);
-
-    
-    
+    console.log('result: ', result)
 
     if (result?.error) {
       console.error(result.error)
@@ -50,7 +47,6 @@ export default function Home() {
     } else {
       router.push('/homeDummy1')
     }
-
   }
 
   // console.log(session?.user)
@@ -110,7 +106,7 @@ export default function Home() {
             <p className="mt-4 text-center text-red-500">{credentialsError}</p>
           )}
         </div>
-        <Button type="submit" className="mt-6 w-full bg-primary" >
+        <Button type="submit" className="mt-6 w-full bg-primary">
           Sign in to account
         </Button>
       </form>

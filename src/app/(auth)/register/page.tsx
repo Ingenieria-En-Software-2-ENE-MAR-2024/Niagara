@@ -14,7 +14,6 @@ import { env } from 'process'
 // }
 
 export default function Register() {
-
   const router = useRouter()
 
   // handle submit
@@ -33,14 +32,16 @@ export default function Register() {
     const password = target.password.value
     const role = target.role.value
 
-    
-    const response = await fetch( new URL('api/users',process.env.NEXT_PUBLIC_BASE_URL), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      new URL('api/users', process.env.NEXT_PUBLIC_BASE_URL),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role }),
       },
-      body: JSON.stringify({ name, email, password, role }),
-    })
+    )
 
     if (response.ok) {
       console.log('User created')
