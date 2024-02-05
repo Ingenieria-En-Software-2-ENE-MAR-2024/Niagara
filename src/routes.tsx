@@ -48,19 +48,19 @@ export const routesInfo: RoutesInfo = {
     test: fulfills_any_role,
   },
   '/homeDummy1': {
-    roles: ['Admin'],
+    roles: ['Doctor'],
     test: fulfills_any_role,
   },
   '/homeDummy2': {
-    roles: ['User'],
+    roles: ['Admin'],
     test: fulfills_any_role,
   },
   '/homeDummy3': {
-    roles: ['User', 'Admin'],
+    roles: ['Admin'],
     test: fulfills_any_role,
   },
   '/niagarahome': {
-    roles: ['Intern'],
+    roles: ['Paciente'],
     test: fulfills_any_role,
   },
 }

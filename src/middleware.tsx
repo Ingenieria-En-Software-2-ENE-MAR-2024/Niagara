@@ -15,5 +15,5 @@ export default withAuth(
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/login/:path*', '/homeDummy1/:path*'],
+  matcher: ['/login/:path*', '/homeAuth/:path*', '/homeDummy1/:path*', '/homeDummy2/:path*', '/homeDummy3/:path*', '/niagarahome/:path*'],
 }

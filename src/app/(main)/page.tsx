@@ -41,8 +41,8 @@ export default function Home() {
 
     if (result?.error) {
       console.error(result.error)
-      if (result.error === 'CredentialsSignin') {
-        setCredentialsError('Invalid credentials')
+      if (result.error === 'CredentialsSignin' || result.error === 'HTTP error! status: 401') {
+        setCredentialsError('Credenciales inválidas')
       }
     } else {
 
@@ -64,14 +64,13 @@ export default function Home() {
 
   return (
     <AuthLayout
-      title="Sign in to account"
+      title="Inicio de Sesión"
       subtitle={
         <>
-          Don’t have an account?{' '}
+          ¿No tienes cuenta todavía?{' '}
           <Link href="/register" className="text-cyan-600">
-            Sign up
+          Regístrate
           </Link>{' '}
-          for a free trial.
         </>
       }
     >
@@ -81,9 +80,9 @@ export default function Home() {
             name="email"
             control={control}
             defaultValue=""
-            rules={{ required: 'Email is required' }}
+            rules={{ required: 'Se requiere correo electrónico' }}
             render={({ field }) => (
-              <TextField {...field} label="Email address" type="email" />
+              <TextField {...field} label="Correo electrónico" type="email" />
             )}
           />
           {errors.email && (
@@ -96,11 +95,11 @@ export default function Home() {
             name="password"
             control={control}
             defaultValue=""
-            rules={{ required: 'Password is required' }}
+            rules={{ required: 'Se requiere contraseña' }}
             render={({ field }) => (
               <TextField
                 {...field}
-                label="Password"
+                label="Contraseña"
                 type="password"
                 className="mt-6"
               />
@@ -117,8 +116,8 @@ export default function Home() {
             <p className="mt-4 text-center text-red-500">{credentialsError}</p>
           )}
         </div>
-        <Button type="submit" className="mt-6 w-full bg-primary">
-          Sign in to account
+        <Button type="submit" className="mt-6 w-full bg-primary" >
+          Inicia sesión
         </Button>
       </form>
     </AuthLayout>

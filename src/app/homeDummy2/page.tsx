@@ -10,7 +10,7 @@ export default function Home() {
         <main className="flex flex-1 flex-col items-center justify-center px-20 text-center">
           <h1 className="text-6xl font-bold">
             <span className="text-gray-700">
-              Welcome User with Doctor permission!
+            ¡Bienvenido Usuario con permiso dummy2!
             </span>
           </h1>
         </main>

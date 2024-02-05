@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import {signOut} from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 import { Popover } from '@headlessui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -51,7 +51,6 @@ function MobileNavLink(
 }
 
 export function HeaderNiagara() {
-
   const handleLogout = () => {
     signOut({ callbackUrl: '/' })
   }
@@ -62,7 +61,9 @@ export function HeaderNiagara() {
         <Container className="relative z-50 flex justify-between py-8">
           <div className="relative z-10 flex items-center gap-16">
             <Link href="/" aria-label="Home">
-              <h1 className="text-2xl font-bold text-blue-500 mt-5 mb-5">Niagara</h1>
+              <h1 className="mb-5 mt-5 text-2xl font-bold text-blue-500">
+                Niagara
+              </h1>
             </Link>
             <div className="hidden lg:flex lg:gap-10">
               <NavLinks />
@@ -109,15 +110,17 @@ export function HeaderNiagara() {
                         >
                           <div className="space-y-4">
                             <MobileNavLink href="/#servicies">
-                              Servicies
+                              Servicios
                             </MobileNavLink>
                             <MobileNavLink href="/#spelcialties">
-                              Specialties
+                              Especialidades
                             </MobileNavLink>
                             <MobileNavLink href="/#appointments">
-                              Appointments
+                              Citas
                             </MobileNavLink>
-                            <MobileNavLink href="/#faqs">FAQs</MobileNavLink>
+                            <MobileNavLink href="/#faqs">
+                              Preguntas Frecuentes
+                            </MobileNavLink>
                           </div>
                         </Popover.Panel>
                       </>
@@ -127,7 +130,7 @@ export function HeaderNiagara() {
               )}
             </Popover>
             <Button onClick={handleLogout} className="hidden lg:block">
-              Log out
+              Cerrar Sesión
             </Button>
           </div>
         </Container>

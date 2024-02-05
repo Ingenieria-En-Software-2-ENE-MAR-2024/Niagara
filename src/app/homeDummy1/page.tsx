@@ -12,7 +12,7 @@ export default async function Home() {
         <main className="flex flex-1 flex-col items-center justify-center px-20 text-center">
           <h1 className="text-6xl font-bold">
             <span className="text-gray-700">
-              Welcome User with Admin permission!
+            ¡Bienvenido Usuario con permiso de Doctor!
             </span>
           </h1>
         </main>
