@@ -19,3 +19,13 @@ model UserTest {
   deletedAt DateTime?
 
 }
+
+model Forms {
+  id        Int      @id @default(autoincrement())
+  title     String
+  questions Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+}

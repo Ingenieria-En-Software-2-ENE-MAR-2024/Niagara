@@ -1,44 +1,53 @@
 import { NextRequest, NextResponse } from 'next/server'
-// import {z} from "zod"
+import { z } from 'zod'
 import prisma from '../../../../prisma/prisma'
 
+// Schema Body
+const QuestionType = z.enum([
+  'single-choice',
+  'multiple-choice',
+  'file-upload',
+  'short-text',
+  'long-text',
+])
+
+const Question = z.object({
+  type: QuestionType,
+  label: z.string(),
+  options: z.array(z.string()).optional(),
+})
+
+const Form = z.object({
+  title: z.string(),
+  questions: z.array(Question),
+})
+
 export async function GET(request: NextRequest) {
-  const response = {
-    loading: false,
-    error: null,
-    data: {
-      id: 'unique_form_identifier',
-      title: 'titulo del formulario s',
-      questions: [
-        {
-          id: 'q1',
-          type: 'single-choice',
-          label: 'Pregunta de Selección Simple',
-          options: ['Opción 1', 'Opción 2', 'Opción 3'],
-        },
-        {
-          id: 'q2',
-          type: 'multiple-choice',
-          label: 'Pregunta de Selección Múltiple',
-          options: ['Opción A', 'Opción B', 'Opción C'],
-        },
-        {
-          id: 'q3',
-          type: 'file-upload',
-          label: 'Carga de Archivos',
-        },
-        {
-          id: 'q4',
-          type: 'short-text',
-          label: 'Área de Texto Corto',
-        },
-        {
-          id: 'q5',
-          type: 'long-text',
-          label: 'Área de Texto Largo',
-        },
-      ],
-    },
+  try {
+    const response = await prisma.forms.findFirstOrThrow()
+    return NextResponse.json(response)
+  } catch (error) {
+    return NextResponse.json(
+      { message: 'Something went wrong' },
+      { status: 500 },
+    )
   }
-  return NextResponse.json(response)
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const jsonBody = await request.json()
+    Form.parse(jsonBody)
+    const { title, questions } = jsonBody
+    const insertForm = await prisma.forms.create({
+      data: {
+        title,
+        questions,
+      },
+    })
+
+    return NextResponse.json(insertForm)
+  } catch (error) {
+    return NextResponse.json({ message: 'Bad Request' }, { status: 404 })
+  }
 }
