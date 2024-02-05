@@ -11,7 +11,7 @@ z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('LLego al route de post user')
+    // console.log('LLego al route de post user')
     const new_user = await post_user(req)
     return NextResponse.json(new_user, { status: 201 })
   } catch (err: any) {

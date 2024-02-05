@@ -37,7 +37,7 @@ export default function Home() {
       redirect: false,
     })
 
-    console.log('result: ', result)
+    // console.log('result: ', result)
 
     if (result?.error) {
       console.error(result.error)

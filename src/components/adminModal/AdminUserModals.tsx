@@ -221,7 +221,7 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
 
        
 
-        console.log({ name, email, role, password})
+        // console.log({ name, email, role, password})
 
         try {
             const response = await fetch(`${baseUrl}/users`, {
@@ -233,7 +233,7 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
               })
 
             if (!response.ok) {
-                console.log(response)
+                // console.log(response)
                 console.log('User could not be created')
                 return;
             }

@@ -16,7 +16,7 @@ import { validator_user_update } from '@/app/validators/user'
 
 export const post_user = async (req: NextRequest) => {
   try {
-    console.log('Llego al controlador')
+    // console.log('Llego al controlador')
     const body = await req.json()
     const data = validator_user_create(body)
     const new_user = await create_user(data)
@@ -131,7 +131,7 @@ export const delete_user = async (
   { params }: { params: { id: string } },
 ) => {
   try {
-    console.log({ params })
+    // console.log({ params })
     let user
     let prams_id = params.id
     let id = parseInt(prams_id)
