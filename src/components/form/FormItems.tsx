@@ -1,5 +1,13 @@
+export interface IFormQuestion {
+  id: string;
+  type: string;
+  label: string;
+  options?: string[] | null;
+}
+
+
 // Define los componentes para cada tipo de pregunta
-function ShortTextComponent({ field }: { field: any }) {
+function ShortTextComponent({ field }: { field: IFormQuestion }) {
     return (
       <div>
         <label htmlFor={field.id} className="block text-sm font-medium">
@@ -111,14 +119,28 @@ function ShortTextComponent({ field }: { field: any }) {
     );
   }
 
+
+  export type componentOption = {
+    [key: string]: React.FC<{ field: IFormQuestion }>
+  }
   
-  export const components = {
+  
+  
+  export const components: componentOption = {
     'short-text': ShortTextComponent,
     'long-text': LongTextComponent,
     'single-choice': SingleChoiceComponent,
     'multiple-choice': MultipleChoiceComponent,
     'file-upload': FileUploadComponent,
-  };
+  }
+  
+  // export const components = {
+  //   'short-text': ShortTextComponent,
+  //   'long-text': LongTextComponent,
+  //   'single-choice': SingleChoiceComponent,
+  //   'multiple-choice': MultipleChoiceComponent,
+  //   'file-upload': FileUploadComponent,
+  // };
 
 
 
