@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import jwt from 'jsonwebtoken'
-import { env } from 'process'
 
 const handler = NextAuth({
   providers: [

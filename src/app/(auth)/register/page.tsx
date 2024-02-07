@@ -6,7 +6,10 @@ import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
 import { SelectField, TextField } from '@/components/Fields'
 import { useRouter } from 'next/navigation'
-import { env } from 'process'
+import React from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { register } from 'module'
+
 // import { type Metadata } from 'next'
 
 // export const metadata: Metadata = {
@@ -16,8 +19,14 @@ import { env } from 'process'
 export default function Register() {
   const router = useRouter()
 
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm()
+
   // handle submit
-  const handleSubmit = async (event: any) => {
+  const onSubmit = async (event: any) => {
     event.preventDefault()
 
     const target = event.target as typeof event.target & {
@@ -47,7 +56,8 @@ export default function Register() {
       console.log('Usuario creado correctamente')
       router.push('/')
     } else {
-      console.error('Fallo en la creación de usuario')
+      const data = await response.json()
+      console.error(data.error_message)
     }
   }
 
@@ -63,34 +73,94 @@ export default function Register() {
         </>
       }
     >
-      <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-2 gap-6">
-          <TextField
-            className="col-span-full"
-            label="Nombre"
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-2">
+          <Controller
             name="name"
-            type="text"
-            autoComplete="given-name"
-            required
+            control={control}
+            defaultValue=""
+            rules={{
+              required: 'Se requiere el nombre',
+              minLength: {
+                value: 3,
+                message: 'El nombre debe tener al menos 3 caracteres',
+              },
+              maxLength: {
+                value: 50,
+                message: 'El nombre debe tener menos de 50 caracteres',
+              },
+              pattern: {
+                value: /^[A-Za-z\s]+$/,
+                message: 'El nombre solo puede contener letras y espacios',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Nombre"
+                type="text"
+                className="col-span-full"
+              />
+            )}
           />
-          <TextField
-            className="col-span-full"
-            label="Correo electrónico"
+          {errors.name && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.name?.message?.toString()}
+            </p>
+          )}
+          <Controller
             name="email"
-            type="email"
-            autoComplete="email"
-            required
+            control={control}
+            defaultValue=""
+            rules={{
+              required: 'Se requiere correo electrónico',
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/i,
+                message: 'Correo electrónico inválido',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Correo electrónico"
+                type="email"
+                className="col-span-full mt-6"
+              />
+            )}
           />
-          <TextField
-            className="col-span-full"
-            label="Contraseña"
+          {errors.email && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.email?.message?.toString()}
+            </p>
+          )}
+          <Controller
             name="password"
-            type="password"
-            autoComplete="new-password"
-            required
+            control={control}
+            defaultValue=""
+            rules={{
+              required: 'Se requiere contraseña',
+              minLength: {
+                value: 8,
+                message: 'La contraseña debe tener al menos 8 caracteres',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Contraseña"
+                type="password"
+                className="col-span-full mt-6"
+              />
+            )}
           />
+          {errors.password && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.password?.message?.toString()}
+            </p>
+          )}
+
           <SelectField
-            className="col-span-full"
+            className="col-span-full mt-6"
             label="Tipo de usuario"
             name="role"
           >

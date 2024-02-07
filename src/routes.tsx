@@ -12,8 +12,8 @@ type RoutesInfo = {
 
 const roleHierarchy: RoleHierarchy = {
   Admin: ['Admin'],
-  Doctor: ['User'],
-  Paciente: ['User', 'Intern'],
+  Doctor: ['Doctor'],
+  Paciente: ['Doctor', 'Paciente'],
   User2: [],
   User: [],
 }

@@ -92,7 +92,7 @@ export default function Home() {
             )}
           />
           {errors.email && (
-            <p className="mt-2 text-red-500">
+            <p className="mt-2 text-red-500 text-sm">
               {errors.email?.message?.toString()}
             </p>
           )}
@@ -112,14 +112,14 @@ export default function Home() {
             )}
           />
           {errors.password && (
-            <p className="mt-2 text-red-500">
-              {errors.password?.message?.toString() || ''}
+            <p className="mt-2 text-red-500 text-sm">
+              {errors.password?.message?.toString()}
             </p>
           )}
 
           {/* Show error message if credentials are invalid */}
           {credentialsError && (
-            <p className="mt-4 text-center text-red-500">{credentialsError}</p>
+            <p className="mt-4 text-center text-red-500 text-sm">{credentialsError}</p>
           )}
         </div>
         <Button type="submit" className="mt-6 w-full bg-primary" >
