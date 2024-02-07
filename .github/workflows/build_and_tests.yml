@@ -3,12 +3,8 @@ run-name: Checking current build + tests
 
 on  :
     push:
-        branches:
-            - release
     pull_request:
         types: [opened, reopened]
-        branches:
-            - release
 
 jobs:
     check-build:
@@ -40,9 +36,7 @@ jobs:
               run : npm ci
 
             - name: Linter
-              run : |
-                chmod +x ./.github/scripts/strict-linter.sh
-                ./.github/scripts/strict-linter.sh
+              run : npm run lint
 
             - name: Run Jest tests
               run : npm run test
