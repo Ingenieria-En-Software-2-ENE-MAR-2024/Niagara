@@ -152,7 +152,7 @@ export default function Register() {
           <Controller
             name="role"
             control={control}
-            defaultValue=""
+            defaultValue="Admin"
             render={({ field }) => (
               <SelectField
                 {...field}
