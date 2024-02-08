@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo Running ESLint
+echo ===============================
+if ! npm run lint; then
+    echo ESLint has warning or errors. Fix them before commiting.
+    exit 1
+fi
