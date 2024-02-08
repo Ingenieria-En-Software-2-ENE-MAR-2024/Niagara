@@ -8,13 +8,13 @@ import { SelectField, TextField } from '@/components/Fields'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { register } from 'module'
 
-// import { type Metadata } from 'next'
-
-// export const metadata: Metadata = {
-//   title: 'Sign Up',
-// }
+interface FormData {
+  name: string
+  email: string
+  password: string
+  role: string
+}
 
 export default function Register() {
   const router = useRouter()
@@ -23,23 +23,13 @@ export default function Register() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm()
+  } = useForm<FormData>()
 
   // handle submit
-  const onSubmit = async (event: any) => {
-    event.preventDefault()
+  const onSubmit = async (data: FormData) => {
+    const { name, email, password, role } = data
 
-    const target = event.target as typeof event.target & {
-      name: { value: string }
-      email: { value: string }
-      password: { value: string }
-      role: { value: string }
-    }
-
-    const name = target.name.value
-    const email = target.email.value
-    const password = target.password.value
-    const role = target.role.value
+    // console.log('data', data)
 
     const response = await fetch(
       new URL('api/users', process.env.NEXT_PUBLIC_BASE_URL),
@@ -159,16 +149,24 @@ export default function Register() {
             </p>
           )}
 
-          <SelectField
-            className="col-span-full mt-6"
-            label="Tipo de usuario"
+          <Controller
             name="role"
-          >
-            <option>Admin</option>
-            <option>Paciente</option>
-            <option>Doctor</option>
-          </SelectField>
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <SelectField
+                {...field}
+                className="col-span-full mt-6"
+                label="Tipo de usuario"
+              >
+                <option value="Admin">Admin</option>
+                <option value="Paciente">Paciente</option>
+                <option value="Doctor">Doctor</option>
+              </SelectField>
+            )}
+          />
         </div>
+
         <Button type="submit" className="mt-8 w-full bg-primary">
           Regístrate
         </Button>

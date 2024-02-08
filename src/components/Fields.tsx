@@ -32,19 +32,27 @@ export const TextField = React.forwardRef<
   )
 })
 
-export function SelectField({
-  label,
-  className,
-  ...props
-}: Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> & { label?: string }) {
+export const SelectField = React.forwardRef<
+  HTMLSelectElement,
+  Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> & {
+    label?: string
+    className?: string
+  }
+>(({ label, className, ...props }, ref) => {
   let id = useId()
 
   return (
     <div className={className}>
       {label && <Label id={id}>{label}</Label>}
-      <select id={id} {...props} className={clsx(formClasses, 'pr-8')} />
+      <select
+        ref={ref}
+        id={id}
+        {...props}
+        className={clsx(formClasses, 'pr-8')}
+      />
     </div>
   )
-}
+})
 
 TextField.displayName = 'TextField'
+SelectField.displayName = 'SelectField'
