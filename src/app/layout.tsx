@@ -3,6 +3,7 @@ import clsx from 'clsx'
 
 import '@/styles/tailwind.css'
 import { type Metadata } from 'next'
+import Providers from '@/components/Providers'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,7 +31,9 @@ export default function RootLayout({
       className={clsx('h-full bg-gray-50 antialiased', inter.variable)}
     >
       <body className="flex h-full flex-col">
-        <div className="flex min-h-full flex-col">{children}</div>
+        <Providers>
+          <div className="flex min-h-full flex-col">{children}</div>
+        </Providers>
       </body>
     </html>
   )

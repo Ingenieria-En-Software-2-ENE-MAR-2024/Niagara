@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useId } from 'react'
+import React, { useId } from 'react'
 
 const formClasses =
   'block w-full appearance-none rounded-lg border border-gray-200 bg-white py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.3)-1px)] text-gray-900 placeholder:text-gray-400 focus:border-cyan-500 focus:outline-none focus:ring-cyan-500 sm:text-sm'
@@ -15,80 +15,62 @@ function Label({ id, children }: { id: string; children: React.ReactNode }) {
   )
 }
 
-export function TextField({
-  label,
-  type = 'text',
-  register,
-  className,
-  ...props
-}: Omit<React.ComponentPropsWithoutRef<'input'>, 'id'> & {
-  label?: string
-  register?: any
-}) {
+export const TextField = React.forwardRef<
+  HTMLInputElement,
+  React.ComponentPropsWithoutRef<'input'> & {
+    label?: string
+    className?: string
+  }
+>(({ label, type = 'text', className, ...props }, ref) => {
   let id = useId()
 
   return (
     <div className={className}>
       {label && <Label id={id}>{label}</Label>}
-      <input
-        {...register}
+      <input ref={ref} id={id} type={type} {...props} className={formClasses} />
+    </div>
+  )
+})
+
+export const TextArea = React.forwardRef<
+  HTMLInputElement,
+  React.ComponentPropsWithoutRef<'textarea'> & {
+    label?: string
+    className?: string
+  }
+>(({ label, className, ...props }, ref) => {
+  let id = useId()
+
+  return (
+    <div className={className}>
+      {label && <Label id={id}>{label}</Label>}
+      <textarea id={id} rows={5} {...props} className={formClasses} />
+    </div>
+  )
+})
+
+export const SelectField = React.forwardRef<
+  HTMLSelectElement,
+  Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> & {
+    label?: string
+    className?: string
+  }
+>(({ label, className, ...props }, ref) => {
+  let id = useId()
+
+  return (
+    <div className={className}>
+      {label && <Label id={id}>{label}</Label>}
+      <select
+        ref={ref}
         id={id}
-        type={type}
         {...props}
-        className={formClasses}
+        className={clsx(formClasses, 'pr-8')}
       />
     </div>
   )
-}
+})
 
-export function TextArea({
-  label,
-  cols,
-  register,
-  type = 'text',
-  className,
-  ...props
-}: Omit<React.ComponentPropsWithoutRef<'input'>, 'id'> & {
-  label?: string
-  cols?: number
-  register?: any
-}) {
-  let id = useId()
-
-  return (
-    <div className={className}>
-      {label && <Label id={id}>{label}</Label>}
-      <textarea {...register} id={id} rows={5} className={formClasses} />
-    </div>
-  )
-}
-
-export function SelectField({
-  label,
-  className,
-  options,
-  register,
-  ...props
-}: Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> & {
-  label?: string
-  options?: any[]
-  register?: any
-}) {
-  let id = useId()
-
-  return (
-    <div className={className}>
-      {label && <Label id={id}>{label}</Label>}
-      <select {...register} id={id} {...props} className={clsx(formClasses, 'pr-8')}>
-        <option value="" disabled>
-          Seleccione la entrada
-        </option>
-        {options?.map((option: any, index: number) => (
-          <option key={index} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </div>
-  )
-}
+TextField.displayName = 'TextField'
+TextArea.displayName = 'TextArea'
+SelectField.displayName = 'SelectField'

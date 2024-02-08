@@ -2,8 +2,9 @@
 import { useEffect, useState } from 'react'
 import { components } from './FormItems'
 import axios from 'axios'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { Button } from '../Button'
+import { SelectField } from '../Fields'
 
 export default function Form() {
   const {
@@ -12,6 +13,7 @@ export default function Form() {
     setValue,
     formState: { errors },
     watch,
+    control,
   } = useForm()
 
   const [formData, setFormData] = useState<any>({
@@ -26,13 +28,13 @@ export default function Form() {
     axios
       .get(`${serverUrl}/api/forms`)
       .then((response) => {
-          setFormData({
-            loading: response.data === null || false,
-            data: response.data,
-            error: null,
-          })
-          setValue('data', response.data?.questions)
-   
+        setFormData({
+          loading: response.data === null || false,
+          data: response.data,
+          error: null,
+        })
+        setValue('data', response.data?.questions)
+
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -70,16 +72,61 @@ export default function Form() {
                 {!formData.loading &&
                   formData.data.questions.map((field: any, index: number) => {
                     const Component = components[field.type]
+                    const label = field.label
+                    const options = field.options
+
 
                     if (Component) {
                       return (
-                        <Component
-                          key={index}
-                          label={field.label}
-                          options={field.options}
-                          register={register(`data[${index}].answer`)}
+                        // <Component
+                        //   key={index}
+                        //   label={field.label}
+                        //   options={field.options}
+                        //   register={register(`data[${index}].answer`)}
+                        // />
+                        <Controller
+                        key={index}
+                          name={`data[${index}].answer`}
+                          control={control}
+                          defaultValue=""
+                          render={({ field: myfield }) => (
+                            // <TextField {...field} label="Correo electrónico" type="email" />
+                            <Component
+                              
+                              label={label}
+                              {...myfield}
+                            // options={field.options}
+                            />
+                          )}
                         />
                       )
+                    } else if (field.type === 'single-choice') {
+                      return (
+                        <Controller
+                        key={index}
+                          name={`data[${index}].answer`}
+                          control={control}
+                          defaultValue=""
+                          render={({ field: myfield }) => (
+                            // <TextField {...field} label="Correo electrónico" type="email" />
+                            <SelectField
+                              
+                              label={label}
+                              {...myfield}
+                            // options={field.options}
+                            >
+                              {
+                                options.map((option: any, index: number) => { 
+                                  return (
+                                    <option key={index}>{option}</option>
+                                  )
+                                 })
+                              }
+                            </SelectField>
+                          )}
+                        />
+                      )
+
                     } else if (field.type === 'multiple-choice') {
                       return (
                         <div key={index} className="">

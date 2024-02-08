@@ -1,73 +1,174 @@
+'use client'
+
 import Link from 'next/link'
 
 import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
 import { SelectField, TextField } from '@/components/Fields'
-import { type Metadata } from 'next'
+import { useRouter } from 'next/navigation'
+import React from 'react'
+import { useForm, Controller } from 'react-hook-form'
 
-export const metadata: Metadata = {
-  title: 'Sign Up',
+interface FormData {
+  name: string
+  email: string
+  password: string
+  role: string
 }
 
 export default function Register() {
+  const router = useRouter()
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<FormData>()
+
+  // handle submit
+  const onSubmit = async (data: FormData) => {
+    const { name, email, password, role } = data
+
+    // console.log('data', data)
+
+    const response = await fetch(
+      new URL('api/users', process.env.NEXT_PUBLIC_BASE_URL),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, role }),
+      },
+    )
+
+    if (response.ok) {
+      console.log('Usuario creado correctamente')
+      router.push('/')
+    } else {
+      const data = await response.json()
+      console.error(data.error_message)
+    }
+  }
+
   return (
     <AuthLayout
-      title="Sign up for an account"
+      title="Registro"
       subtitle={
         <>
-          Already registered?{' '}
-          <Link href="/login" className="text-cyan-600">
-            Sign in
+          ¿Ya tienes cuenta?{' '}
+          <Link href="/" className="text-cyan-600">
+            Inicia sesión.
           </Link>{' '}
-          to your account.
         </>
       }
     >
-      <form>
-        <div className="grid grid-cols-2 gap-6">
-          <TextField
-            label="First name"
-            name="first_name"
-            type="text"
-            autoComplete="given-name"
-            required
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="grid grid-cols-2">
+          <Controller
+            name="name"
+            control={control}
+            defaultValue=""
+            rules={{
+              required: 'Se requiere el nombre',
+              minLength: {
+                value: 3,
+                message: 'El nombre debe tener al menos 3 caracteres',
+              },
+              maxLength: {
+                value: 50,
+                message: 'El nombre debe tener menos de 50 caracteres',
+              },
+              pattern: {
+                value: /^[A-Za-z\s]+$/,
+                message: 'El nombre solo puede contener letras y espacios',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Nombre"
+                type="text"
+                className="col-span-full"
+              />
+            )}
           />
-          <TextField
-            label="Last name"
-            name="last_name"
-            type="text"
-            autoComplete="family-name"
-            required
-          />
-          <TextField
-            className="col-span-full"
-            label="Email address"
+          {errors.name && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.name?.message?.toString()}
+            </p>
+          )}
+          <Controller
             name="email"
-            type="email"
-            autoComplete="email"
-            required
+            control={control}
+            defaultValue=""
+            rules={{
+              required: 'Se requiere correo electrónico',
+              pattern: {
+                value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/i,
+                message: 'Correo electrónico inválido',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Correo electrónico"
+                type="email"
+                className="col-span-full mt-6"
+              />
+            )}
           />
-          <TextField
-            className="col-span-full"
-            label="Password"
+          {errors.email && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.email?.message?.toString()}
+            </p>
+          )}
+          <Controller
             name="password"
-            type="password"
-            autoComplete="new-password"
-            required
+            control={control}
+            defaultValue=""
+            rules={{
+              required: 'Se requiere contraseña',
+              minLength: {
+                value: 8,
+                message: 'La contraseña debe tener al menos 8 caracteres',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Contraseña"
+                type="password"
+                className="col-span-full mt-6"
+              />
+            )}
           />
-          <SelectField
-            className="col-span-full"
-            label="How did you hear about us?"
-            name="referral_source"
-          >
-            <option>AltaVista search</option>
-            <option>Super Bowl commercial</option>
-            <option>Our route 34 city bus ad</option>
-            <option>The “Never Use This” podcast</option>
-          </SelectField>
+          {errors.password && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.password?.message?.toString()}
+            </p>
+          )}
+
+          <Controller
+            name="role"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <SelectField
+                {...field}
+                className="col-span-full mt-6"
+                label="Tipo de usuario"
+              >
+                <option value="Admin">Admin</option>
+                <option value="Paciente">Paciente</option>
+                <option value="Doctor">Doctor</option>
+              </SelectField>
+            )}
+          />
         </div>
-        <Button type="submit" color="cyan" className="mt-8 w-full">
-          Get started today
+
+        <Button type="submit" className="mt-8 w-full bg-primary">
+          Regístrate
         </Button>
       </form>
     </AuthLayout>
