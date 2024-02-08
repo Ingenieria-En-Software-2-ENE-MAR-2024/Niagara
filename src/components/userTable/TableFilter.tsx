@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MenuItem, TextField, Button } from "@mui/material";
+import { MenuItem, TextField, Button, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 
 
@@ -7,9 +7,10 @@ interface TableFilterProps {
     columns: string[];
     rows: any[];
     setFilteredRows: React.Dispatch<React.SetStateAction<any[]>>;
+    handleCreateUser: () => void;
 }
 
-const TableFilter: React.FC<TableFilterProps> = ({ columns, rows, setFilteredRows }) => {
+const TableFilter: React.FC<TableFilterProps> = ({ columns, rows, setFilteredRows, handleCreateUser }) => {
     const [filterColumn, setFilterColumn] = useState<string>(""); // Column to filter
     const [filterText, setFilterText] = useState<string>(""); // Text column to filter
 
@@ -66,6 +67,16 @@ const TableFilter: React.FC<TableFilterProps> = ({ columns, rows, setFilteredRow
                 startIcon={<SearchIcon />}
             >
                 Search
+            </Button>
+            <Button
+              variant="contained"
+              className="bg-blue-600 sm:ml-6 md:ml-16"
+              onClick={handleCreateUser}
+              startIcon={<i className="bi bi-plus-circle "></i>}
+            >
+              <Typography variant="subtitle1" className="text-options-button">
+                Create User
+              </Typography>
             </Button>
         </div>
     );

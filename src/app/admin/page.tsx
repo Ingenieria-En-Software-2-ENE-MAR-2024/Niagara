@@ -208,22 +208,14 @@ export default function AdminPage() {
             <Typography variant="h5" className="welcome-text">
               User List
             </Typography>
-            <Button
-              variant="contained"
-              className="bg-blue-600"
-              onClick={handleCreateUser}
-              startIcon={<i className="bi bi-plus-circle "></i>}
-            >
-              <Typography variant="subtitle1" className="text-options-button">
-                Create User
-              </Typography>
-            </Button>
+            
           </Grid>
           <Grid item md={12}>
             <TableFilter
               columns={columnsToFilter}
               rows={users}
               setFilteredRows={setFilteredRows}
+              handleCreateUser={handleCreateUser}
             />
             <UserTable
               filteredRows={filteredRows}
