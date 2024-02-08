@@ -60,6 +60,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ columns, rows, setFilteredRow
                 style={{ marginRight: "10px" }}
             />
             <Button
+                className="bg-blue-600"
                 variant="contained"
                 onClick={handleFilter}
                 startIcon={<SearchIcon />}

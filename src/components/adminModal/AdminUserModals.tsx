@@ -37,7 +37,7 @@ interface ModalUserProps {
     onChangedUsers: any;
 }
 
-const baseUrl = 'http://localhost:3000/api';
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 /**
  * Create the user creation modal
@@ -65,7 +65,7 @@ const ModalUserEdit: React.FC<ModalUserProps> = ({
         }
 
         try {
-            const response = await fetch(`${baseUrl}/users/${data.id}`, {
+            const response = await fetch(`${baseUrl}/api/users/${data.id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ const ModalUserCreate: React.FC<ModalUserProps> = ({
         // console.log({ name, email, role, password})
 
         try {
-            const response = await fetch(`${baseUrl}/users`, {
+            const response = await fetch(`${baseUrl}/api/users`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -386,7 +386,7 @@ const ModalUserDelete: React.FC<ModalUserProps>  = ({ open, setOpen, data, onCha
 
     const handleDelete = async (data: any) => {
         try {
-            const response = await fetch(`${baseUrl}/users/${data.userId}`, {
+            const response = await fetch(`${baseUrl}/api/users/${data.userId}`, {
                 method: 'DELETE',
                 headers: {
                   'Content-Type': 'application/json',
@@ -418,11 +418,12 @@ const ModalUserDelete: React.FC<ModalUserProps>  = ({ open, setOpen, data, onCha
                     {`It seems that you are trying to delete the user: "${data.name}".\nAre you sure?`}
                 </Typography>
                 <Box display="flex" flexDirection="row-reverse">
-                    <Button variant="contained" onClick={() => setOpen(false)}>
+                    <Button className="bg-blue-600" variant="contained" onClick={() => setOpen(false)}>
                         <Typography>Cancel</Typography>
                     </Button>
                     <Box sx={{ pr: 1 }}>
                         <Button
+                            className="bg-red-600"
                             variant="contained"
                             sx={{
                                 backgroundColor: "#f44336",

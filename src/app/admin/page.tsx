@@ -50,7 +50,6 @@ const columns: string[] = [
 ]
 const columnsToFilter: string[] = [columns[0], columns[1], columns[2]]
 
-const baseUrl = 'http://localhost:3000/api'
 
 export default function AdminPage() {
   const [creating, setCreating] = useState<boolean>(false)
@@ -95,7 +94,7 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchUsers = async (page: number, pageSize: number) => {
       try {
-        const response = await fetch('http://localhost:3000/api/users', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -211,7 +210,7 @@ export default function AdminPage() {
             </Typography>
             <Button
               variant="contained"
-              className="options-button"
+              className="bg-blue-600"
               onClick={handleCreateUser}
               startIcon={<i className="bi bi-plus-circle "></i>}
             >
