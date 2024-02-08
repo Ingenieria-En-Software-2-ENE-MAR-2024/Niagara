@@ -23,7 +23,7 @@ export function TextField({
   ...props
 }: Omit<React.ComponentPropsWithoutRef<'input'>, 'id'> & {
   label?: string
-  register: any
+  register?: any
 }) {
   let id = useId()
 
@@ -72,7 +72,7 @@ export function SelectField({
 }: Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> & {
   label?: string
   options?: any[]
-  register: any
+  register?: any
 }) {
   let id = useId()
 
