@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgresdb:
-    image: postgis/postgis:13-3.1-alpine
+    image: postgres
     restart: unless-stopped
     env_file: ./.env
     environment:
@@ -35,7 +35,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./data/app:/src/app
+      - ./src/app:/src/app
       - /node_modules 
       - /prisma
     networks:

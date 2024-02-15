@@ -8,6 +8,7 @@ interface RequestBody {
   password: string
 }
 
+
 export async function POST(request: NextRequest) {
   const body: RequestBody = await request.json()
 
