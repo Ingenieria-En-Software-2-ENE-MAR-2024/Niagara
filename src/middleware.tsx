@@ -24,5 +24,6 @@ export const config = {
     '/homeDummy3/:path*',
     '/niagarahome/:path*',
     '/admin/:path*',
+    '/logger/:path*',
   ],
 }

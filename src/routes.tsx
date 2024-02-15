@@ -47,6 +47,10 @@ export const routesInfo: RoutesInfo = {
     roles: ['Admin'],
     test: fulfills_any_role,
   },
+  '/logger': {
+    roles: ['Admin'],
+    test: fulfills_any_role,
+  },
   '/homeAuth': {
     roles: ['Admin'],
     test: fulfills_any_role,
