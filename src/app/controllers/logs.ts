@@ -47,7 +47,7 @@ export const get_logs = async (req: NextRequest) => {
       logs = await list_logs()
     }
 
-    return logs
+    return logs.map( (it) => {return {...it,date: new Date(it.createdAt).toLocaleDateString(),time: new Date(it.createdAt).toTimeString().split(' ')[0] }})
   } catch (error: any) {
     const handle_err: error_object = handle_error_http_response(error, '0002')
     throw new custom_error(
