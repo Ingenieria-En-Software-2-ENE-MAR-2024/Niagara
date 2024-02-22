@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgresdb:
-    image: postgres
+    image: postgis/postgis:13-3.1-alpine
     restart: unless-stopped
     env_file: ./.env
     environment:
@@ -13,6 +13,11 @@ services:
       - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
     volumes:
       - db:/var/lib/postgres
+    stdin_open: true
+    tty: true
+    networks:
+      project-network:
+        ipv4_address: 192.168.41.4
   app:
     depends_on:
       - postgresdb
@@ -35,6 +40,8 @@ services:
     tty: true
     volumes:
       - ./data/app:/src/app
+      - /node_modules 
+      - /prisma
     networks:
       project-network:
         ipv4_address: 192.168.41.2
@@ -42,3 +49,10 @@ services:
 
 volumes: 
   db:
+
+networks:
+  project-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.41.0/24

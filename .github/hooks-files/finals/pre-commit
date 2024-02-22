@@ -1,0 +1,18 @@
+#!/bin/sh
+
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$BRANCH" = "main" ]; then
+  echo "You can't commit directly to '"${BRANCH}"' branch"
+  exit 1
+fi
+
+echo Running ESLint
+echo ===============================
+if ! npm run lint; then
+    echo ESLint has warning or errors. Fix them before commiting.
+    exit 1
+fi
+
+echo All good. Allowing commit to proceed.
+exit 0
