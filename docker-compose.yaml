@@ -16,10 +16,11 @@ services:
   app:
     depends_on:
       - postgresdb
-    build: 
+    build:
       context: .
-      target: dev
-    command: npm start
+      no_cache: true
+      args:
+        POSTGRES_PRISMA_URL: ${POSTGRES_PRISMA_URL}
     restart: unless-stopped
     env_file: ./.env
     ports:
@@ -33,9 +34,11 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - .:/app
-      - /app/node_modules
-      - /app/.next
+      - ./data/app:/src/app
+    networks:
+      project-network:
+        ipv4_address: 192.168.41.2
+
 
 volumes: 
   db:

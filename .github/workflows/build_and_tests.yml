@@ -23,6 +23,9 @@ jobs:
             - name: Install dependencies for CI
               run : npm ci
 
+            - name: Prisma installation and generation
+              run : npm install -g prisma && prisma generate
+
             - name: Build project
               run : npm run build
 
@@ -39,10 +42,11 @@ jobs:
             - name: Install dependencies for CI
               run : npm ci
 
-            #- name: Linter
-            #  run : |
-            #    chmod +x ./.github/scripts/strict-linter.sh
-            #    ./.github/scripts/strict-linter.sh
+            - name: Prisma installation and generation
+              run : npm install -g prisma && prisma generate
+
+            - name: Linter
+              run : npm run lint
 
             - name: Run Jest tests
               run : npm run test
