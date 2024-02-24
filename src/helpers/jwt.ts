@@ -24,6 +24,6 @@ export function verifyJwt(token: string) {
     return decoded as JwtPayload
   } catch (error) {
     console.log(error)
-    return null
+    throw new Error('Invalid token')
   }
 }
