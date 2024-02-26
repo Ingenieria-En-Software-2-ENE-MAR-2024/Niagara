@@ -55,6 +55,7 @@ const error_message_dict: error_message_dictionary = {
   '0002': 'Error listing users',
   '0003': 'Error updating user',
   '0004': 'error deleting user',
+  'email-0000': 'Error sendig email',
 }
 
 function get_message_for_code(code: string): string {
