@@ -12,8 +12,8 @@ export const send_email = async (
       user: credentials.address,
       pass: credentials.password,
     },
-  })
-
+  } as nodemailer.TransportOptions);
+    
   const data = {
     from: {
       name: credentials.name,
