@@ -20,11 +20,11 @@ export function FormChangePassword() {
             return;
         }
         if (oldPassword === newPassword) {
-            setErrorMessage('La nueva contraseña no puede ser igual a la anterior.');
+            setErrorMessage('*La nueva contraseña no puede ser igual a la anterior.');
             return;
         }
         if (newPassword.length < 8) {
-            setErrorMessage('La contraseña debe tener al menos 8 caracteres.');
+            setErrorMessage('*La contraseña debe tener al menos 8 caracteres.');
             return;
         }
 
