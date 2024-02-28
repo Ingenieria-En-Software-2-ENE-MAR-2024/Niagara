@@ -27,6 +27,10 @@ export function FormChangePassword() {
             setErrorMessage('*La contraseña debe tener al menos 8 caracteres.');
             return;
         }
+        if ((oldPassword === '') || (newPassword === '') || (compareNewPassword === '')) {
+            setErrorMessage('*Por favor, llene todos los campos.');
+            return;
+        }
 
         console.log({ oldPassword, newPassword, compareNewPassword }); // Aquí se enviaría la data al servidor
     }
