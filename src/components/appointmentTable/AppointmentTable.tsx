@@ -91,8 +91,8 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
           </TableHead>
           <TableBody>
             {filteredRows &&
-              filteredRows.map((row, key) => (
-                <AppointmentTableRowStyle key={key}>
+              filteredRows.map((row, index) => (
+                <AppointmentTableRowStyle key={index}>
                   <AppointmentTableCellStyle align="left">
                     {row.date}
                   </AppointmentTableCellStyle>

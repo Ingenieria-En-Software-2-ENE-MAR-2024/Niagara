@@ -16,6 +16,7 @@ import {
   AppointmentTable,
 } from '../../components/appointmentTable/AppointmentTable'
 import { Edit, Delete } from '@mui/icons-material'
+import AppointmentFilter from '../../components/appointmentTable/AppointmentFilter'
 import Swal from 'sweetalert2'
 
 const createData = (
@@ -172,6 +173,7 @@ export default function AppointmentTablePage() {
           </Toolbar>
         </AppBar>
         <Box sx={{ p: 4 }} className="pt-24">
+          <AppointmentFilter />
           <Grid
             container
             justifyContent="center"
