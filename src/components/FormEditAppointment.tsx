@@ -12,13 +12,13 @@ interface Props {
     name: string;
     speciality: string;
     doctor: string;
-    originalDate: string;
+    originalDate: Date;
     originalTime: string;
     originalDescription: string;
 }
 
-export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", speciality = "Ginecologia", doctor = "Hugo Chavez", originalDate = "22/03/2023", originalTime = "10:00", originalDescription = "Necesita un cambio de genero" }: Props) {
-    const [date, setDate] = useState(originalDate);
+export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", speciality = "Ginecologia", doctor = "Hugo Chavez", originalDate = new Date("2023/02/03"), originalTime = "10:00", originalDescription = "Necesita un cambio de genero" }: Props) {
+    const [date, setDate] = useState<Date>(originalDate);
     const [time, setTime] = useState(originalTime);
     const [description, setDescription] = useState(originalDescription);
     const [changeReason, setChangeReason] = useState('');
@@ -28,6 +28,8 @@ export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", s
         event.preventDefault();
 
         console.log({ date, time, description }); // aqui iria el fetch
+        //const router = useRouter();
+        //router.back();
     }
 
     const onCancel = () => {
@@ -45,6 +47,18 @@ export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", s
         }
         return options;
     }
+
+    const formatDate = (date: Date): string => {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        const formattedDay = day < 10 ? '0' + day : day;
+        const formattedMonth = month < 10 ? '0' + month : month;
+
+        return `${year}-${formattedMonth}-${formattedDay}`;
+    }
+
 
 
     return (
@@ -83,9 +97,10 @@ export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", s
                 />
 
                 <TextField
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    value={formatDate(date)}    
+                    onChange={(e) => setDate(new Date(e.target.value))}
                     label="Fecha (dd/mm/yy)"
+                    type="date"
                     className="mt-6"
                 />
 
