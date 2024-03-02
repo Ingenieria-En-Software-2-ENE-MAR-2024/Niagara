@@ -14,3 +14,9 @@ export interface user_body_update {
   name: string
   role?: string
 }
+
+export interface user_body_update_password{
+  oldPassword: string
+  newPassword: string
+  compareNewPassword: string
+}

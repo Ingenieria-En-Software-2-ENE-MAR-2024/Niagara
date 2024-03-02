@@ -13,3 +13,19 @@ export function add_property(obj: any, property_name: string, value: any): void 
     const new_object = { ...input_object, [value_name]: value } as T & { [key: string]: any };
     return new_object;
   }
+
+/**
+ * 
+ * @param date en formato mm/dd/yy
+ * @returns 
+ */
+  export const  formatDateToDb = (date:string) => {
+    const dateArray = date.split('/')
+    const dateFormartedForDb = new Date(date)
+    return dateFormartedForDb
+  }
+
+  export const formatDateToFront = (date: Date) => {
+    // formateamos la fecha para salida en formato  dd/mm/yyyy
+    return new Date(date).toLocaleDateString('en-GB')
+  }
