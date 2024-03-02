@@ -8,7 +8,7 @@ import {
     appointmentService
 } from '../services/appointment'
 import { error_object } from '../interfaces/error'
-import { validator_appointment_create } from '../validators/appointment'
+import { validator_appointment_create, validator_appointment_update } from '../validators/appointment'
 
 const post_appointment = async (req: NextRequest) => {
   try {
@@ -111,29 +111,39 @@ const post_appointment = async (req: NextRequest) => {
 //   }
 // }
 
-// export const update_user = async (
-//   req: NextRequest,
-//   { params }: { params: { id: string } },
-// ) => {
-//   try {
-//     let body = await req.json()
-//     const data = validator_user_update(body)
-//     let user
-//     let prams_id = params.id
-//     let id = parseInt(prams_id)
-//     user = await update_my_user(id, data)
+const updateAppointment = async (
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) => {
+  try {
+    let body = await req.json()
+    const data = validator_appointment_update(body)
 
-//     return user
-//   } catch (error: any) {
-//     const handle_err: error_object = handle_error_http_response(error, '0003')
-//     throw new custom_error(
-//       handle_err.error_message,
-//       handle_err.error_message_detail,
-//       handle_err.error_code,
-//       handle_err.status,
-//     )
-//   }
-// }
+    const accessToken = headers().get('access-token')
+
+    if (!accessToken) {
+      const handle_err: error_object = handle_error_http_response(new Error("Unauthorized"), '0101')
+      throw new custom_error(
+        handle_err.error_message,
+        handle_err.error_message_detail,
+        handle_err.error_code,
+        handle_err.status,
+      )
+    }
+    const appointmentId = parseInt(params.id)
+    const appointmentUpdated  = await appointmentService.updateAppointment(data,appointmentId)
+
+    return appointmentUpdated
+  } catch (error: any) {
+    const handle_err: error_object = handle_error_http_response(error, '0003')
+    throw new custom_error(
+      handle_err.error_message,
+      handle_err.error_message_detail,
+      handle_err.error_code,
+      handle_err.status,
+    )
+  }
+}
 
 // export const delete_user = async (
 //   req: NextRequest,
@@ -206,7 +216,8 @@ const post_appointment = async (req: NextRequest) => {
 
 
 export const appointmentController = {
-    post_appointment
+    post_appointment,
+    updateAppointment
     // get_user,
     // get_users,
     // update_user,

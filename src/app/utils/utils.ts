@@ -29,3 +29,13 @@ export function add_property(obj: any, property_name: string, value: any): void 
     // formateamos la fecha para salida en formato  dd/mm/yyyy
     return new Date(date).toLocaleDateString('en-GB')
   }
+
+  export const verifyDate = (date: Date) => {
+    const dateNow = new Date()
+    // Para poder comparar fechas, eliminamos la hora, minuto, segundo y milisegundo
+    dateNow.setHours(0, 0, 0, 0)
+    if (date < dateNow) {
+      throw new Error('La fecha debe ser mayor o igual a la fecha actual')
+    }
+    return true
+  }
