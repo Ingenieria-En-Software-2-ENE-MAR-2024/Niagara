@@ -74,6 +74,121 @@ const create_appointment = async (body: Tappointment_create_body) => {
   }
 }
 
+
+
+const read_medic_appointment = async (id:number,date?:string) => {
+  try {
+    // Buscamos que el paciente exista y el doctor existan
+
+    const foundMedic = await prisma.medic.findFirst({
+      where: {
+        id
+      },
+    })
+
+    if (!foundMedic) {
+      throw new Error('Medic does not exists')
+    }
+    let FoundAppointment;
+    if(date!=null){
+      const dateFormatted = formatDateToDb(date)
+
+       FoundAppointment = await prisma.appointment.findMany({where:{AND:[
+        { id_medic: id },
+        { date: dateFormatted }
+      ]}});
+  
+    }else{
+       FoundAppointment = await prisma.appointment.findMany({where:{id_medic:id}});
+
+    }
+   
+    if(FoundAppointment.length>0){
+      let formattedAppointments : any= [];
+
+      FoundAppointment.forEach(appointment=>{
+        let appointmentFormarted = {
+          id: appointment.id,
+          hour: appointment.hour,
+          date: formatDateToFront(appointment.date),
+          id_medic: appointment.id_medic,
+          id_patient: appointment.id_patient,
+      }
+      formattedAppointments.push(appointmentFormarted);
+      console.log(appointment)
+
+
+      });
+      return formattedAppointments;
+    }else{
+      return FoundAppointment
+    }
+
+  } catch (error) {
+    throw error
+  }
+}
+
+
+
+const read_patient_appointment = async (id:number,date?:string) => {
+  try {
+    // Buscamos que el paciente exista y el doctor existan
+
+    const foundPatient = await prisma.userTest.findFirst({
+      where: {
+        id
+      },
+    })
+
+    console.log(foundPatient)
+
+    if (!foundPatient || foundPatient.role!='Patient') {
+      throw new Error('Patient does not exists')
+    }
+    let FoundAppointment;
+    if(date!=null){
+      const dateFormatted = formatDateToDb(date)
+
+       FoundAppointment = await prisma.appointment.findMany({where:{AND:[
+        { id_patient: id },
+        { date: dateFormatted }
+      ]}});
+  
+    }else{
+       FoundAppointment = await prisma.appointment.findMany({where:{id_patient:id}});
+    
+    }
+   
+    if(FoundAppointment.length>0){
+      let formattedAppointments : any= [];
+
+      FoundAppointment.forEach(appointment=>{
+        let appointmentFormarted = {
+          id: appointment.id,
+          hour: appointment.hour,
+          date: formatDateToFront(appointment.date),
+          id_medic: appointment.id_medic,
+          id_patient: appointment.id_patient,
+      }
+      formattedAppointments.push(appointmentFormarted);
+      console.log(appointment)
+
+
+      });
+      return formattedAppointments;
+    }else{
+      return FoundAppointment
+    }
+
+  } catch (error) {
+    throw error
+  }
+}
+
+
+
+
 //   export const read_user = async (id: number) => {
 //     try {
 //       const read_user = await prisma.userTest.findFirst({
@@ -257,4 +372,6 @@ const create_appointment = async (body: Tappointment_create_body) => {
 
 export const appointmentService = {
   create_appointment,
+  read_medic_appointment,
+  read_patient_appointment
 }
