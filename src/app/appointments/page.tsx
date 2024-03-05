@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import {
   Box,
-  Button,
   IconButton,
   Tooltip,
   Grid,
@@ -18,6 +17,8 @@ import {
 import { Edit, Delete } from '@mui/icons-material'
 import AppointmentFilter from '../../components/appointmentTable/AppointmentFilter'
 import Swal from 'sweetalert2'
+import { FormEditAppointment } from '@/components/FormEditAppointment'
+import { HeaderNiagara } from '@/components/HeaderNiagara'
 
 const createData = (
   date: string,
@@ -43,67 +44,78 @@ const columns: string[] = [
   'Acciones',
 ]
 
-const columnsToFilter: string[] = [columns[2], columns[3], columns[4], columns[5]]
+const columnsToFilter: string[] = [
+  columns[2],
+  columns[3],
+  columns[4],
+  columns[5],
+]
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function AppointmentTablePage() {
+  const [open, setOpen] = useState<boolean>(false)
+  const [dataModal, setDataModal] = useState<any>(null)
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [filteredRows, setFilteredRows] = useState<Appointment[]>(appointments)
 
   const [page, setPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(5)
 
-  useEffect(() => {
-    // Datos dummy
-    const dummyData: any[] = [
-      {
-        date: '2022-12-12',
-        time: '10:00',
-        id: '123',
-        fullName: 'Juan Perez',
-        specialty: 'Cardiología',
-        doctor: 'Dr. Juan Perez',
-        description: 'Dolor en el pecho',
-      },
-      {
-        date: '2024-02-26',
-        time: '15:00',
-        id: '124',
-        fullName: 'Maria Rodriguez',
-        specialty: 'Oftalmología',
-        doctor: 'Dr. Juan Perez',
-        description: 'Dolor de cabeza',
-      },
-      {
-        date: '2024-01-26',
-        time: '15:00',
-        id: '125',
-        fullName: 'Pablo Rodriguez',
-        specialty: 'Oftalmología',
-        doctor: 'Dr. Juan Perez',
-        description: 'Dolor de cabeza',
-      },
-    ]
+  const handleModal = (appointment: Appointment) => {
+    setDataModal(appointment)
+    setOpen(true)
+  }
 
+  useEffect(() => {
     const fetchAppointments = async (page: number, pageSize: number) => {
-      const startIndex = page * pageSize
-      const endIndex = startIndex + pageSize
-      const appointmentsSliced = dummyData.slice(startIndex, endIndex)
-      const appointmentList = appointmentsSliced.map(
-        (appointment: Appointment) => {
-          return createData(
-            appointment.date,
-            appointment.time,
-            appointment.id,
-            appointment.fullName,
-            appointment.specialty,
-            appointment.doctor,
-            appointment.description,
-            createActionsComponent({ appointment }), // Remove the empty string argument
-          )
-        },
+      try {
+        const response = await fetch(`${baseUrl}/api/appointments/patient`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: null,
+        })
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.log('an error ocurred fetching the appointments')
+          throw new Error(errorText)
+        }
+
+        const allAppointments = await response.json()
+
+        const startIndex = page * pageSize
+        const endIndex = startIndex + pageSize
+        const appointmentsSliced = allAppointments.slice(startIndex, endIndex)
+        const appointmentList = appointmentsSliced.map(
+          (appointment: Appointment) => {
+            return createData(
+              appointment.date,
+              appointment.time,
+              appointment.id,
+              appointment.fullName,
+              appointment.specialty,
+              appointment.doctor,
+              appointment.description,
+              createActionsComponent({ appointment }), // Remove the empty string argument
+            )
+          },
+        )
+        setAppointments(appointmentList)
+        setFilteredRows(appointmentList)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
+    const handleEditAppointment = (appointmentId: String) => {
+      const appointment = appointments.find(
+        (appointment) => appointment.id === appointmentId,
       )
-      setAppointments(appointmentList)
-      setFilteredRows(appointmentList)
+      if (appointment) {
+        handleModal(appointment)
+      }
     }
 
     const createActionsComponent: React.FC<{ appointment: Appointment }> = ({
@@ -116,7 +128,7 @@ export default function AppointmentTablePage() {
               <IconButton
                 color="primary"
                 className="text-tertiary"
-                // onClick={() => editAppointment(appointment)}
+                onClick={() => handleEditAppointment(appointment.id)}
               >
                 <Edit />
               </IconButton>
@@ -153,12 +165,12 @@ export default function AppointmentTablePage() {
     }
 
     fetchAppointments(page, pageSize)
-  }, [page, pageSize])
+  }, [page, pageSize, appointments])
 
   return (
     <>
       <Box className="box-content">
-        <AppBar
+        {/* <AppBar
           position="fixed"
           style={{ justifyItems: 'center', alignItems: 'center' }}
           className="bg-tertiary"
@@ -173,8 +185,17 @@ export default function AppointmentTablePage() {
               {`Gestión de Citas Médicas`}
             </Typography>
           </Toolbar>
-        </AppBar>
-        <Box sx={{ p: 4 }} className="pt-24">
+        </AppBar> */}
+        <HeaderNiagara />
+        {open && (
+          <FormEditAppointment
+            open={open}
+            setOpen={setOpen}
+            data={dataModal}
+            onChangedUsers={async () => setPageSize(pageSize + 1)}
+          />
+        )}
+        <Box sx={{ p: 4 }} className="pt-4">
           <AppointmentFilter
             columns={columnsToFilter}
             rows={appointments}

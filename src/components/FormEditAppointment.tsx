@@ -2,39 +2,61 @@
 
 import React, { useState } from 'react'
 import { TextField, SelectField } from '@/components/Fields'
-import { AuthLayout } from '@/components/AuthLayout';
 import { Button } from '@/components/Button';
-import { useRouter } from 'next/router';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Grid } from '@mui/material';
 
-
-interface Props {
-    idPacient: string;
+interface AppointmentData {
+    idPatient: string;
     name: string;
-    speciality: string;
+    specialty: string;
     doctor: string;
+    id: string;
     originalDate: Date;
     originalTime: string;
     originalDescription: string;
 }
 
-export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", speciality = "Ginecologia", doctor = "Hugo Chavez", originalDate = new Date("2023/02/03"), originalTime = "10:00", originalDescription = "Necesita un cambio de genero" }: Props) {
-    const [date, setDate] = useState<Date>(originalDate);
-    const [time, setTime] = useState(originalTime);
-    const [description, setDescription] = useState(originalDescription);
+interface ModalUserProps {
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    data: AppointmentData;
+    onChangedUsers: any;
+}
+
+export const FormEditAppointment: React.FC<ModalUserProps> = ({ open, setOpen, data, onChangedUsers = undefined }) => {
+    const [date, setDate] = useState<Date>(data.originalDate);
+    const [time, setTime] = useState(data.originalTime);
+    const [description, setDescription] = useState(data.originalDescription);
     const [changeReason, setChangeReason] = useState('');
-    const [errorMessage, setErrorMessage] = useState(''); 
-    const router = useRouter();
 
-    const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmitDialog = async () => {
+        if (time === "" || description === "") {
+            console.log("Faltaron datos.")
+            return;
+        }
 
-        console.log({ date, time, description }); // aqui iria el fetch
-        //const router = useRouter();
-        //router.back();
-    }
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${data.id}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ data })
+              })
 
-    const onCancel = () => {
-        router.back();
+            if (!response.ok) {
+                // console.log(response)
+                console.log('Appointment could not be edited')
+                return;
+            }
+            console.log('Appointment edited')
+            if (onChangedUsers != undefined) onChangedUsers();
+        } catch (e) {
+            console.log('An error ocurred editing the appointment')
+            return;
+        } finally {
+            setOpen(false);
+        }
     }
 
     const generateTimeOptions = () => {
@@ -60,79 +82,107 @@ export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", s
     }
 
 
-
     return (
-        <AuthLayout 
-        title="Editción de la cita médica"
-        subtitle=""
-        >
-            {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
-            <form onSubmit={onSubmit}>
-                <TextField
-                    value={idPacient}
-                    label="ID Paciente"
-                    disabled
-                    className="mt-6"
-                />
+        <>
+            <Dialog
+                open={open}
+                onClose={() => setOpen(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    {"Editción de la cita médica"}
+                </DialogTitle>
 
-                <TextField
-                    value={name}
-                    label="Nombre y Apellido"
-                    disabled
-                    className="mt-6"
-                />
+                <DialogContent>
+                    <Grid container rowSpacing={3}>
+                        <Grid item xs={12}>
+                            <TextField
+                                value={data.idPatient}
+                                label="ID Paciente"
+                                disabled
+                                className="mt-6"
+                            />
+                        </Grid>
 
-                <TextField
-                    value={speciality}
-                    label="Área o Especialidad"
-                    disabled
-                    className="mt-6"
-                />
+                        <Grid item xs={12}>
+                            <TextField
+                                value={data.name}
+                                label="Nombre y Apellido"
+                                disabled
+                                className="mt-6"
+                            />
+                        </Grid>
 
-                <TextField
-                    value={doctor}
-                    label="Médico o Especialista"
-                    disabled
-                    className="mt-6"
-                />
+                        <Grid item xs={12}>
+                            <TextField
+                                value={data.specialty}
+                                label="Área o Especialidad"
+                                disabled
+                                className="mt-6"
+                            />
+                        </Grid>
 
-                <TextField
-                    value={formatDate(date)}    
-                    onChange={(e) => setDate(new Date(e.target.value))}
-                    label="Fecha (dd/mm/yy)"
-                    type="date"
-                    className="mt-6"
-                />
+                        <Grid item xs={12}>
+                            <TextField
+                                value={data.doctor}
+                                label="Médico o Especialista"
+                                disabled
+                                className="mt-6"
+                            />
+                        </Grid>
 
-                <SelectField
-                    value={time}
-                    onChange={(e) => setTime(e.target.value)}
-                    label="Hora"
-                    className="mt-6"
-                >
-                    {generateTimeOptions()}
-                </SelectField>
+                        <Grid item xs={12}>
+                            <TextField
+                                value={formatDate(date)}
+                                onChange={(e) => setDate(new Date(e.target.value))}
+                                label="Fecha (dd/mm/yy)"
+                                type="date"
+                                className="mt-6"
+                            />
+                        </Grid>
 
-                <TextField
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    label="Descripción"
-                    className="mt-6"
-                />
 
-                <TextField
-                    value={changeReason}
-                    onChange={(e) => setChangeReason(e.target.value)}
-                    label="Razón de cambio"
-                    className="mt-6"
-                />
+                        <Grid item xs={12}>
+                            <SelectField
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                                label="Hora"
+                                className="mt-6"
+                            >
+                                {generateTimeOptions()}
+                            </SelectField>
+                        </Grid>
 
-                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between', maxWidth: '200px', margin: '20px auto' }}>
-                    <Button variant='solid' color="cyan" type='submit'> Confirmar </Button>
-                    <Button variant='outline' color="gray" onClick={onCancel}> Cancelar </Button>
-                </div>
+                        <Grid item xs={12}>
+                            <TextField
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                label="Descripción"
+                                className="mt-6"
+                            />
+                        </Grid>
 
-            </form>
-        </AuthLayout>
-    );
+                        <Grid item xs={12}>
+                            <TextField
+                                value={changeReason}
+                                onChange={(e) => setChangeReason(e.target.value)}
+                                label="Razón de cambio"
+                                className="mt-6"
+                            />
+                        </Grid>
+
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpen(false)}>Cancelar</Button>
+                    <Button onClick={handleSubmitDialog} autoFocus>
+                        Confirmar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+            );
 };
