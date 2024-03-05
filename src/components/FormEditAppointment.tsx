@@ -23,6 +23,7 @@ export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", s
     const [description, setDescription] = useState(originalDescription);
     const [changeReason, setChangeReason] = useState('');
     const [errorMessage, setErrorMessage] = useState(''); 
+    const router = useRouter();
 
     const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -33,7 +34,6 @@ export function FormEditAppointment({ idPacient = "32", name = "Adolf Hitler", s
     }
 
     const onCancel = () => {
-        const router = useRouter();
         router.back();
     }
 

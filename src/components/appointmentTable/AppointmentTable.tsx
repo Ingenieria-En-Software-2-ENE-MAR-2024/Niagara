@@ -6,7 +6,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Chip,
   TablePagination,
 } from '@mui/material'
 import AppointmentTableRowStyle from './AppointmentTableRowStyle'

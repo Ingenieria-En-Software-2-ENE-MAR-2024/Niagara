@@ -43,6 +43,8 @@ const columns: string[] = [
   'Acciones',
 ]
 
+const columnsToFilter: string[] = [columns[2], columns[3], columns[4], columns[5]]
+
 export default function AppointmentTablePage() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [filteredRows, setFilteredRows] = useState<Appointment[]>(appointments)
@@ -173,7 +175,11 @@ export default function AppointmentTablePage() {
           </Toolbar>
         </AppBar>
         <Box sx={{ p: 4 }} className="pt-24">
-          <AppointmentFilter />
+          <AppointmentFilter
+            columns={columnsToFilter}
+            rows={appointments}
+            setFilteredRows={setFilteredRows}
+          />
           <Grid
             container
             justifyContent="center"
