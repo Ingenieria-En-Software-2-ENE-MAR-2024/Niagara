@@ -15,10 +15,36 @@ model UserTest {
   email     String
   role      String?
   password  String
+  Medic Medic?
+  Appointments Appointment[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
 
+}
+
+model Medic {
+  id        Int      @id @default(autoincrement())
+  name      String
+  userId    Int @unique
+  user    UserTest @relation(fields: [userId], references: [id])
+  Appointments Appointment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+}
+
+model Appointment {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  hour      String
+  id_medic  Int
+  medic     Medic    @relation(fields: [id_medic], references: [id])
+  id_patient   Int
+  user      UserTest @relation(fields: [id_patient], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 model Forms {
