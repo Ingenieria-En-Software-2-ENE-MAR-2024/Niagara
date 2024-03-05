@@ -11,8 +11,6 @@ services:
       - POSTGRES_DB=$POSTGRESDB_DATABASE
     ports:
       - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
-    volumes:
-      - db:/var/lib/postgres
     stdin_open: true
     tty: true
     networks:
@@ -21,7 +19,11 @@ services:
   app:
     depends_on:
       - postgresdb
-    build: .
+    build:
+      context: .
+      no_cache: true
+      args:
+        POSTGRES_PRISMA_URL: ${POSTGRES_PRISMA_URL}
     restart: unless-stopped
     env_file: ./.env
     ports:
@@ -34,10 +36,6 @@ services:
       - DB_PORT=$POSTGRESDB_DOCKER_PORT
     stdin_open: true
     tty: true
-    volumes:
-      - ./data/app:/src/app
-      - /node_modules 
-      - /prisma
     networks:
       project-network:
         ipv4_address: 192.168.41.2
