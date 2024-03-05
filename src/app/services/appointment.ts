@@ -9,6 +9,7 @@ import {
 import { error_object } from '../interfaces/error'
 import { verifyJwt } from '@/helpers/jwt'
 import { Tappointment_create_body } from '../validators/appointment'
+import { BorderAll } from '@mui/icons-material'
 
 const create_appointment = async (body: Tappointment_create_body) => {
   try {
@@ -37,17 +38,24 @@ const create_appointment = async (body: Tappointment_create_body) => {
 
     // Necesitamos parsear la fecha
 
-    const date = formatDateToDb(body.date)
-    console.log({date})
+    const start_date = formatDateToDb(body.start_date)
+
+    const end_date = formatDateToDb(body.end_date)
+
 
     
     const newAppointmentData = {
-      hour: body.hour,
-      date,
+      start_hour: body.start_hour,
+      end_hour : body.end_hour,
+      start_date,
+      end_date,
       id_medic: body.id_medic,
       id_patient: body.id_patient,
+      description : body.description,
+    
     }
 
+   
 
     // Creamos la cita
     const new_appointment = await prisma.appointment.create({
@@ -58,15 +66,32 @@ const create_appointment = async (body: Tappointment_create_body) => {
       throw new Error('Error creating appointment')
     }
 
+
+    const appointmentWithRelatedData = await prisma.appointment.findUnique({
+      where: {
+        id: new_appointment.id // Reemplaza appointmentId con el ID del appointment específico que deseas consultar
+      },
+      include: {
+        user: true, 
+        medic: true 
+      }
+    });
+  
+
     const appointmentFormarted = {
         id: new_appointment.id,
-        hour: new_appointment.hour,
-        date: formatDateToFront(new_appointment.date),
+        start_hour: new_appointment.start_hour,
+        end_hour: new_appointment.end_hour,
+        start_date:  formatDateToFront(new_appointment.start_date),
+        end_date: formatDateToFront(new_appointment.end_date),
         id_medic: new_appointment.id_medic,
         id_patient: new_appointment.id_patient,
+        patient_name : appointmentWithRelatedData?.user.name,
+        description: appointmentWithRelatedData?.description,
+        speciality: appointmentWithRelatedData?.medic.speciality
     }
 
-    console.log({appointmentFormarted})
+  
 
     return appointmentFormarted
   } catch (error) {
@@ -78,11 +103,13 @@ const create_appointment = async (body: Tappointment_create_body) => {
 
 const read_medic_appointment = async (id:number,date?:string) => {
   try {
-    // Buscamos que el paciente exista y el doctor existan
+    // Buscamos que medico exista y el doctor existan
+    
+
 
     const foundMedic = await prisma.medic.findFirst({
       where: {
-        id
+        userId:id
       },
     })
 
@@ -93,13 +120,25 @@ const read_medic_appointment = async (id:number,date?:string) => {
     if(date!=null){
       const dateFormatted = formatDateToDb(date)
 
-       FoundAppointment = await prisma.appointment.findMany({where:{AND:[
-        { id_medic: id },
-        { date: dateFormatted }
-      ]}});
+       FoundAppointment = await prisma.appointment.findMany({
+        where:{
+          AND:[
+            { id_medic: foundMedic.id },
+            {start_date: dateFormatted }
+          ]
+        },
+        include:{
+          user: true,
+          medic:true
+        }
+    });
   
     }else{
-       FoundAppointment = await prisma.appointment.findMany({where:{id_medic:id}});
+       FoundAppointment = await prisma.appointment.findMany({where:{id_medic:foundMedic.id},
+        include:{
+          user: true,
+          medic:true
+        }});
 
     }
    
@@ -109,13 +148,18 @@ const read_medic_appointment = async (id:number,date?:string) => {
       FoundAppointment.forEach(appointment=>{
         let appointmentFormarted = {
           id: appointment.id,
-          hour: appointment.hour,
-          date: formatDateToFront(appointment.date),
+          start_hour: appointment.start_hour,
+          end_hour: appointment.end_hour,
+          start_date: formatDateToFront(appointment.start_date),
+          end_date: formatDateToFront(appointment.end_date),
           id_medic: appointment.id_medic,
           id_patient: appointment.id_patient,
+          name_patient : appointment?.user.name,
+          speciality : appointment?.medic.speciality,
+          description: appointment.description
       }
       formattedAppointments.push(appointmentFormarted);
-      console.log(appointment)
+      
 
 
       });
@@ -152,11 +196,20 @@ const read_patient_appointment = async (id:number,date?:string) => {
 
        FoundAppointment = await prisma.appointment.findMany({where:{AND:[
         { id_patient: id },
-        { date: dateFormatted }
-      ]}});
+        { start_date: dateFormatted }
+      ]},
+      
+      include:{
+        user: true,
+        medic:true
+      }});
   
     }else{
-       FoundAppointment = await prisma.appointment.findMany({where:{id_patient:id}});
+       FoundAppointment = await prisma.appointment.findMany({where:{id_patient:id},
+        include:{
+          user: true,
+          medic:true
+        }});
     
     }
    
@@ -166,13 +219,18 @@ const read_patient_appointment = async (id:number,date?:string) => {
       FoundAppointment.forEach(appointment=>{
         let appointmentFormarted = {
           id: appointment.id,
-          hour: appointment.hour,
-          date: formatDateToFront(appointment.date),
+          start_hour: appointment.start_hour,
+          end_hour: appointment.end_hour,
+          start_date: formatDateToFront(appointment.start_date),
+          end_date: formatDateToFront(appointment.end_date),
           id_medic: appointment.id_medic,
           id_patient: appointment.id_patient,
+          name_patient : appointment?.user.name,
+          speciality : appointment?.medic.speciality,
+          description: appointment.description
       }
       formattedAppointments.push(appointmentFormarted);
-      console.log(appointment)
+      
 
 
       });
