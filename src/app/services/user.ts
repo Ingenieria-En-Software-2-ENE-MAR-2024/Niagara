@@ -25,11 +25,12 @@ export const create_user = async (body: user_body_create) => {
       },
     })
 
-    if (body.role === "Medic") {
+    if (body.role === "Medic" && body.speciality) {
       await prisma.medic.create({
         data: {
           userId: new_user.id,
           name: body.name,
+          speciality: body.speciality
         }
       })
     }

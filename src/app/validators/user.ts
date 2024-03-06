@@ -5,6 +5,7 @@ const user_create_object_body = z.object({
   email: z.string().email(),
   role: z.string(),
   password: z.string().min(8),
+  speciality: z.string().optional()
 })
 
 export const validator_user_create = (body: unknown) => {

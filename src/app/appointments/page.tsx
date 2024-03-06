@@ -10,27 +10,36 @@ import {
   AppBar,
   Toolbar,
 } from '@mui/material'
-import {
-  Appointment,
-  AppointmentTable,
-} from '../../components/appointmentTable/AppointmentTable'
-import { Edit, Delete } from '@mui/icons-material'
+import { Appointment, AppointmentTable } from '../../components/appointmentTable/AppointmentTable'
+import { Edit, Delete, ApiOutlined } from '@mui/icons-material'
 import AppointmentFilter from '../../components/appointmentTable/AppointmentFilter'
 import Swal from 'sweetalert2'
 import { FormEditAppointment } from '@/components/FormEditAppointment'
 import { HeaderNiagara } from '@/components/HeaderNiagara'
+import { getSession } from 'next-auth/react'
 
 const createData = (
-  date: string,
-  time: string,
-  id: string,
-  fullName: string,
-  specialty: string,
+  id: number,
+  end_date: string,
+  start_hour: string,
+  id_patient: string,
+  name_patient: string,
+  speciality: string,
   doctor: string,
   description: string,
   actions: any,
 ): Appointment => {
-  return { date, time, id, fullName, specialty, doctor, description, actions }
+  return {
+    id,
+    end_date,
+    start_hour,
+    id_patient,
+    name_patient,
+    speciality,
+    doctor,
+    description,
+    actions,
+  }
 }
 
 const columns: string[] = [
@@ -70,12 +79,15 @@ export default function AppointmentTablePage() {
   useEffect(() => {
     const fetchAppointments = async (page: number, pageSize: number) => {
       try {
+        // Get the session
+        const session = await getSession()
+
         const response = await fetch(`${baseUrl}/api/appointments/patient`, {
           method: 'GET',
           headers: {
+            'access-token': `Bearer ${session?.user.accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: null,
         })
         if (!response.ok) {
           const errorText = await response.text()
@@ -84,6 +96,7 @@ export default function AppointmentTablePage() {
         }
 
         const allAppointments = await response.json()
+        console.log(allAppointments)
 
         const startIndex = page * pageSize
         const endIndex = startIndex + pageSize
@@ -91,11 +104,12 @@ export default function AppointmentTablePage() {
         const appointmentList = appointmentsSliced.map(
           (appointment: Appointment) => {
             return createData(
-              appointment.date,
-              appointment.time,
               appointment.id,
-              appointment.fullName,
-              appointment.specialty,
+              appointment.end_date,
+              appointment.start_hour,
+              appointment.id_patient,
+              appointment.name_patient,
+              appointment.speciality,
               appointment.doctor,
               appointment.description,
               createActionsComponent({ appointment }), // Remove the empty string argument
@@ -109,13 +123,8 @@ export default function AppointmentTablePage() {
       }
     }
 
-    const handleEditAppointment = (appointmentId: String) => {
-      const appointment = appointments.find(
-        (appointment) => appointment.id === appointmentId,
-      )
-      if (appointment) {
-        handleModal(appointment)
-      }
+    const handleEditAppointment = (appoint: Appointment, appointmentId: number) => {
+      handleModal(appoint)
     }
 
     const createActionsComponent: React.FC<{ appointment: Appointment }> = ({
@@ -128,7 +137,7 @@ export default function AppointmentTablePage() {
               <IconButton
                 color="primary"
                 className="text-tertiary"
-                onClick={() => handleEditAppointment(appointment.id)}
+                onClick={() => handleEditAppointment(appointment, appointment.id)}
               >
                 <Edit />
               </IconButton>
@@ -149,7 +158,7 @@ export default function AppointmentTablePage() {
       )
     }
 
-    const handleRemoveAppointment = (id: string) => {
+    const handleRemoveAppointment = (id: number) => {
       Swal.fire({
         title: '¿Estás seguro de eliminar la cita?',
         icon: 'warning',
@@ -165,7 +174,7 @@ export default function AppointmentTablePage() {
     }
 
     fetchAppointments(page, pageSize)
-  }, [page, pageSize, appointments])
+  }, [page, pageSize])
 
   return (
     <>
@@ -218,11 +227,11 @@ export default function AppointmentTablePage() {
           </Grid>
           <Grid item md={12}>
             <AppointmentTable
-              filteredRows={filteredRows}
+              filteredRows={filteredRows.map(appointment => ({ ...appointment, id: Number(appointment.id) }))}
               columns={columns}
               onPageChange={setPage}
               onSizeChange={setPageSize}
-              appointments={appointments}
+              appointments={appointments.map(appointment => ({ ...appointment, id: Number(appointment.id) }))}
             />
           </Grid>
         </Box>

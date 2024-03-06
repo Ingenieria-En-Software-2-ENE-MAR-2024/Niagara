@@ -12,14 +12,15 @@ import AppointmentTableRowStyle from './AppointmentTableRowStyle'
 import AppointmentTableCellStyle from './AppointmentTableCellStyle'
 
 export interface Appointment {
-  date: string
-  time: string
-  id: string
-  fullName: string
-  specialty: string
-  doctor: string
-	description: string
-  actions: any
+  id: number;
+  end_date: string;
+  start_hour: string;
+  id_patient: string;
+  name_patient: string;
+  speciality: string;
+  doctor: string;
+  description: string;
+  actions: any;
 }
 
 interface AppointmentTableProps {
@@ -93,19 +94,19 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
               filteredRows.map((row, index) => (
                 <AppointmentTableRowStyle key={index}>
                   <AppointmentTableCellStyle align="left">
-                    {row.date}
+                    {row.end_date}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">
-                    {row.time}
+                    {row.start_hour}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">
-                    {row.id}
+                    {row.id_patient}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">
-                    {row.fullName}
+                    {row.name_patient}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">
-                    {row.specialty}
+                    {row.speciality}
                   </AppointmentTableCellStyle>
 									<AppointmentTableCellStyle align="left">
                     {row.doctor}

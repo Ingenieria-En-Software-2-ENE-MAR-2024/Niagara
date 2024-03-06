@@ -12,16 +12,18 @@ import Swal from 'sweetalert2'
 import { HeaderNiagara } from '@/components/HeaderNiagara'
 import { useRouter } from 'next/router'
 import { FormEditAppointment } from '@/components/FormEditAppointment'
+import { getSession } from 'next-auth/react'
 
 const createData = (
-  date: string,
-  time: string,
-  id: string,
-  fullName: string,
-  specialty: string,
+  end_date: string,
+  start_hour: string,
+  id: number,
+  id_patient: string,
+  name_patient: string,
+  speciality: string,
   actions: any,
 ): Appointment => {
-  return { date, time, id, fullName, specialty, actions }
+  return { end_date, start_hour, id, id_patient, name_patient, speciality, actions };
 }
 
 const columns: string[] = [
@@ -53,9 +55,12 @@ export default function AppointmentTablePage() {
   useEffect(() => {
     const fetchAppointments = async (page: number, pageSize: number) => {
       try {
+        const session = await getSession()
+        
         const response = await fetch(`${baseUrl}/api/appointments/medic`, {
           method: 'GET',
           headers: {
+            'access-token': `Bearer ${session?.user.accessToken}`,
             'Content-Type': 'application/json',
           },
           body: null,
@@ -70,15 +75,17 @@ export default function AppointmentTablePage() {
         const startIndex = page * pageSize
         const endIndex = startIndex + pageSize
         const allAppoint = await response.json()
+        console.log(allAppoint)
         const appointmentsSliced = allAppoint.slice(startIndex, endIndex)
         const appointmentList = appointmentsSliced.map(
           (appointment: Appointment) => {
             return createData(
-              appointment.date,
-              appointment.time,
+              appointment.end_date,
+              appointment.start_hour,
               appointment.id,
-              appointment.fullName,
-              appointment.specialty,
+              appointment.id_patient,
+              appointment.name_patient,
+              appointment.speciality,
               createActionsComponent({ appointment }), // Remove the empty string argument
             )
           },
@@ -88,6 +95,10 @@ export default function AppointmentTablePage() {
       } catch (e) {
         return
       }
+    }
+
+    const handleEditAppointment = (appoint: Appointment, appointmentId: number) => {
+        handleModal(appoint)
     }
 
     const createActionsComponent: React.FC<{ appointment: Appointment }> = ({
@@ -100,7 +111,7 @@ export default function AppointmentTablePage() {
               <IconButton
                 color="primary"
                 className="text-tertiary"
-                onClick={() => handleEditAppointment(appointment.id)}
+                onClick={() => handleEditAppointment(appointment, appointment.id)}
               >
                 <Edit />
               </IconButton>
@@ -121,16 +132,7 @@ export default function AppointmentTablePage() {
       )
     }
 
-    const handleEditAppointment = (appointmentId: String) => {
-      const appointment = appointments.find(
-        (appointment) => appointment.id === appointmentId,
-      )
-      if (appointment) {
-        handleModal(appointment)
-      }
-    }
-
-    const handleRemoveAppointment = async (id: string) => {
+    const handleRemoveAppointment = async (id: number) => {
       const result = await Swal.fire({
         title: '¿Estás seguro de eliminar la cita?',
         icon: 'warning',
@@ -165,7 +167,7 @@ export default function AppointmentTablePage() {
     }
 
     fetchAppointments(page, pageSize)
-  }, [page, pageSize, appointments])
+  }, [page, pageSize])
 
   return (
     <>
