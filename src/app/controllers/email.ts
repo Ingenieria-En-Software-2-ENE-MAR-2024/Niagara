@@ -10,7 +10,7 @@ import { error_object } from '../interfaces/error'
 export const post_email = async (req: NextRequest) => {
   try {
     const body = await req.json()
-    const { credentials, data } = await validator_email_body(body)
+    const { credentials, data } = validator_email_body(body)
     const email_response = await send_email(credentials, data)
     return email_response
   } catch (error) {
