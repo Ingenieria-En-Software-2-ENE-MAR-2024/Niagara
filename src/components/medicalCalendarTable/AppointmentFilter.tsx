@@ -26,18 +26,19 @@ const TableFilter: React.FC<TableFilterProps> = ({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setFilterText(event.target.value)
+    handleFilter()
   }
 
   const handleFilter = () => {
     const tempKey =
       filterColumn === 'ID Paciente'
-        ? 'id'
+        ? 'id_patient'
         : filterColumn === 'Nombre y Apellido'
-          ? 'fullName'
+          ? 'name_patient'
           : filterColumn === 'Área o Especialidad'
-            ? 'specialty'
+            ? 'speciality'
             : ''
-    if (filterColumn === '') {
+    if (filterColumn === '' || filterText === '') {
       setFilteredRows(rows)
     } else {
       const filteredRows = rows.filter(

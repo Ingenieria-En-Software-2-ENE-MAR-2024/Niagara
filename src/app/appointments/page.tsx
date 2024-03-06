@@ -54,7 +54,6 @@ const columns: string[] = [
 ]
 
 const columnsToFilter: string[] = [
-  columns[2],
   columns[3],
   columns[4],
   columns[5],

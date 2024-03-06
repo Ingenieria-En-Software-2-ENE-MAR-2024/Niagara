@@ -159,9 +159,9 @@ export default function Register() {
                 className="col-span-full mt-6"
                 label="Tipo de usuario"
               >
-                <option value="Admin">Admin</option>
-                <option value="Paciente">Paciente</option>
-                <option value="Doctor">Doctor</option>
+                <option value="admin">Admin</option>
+                <option value="patient">Paciente</option>
+                <option value="medical">Doctor</option>
               </SelectField>
             )}
           />

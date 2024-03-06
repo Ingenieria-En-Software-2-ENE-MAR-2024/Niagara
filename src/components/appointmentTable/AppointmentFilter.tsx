@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { MenuItem, TextField, Button } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from '@mui/icons-material/Add'
 
 interface TableFilterProps {
   columns: string[]
@@ -27,20 +27,19 @@ const TableFilter: React.FC<TableFilterProps> = ({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setFilterText(event.target.value)
+    handleFilter()
   }
 
   const handleFilter = () => {
     const tempKey =
-      filterColumn === 'ID Paciente'
-        ? 'id'
-        : filterColumn === 'Nombre y Apellido'
-          ? 'fullName'
-          : filterColumn === 'Área o Especialidad'
-            ? 'specialty'
-              : filterColumn === 'Médico o Especialista'
-                ? 'doctor'
-                  : ''
-    if (filterColumn === '') {
+      filterColumn === 'Nombre y Apellido'
+        ? 'name_patient'
+        : filterColumn === 'Área o Especialidad'
+          ? 'speciality'
+          : filterColumn === 'Médico o Especialista'
+            ? 'doctor'
+            : ''
+    if (filterColumn === '' || filterText === '') {
       setFilteredRows(rows)
     } else {
       const filteredRows = rows.filter(
@@ -93,7 +92,7 @@ const TableFilter: React.FC<TableFilterProps> = ({
           height: '50px',
           alignItems: 'center',
           justifyContent: 'center',
-          marginRight: '10px'
+          marginRight: '10px',
         }}
       >
         <SearchIcon />
