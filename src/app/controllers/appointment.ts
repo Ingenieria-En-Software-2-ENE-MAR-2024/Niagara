@@ -11,6 +11,7 @@ import {
   validator_appointment_update,
 } from '../validators/appointment'
 import { get_medical_appointment } from './medical_appointment'
+import { verifyJwt } from '@/helpers/jwt'
 
 const post_appointment = async (req: NextRequest) => {
   try {
@@ -48,12 +49,12 @@ const post_appointment = async (req: NextRequest) => {
 
 const get_medic_appointment = async (req: NextRequest,{ params }: { params: { id: string } }) => {
   try {
-    // console.log('Llego al controlador')
-    let params_id = params.id
-    let id = parseInt(params_id)
+   
     const date : any= req.nextUrl.searchParams.get('date')
    
     let accessToken = headers().get('access-token')
+
+  
 
     if (!accessToken) {
         const handle_err: error_object = handle_error_http_response(new Error("Unauthorized"), '0101')
@@ -65,7 +66,8 @@ const get_medic_appointment = async (req: NextRequest,{ params }: { params: { id
         )
       }
 
-    const new_appointment = await appointmentService.read_medic_appointment(id,date)
+    const user_payload = verifyJwt(accessToken);
+    const new_appointment = await appointmentService.read_medic_appointment(user_payload.id,date)
 
     return new_appointment
   } catch (error: any) {
@@ -83,9 +85,7 @@ const get_medic_appointment = async (req: NextRequest,{ params }: { params: { id
 
 const get_patient_appointment = async (req: NextRequest,{ params }: { params: { id: string } }) => {
   try {
-    // console.log('Llego al controlador')
-    let params_id = params.id
-    let id = parseInt(params_id)
+
     const date : any= req.nextUrl.searchParams.get('date')
    
     let accessToken = headers().get('access-token')
@@ -99,8 +99,9 @@ const get_patient_appointment = async (req: NextRequest,{ params }: { params: { 
           handle_err.status,
         )
       }
-
-    const new_appointment = await appointmentService.read_patient_appointment(id,date)
+    const user_payload = await verifyJwt(accessToken);
+  
+    const new_appointment = await appointmentService.read_patient_appointment(user_payload.id,date)
 
     return new_appointment
   } catch (error: any) {
@@ -124,18 +125,7 @@ const updateAppointment = async (
       let body = await req.json()
       const data = validator_appointment_update(body)
 
-
-// export const get_user = async (
-//   req: NextRequest,
-//   { params }: { params: { id: string } },
-// ) => {
-//   try {
-//     let user
-//     let prams_id = params.id
-//     let id = parseInt(prams_id)
-//     user = await read_user(id)
-
-    const accessToken = headers().get('access-token')
+      const accessToken = headers().get('access-token')
 
     if (!accessToken) {
       const handle_err: error_object = handle_error_http_response(

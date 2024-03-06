@@ -3,6 +3,7 @@ export interface user_body_create {
   email: string
   role?: string
   password: string
+  speciality? : string
 }
 
 export interface filters {
