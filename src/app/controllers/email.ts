@@ -16,7 +16,7 @@ export const post_email = async (req: NextRequest) => {
   } catch (error) {
     const handle_err: error_object = handle_error_http_response(
       error,
-      'email-0000',
+      '0200',
     )
     throw new custom_error(
       handle_err.error_message,
