@@ -13,13 +13,12 @@ import {
 } from '../utils/error_handler'
 import { error_object } from '../interfaces/error'
 import { verifyJwt } from '@/helpers/jwt'
-import { Tappointment_create_body } from '../validators/appointment'
+import { Tappointment_create_body, Tappointment_update_body } from '../validators/appointment'
 import { BorderAll } from '@mui/icons-material'
 
 const create_appointment = async (body: Tappointment_create_body) => {
   try {
     // Buscamos que el paciente exista y el doctor existan
-
     const foundPatient = await prisma.userTest.findFirst({
       where: {
         id: body.id_patient,
@@ -277,8 +276,8 @@ const updateAppointment = async (
     }
 
     const newAppointmentData = {
-      hour: body.hour ? body.hour : foundAppointment.hour,
-      date: date ? date : foundAppointment.date,
+      hour: body.hour ? body.hour : foundAppointment.start_hour,
+      date: date ? date : foundAppointment.start_date,
       id_medic: body.id_medic ? body.id_medic : foundAppointment.id_medic,
       id_patient: body.id_patient
         ? body.id_patient
@@ -299,8 +298,8 @@ const updateAppointment = async (
 
     const appointmentFormarted = {
       id: updatedAppointment.id,
-      hour: updatedAppointment.hour,
-      date: formatDateToFront(updatedAppointment.date),
+      hour: updatedAppointment.start_hour,
+      date: formatDateToFront(updatedAppointment.start_date),
       id_medic: updatedAppointment.id_medic,
       id_patient: updatedAppointment.id_patient,
     }
