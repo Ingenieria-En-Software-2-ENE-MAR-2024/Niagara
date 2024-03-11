@@ -3,13 +3,10 @@
 import { useState, useEffect } from 'react'
 import {
     Box,
-    Button,
     IconButton,
     Tooltip,
     Grid,
     Typography,
-    AppBar,
-    Toolbar,
 } from '@mui/material'
 import {
     Appointment,
@@ -19,6 +16,9 @@ import { Edit, Delete } from '@mui/icons-material'
 import AppointmentFilter from '../../components/medicalCalendarTable/AppointmentFilter'
 import Swal from 'sweetalert2'
 import { HeaderNiagara } from '@/components/HeaderNiagara'
+import { useRouter } from 'next/router';
+import { FormEditAppointment } from '@/components/FormEditAppointment'
+
 
 const createData = (
     date: string,
@@ -41,57 +41,67 @@ const columns: string[] = [
 ]
 const columnsToFilter: string[] = [columns[2], columns[3], columns[4]]
 
+
+export const handleEditAppointment = (appointmentId: String) => {
+    console.log("Editando cita:", appointmentId);
+    const router = useRouter()
+    router.push(`/EditAppointment/${appointmentId}`)
+};
+
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+
 export default function AppointmentTablePage() {
+    const [open, setOpen] = useState<boolean>(false)
+    const [dataModal, setDataModal] = useState<any>(null)
     const [appointments, setAppointments] = useState<Appointment[]>([])
     const [filteredRows, setFilteredRows] = useState<Appointment[]>(appointments)
 
     const [page, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
 
-    useEffect(() => {
-        // Datos dummy
-        const dummyData: any[] = [
-            {
-                date: '2022-12-12',
-                time: '10:00',
-                id: '123',
-                fullName: 'Juan Perez',
-                specialty: 'Cardiología',
-            },
-            {
-                date: '2024-02-26',
-                time: '15:00',
-                id: '124',
-                fullName: 'Maria Rodriguez',
-                specialty: 'Oftalmología',
-            },
-            {
-                date: '2024-01-26',
-                time: '15:00',
-                id: '125',
-                fullName: 'Pablo Rodriguez',
-                specialty: 'Oftalmología',
-            },
-        ]
+    const handleModal = (appointment: Appointment) => {
+        setDataModal(appointment)
+        setOpen(true)
+    }
 
+    useEffect(() => {
         const fetchAppointments = async (page: number, pageSize: number) => {
-            const startIndex = page * pageSize
-            const endIndex = startIndex + pageSize
-            const appointmentsSliced = dummyData.slice(startIndex, endIndex)
-            const appointmentList = appointmentsSliced.map(
-                (appointment: Appointment) => {
-                    return createData(
-                        appointment.date,
-                        appointment.time,
-                        appointment.id,
-                        appointment.fullName,
-                        appointment.specialty,
-                        createActionsComponent({ appointment }), // Remove the empty string argument
-                    )
-                },
-            )
-            setAppointments(appointmentList)
-            setFilteredRows(appointmentList)
+            try {
+                const response = await fetch(`${baseUrl}/api/appointments/medic`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: null,
+                })
+                if (!response.ok) {
+                    const errorText = await response.text()
+                    console.log('an error ocurred fetching the appointments')
+                    console.log(errorText)
+                    return
+                }
+
+                const startIndex = page * pageSize
+                const endIndex = startIndex + pageSize
+                const allAppoint = await response.json()
+                const appointmentsSliced = allAppoint.slice(startIndex, endIndex)
+                const appointmentList = appointmentsSliced.map(
+                    (appointment: Appointment) => {
+                        return createData(
+                            appointment.date,
+                            appointment.time,
+                            appointment.id,
+                            appointment.fullName,
+                            appointment.specialty,
+                            createActionsComponent({ appointment }), // Remove the empty string argument
+                        )
+                    },
+                )
+                setAppointments(appointmentList)
+                setFilteredRows(appointmentList)
+            } catch (e) {
+                return
+            }
         }
 
         const createActionsComponent: React.FC<{ appointment: Appointment }> = ({
@@ -104,7 +114,7 @@ export default function AppointmentTablePage() {
                             <IconButton
                                 color="primary"
                                 className="text-tertiary"
-                            // onClick={() => editAppointment(appointment)}
+                                onClick={() => handleEditAppointment(appointment.id)}
                             >
                                 <Edit />
                             </IconButton>
@@ -125,20 +135,39 @@ export default function AppointmentTablePage() {
             )
         }
 
-        const handleRemoveAppointment = (id: string) => {
-            Swal.fire({
+        const handleRemoveAppointment = async (id: string) => {
+            const result = await Swal.fire({
                 title: '¿Estás seguro de eliminar la cita?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Eliminar',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(`${baseUrl}/api/appointments/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: null,
+                    });
+
+                    if (!response.ok) {
+                        console.log('La cita no pudo ser eliminada');
+                        return;
+                    }
+
+                    console.log('Cita eliminada');
+                } catch (e) {
+                    console.log('Ocurrió un error al eliminar la cita');
+                    return;
                 }
-            })
-        }
+                Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success');
+            }
+        };
 
         fetchAppointments(page, pageSize)
     }, [page, pageSize])
@@ -146,6 +175,14 @@ export default function AppointmentTablePage() {
     return (
         <>
             <HeaderNiagara />
+            {open && (
+                <FormEditAppointment
+                    open={open}
+                    setOpen={setOpen}
+                    data={dataModal}
+                    onChangedUsers={async () => setPageSize(pageSize + 1)}
+                />
+            )}
             <Box className="box-content">
                 <Box sx={{ p: 4 }} className="pt-24">
                     <AppointmentFilter
