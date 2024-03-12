@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { validator_user_create } from '@/app/validators/user'
+import { headers } from 'next/headers'
+import { validator_user_create, validator_user_update_password_body } from '@/app/validators/user'
 import {
   custom_error,
   handle_error_http_response,
@@ -10,6 +11,7 @@ import {
   read_user,
   delete_my_user,
   update_my_user,
+  update_my_user_password,
 } from '../services/user'
 import { error_object } from '../interfaces/error'
 import { validator_user_update } from '@/app/validators/user'
@@ -138,6 +140,52 @@ export const delete_user = async (
     user = await delete_my_user(id)
 
     return user
+  } catch (error: any) {
+    const handle_err: error_object = handle_error_http_response(error, '0004')
+    throw new custom_error(
+      handle_err.error_message,
+      handle_err.error_message_detail,
+      handle_err.error_code,
+      handle_err.status,
+    )
+  }
+}
+
+
+export const update_user_password = async (
+  req: NextRequest,
+) => {
+  try {
+    // console.log({ params })
+    const body = await req.json()
+
+    // Then use it like this
+    let accessToken = headers().get('access-token')
+
+    if (!body) {
+      const handle_err: error_object = handle_error_http_response(new Error("Body not found on request"), '0100')
+      throw new custom_error(
+        handle_err.error_message,
+        handle_err.error_message_detail,
+        handle_err.error_code,
+        handle_err.status,
+      )
+    }
+    if (!accessToken) {
+      const handle_err: error_object = handle_error_http_response(new Error("Unauthorized"), '0101')
+      throw new custom_error(
+        handle_err.error_message,
+        handle_err.error_message_detail,
+        handle_err.error_code,
+        handle_err.status,
+      )
+    }
+
+    const validatedBody = validator_user_update_password_body(body)
+
+    const updatedUser = await update_my_user_password(validatedBody, accessToken)
+
+    return updatedUser
   } catch (error: any) {
     const handle_err: error_object = handle_error_http_response(error, '0004')
     throw new custom_error(

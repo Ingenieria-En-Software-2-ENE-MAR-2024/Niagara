@@ -5,6 +5,7 @@ const user_create_object_body = z.object({
   email: z.string().email(),
   role: z.string(),
   password: z.string().min(8),
+  speciality: z.string().optional()
 })
 
 export const validator_user_create = (body: unknown) => {
@@ -20,4 +21,18 @@ const user_update_object_body = z.object({
 export const validator_user_update = (body: unknown) => {
   const its_valdiate = user_update_object_body.parse(body)
   return its_valdiate
+}
+
+
+const user_update_password_body = z.object({
+  oldPassword: z.string().min(8),
+  newPassword: z.string().min(8),
+  compareNewPassword: z.string().min(8),
+})
+
+ type TUser_update_password_body = z.infer<typeof user_update_password_body>
+
+export const validator_user_update_password_body = (body: TUser_update_password_body) => {
+  const its_validated = user_update_password_body.parse(body)
+  return its_validated
 }

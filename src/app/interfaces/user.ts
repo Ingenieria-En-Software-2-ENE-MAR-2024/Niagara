@@ -3,6 +3,7 @@ export interface user_body_create {
   email: string
   role?: string
   password: string
+  speciality? : string
 }
 
 export interface filters {
@@ -13,4 +14,10 @@ export interface filters {
 export interface user_body_update {
   name: string
   role?: string
+}
+
+export interface user_body_update_password{
+  oldPassword: string
+  newPassword: string
+  compareNewPassword: string
 }

@@ -1,8 +1,18 @@
-import { user_body_create, user_body_update } from '../interfaces/user'
+import {
+  user_body_create,
+  user_body_update,
+  user_body_update_password,
+} from '../interfaces/user'
 import prisma from '../../../prisma/prisma'
 import { add_property } from '../utils/utils'
 import { add_object_to_array } from '../utils/utils'
 import * as bcrypt from 'bcryptjs'
+import {
+  custom_error,
+  handle_error_http_response,
+} from '../utils/error_handler'
+import { error_object } from '../interfaces/error'
+import { verifyJwt } from '@/helpers/jwt'
 
 export const create_user = async (body: user_body_create) => {
   try {
@@ -14,6 +24,17 @@ export const create_user = async (body: user_body_create) => {
         password: await bcrypt.hash(body.password, 10),
       },
     })
+
+    if (body.role === "Medic" && body.speciality) {
+      await prisma.medic.create({
+        data: {
+          userId: new_user.id,
+          name: body.name,
+          speciality: body.speciality
+        }
+      })
+    }
+
     const { password, ...userWithoutPass } = new_user
 
     return userWithoutPass
@@ -121,5 +142,84 @@ export const update_my_user = async (id: number, body: user_body_update) => {
     return update_user
   } catch (error) {
     throw error
+  }
+}
+
+export const update_my_user_password = async (
+  body: user_body_update_password,
+  token: string,
+) => {
+  try {
+    const userWithoutPass = verifyJwt(token)
+
+    if (!userWithoutPass) {
+      const handle_err: error_object = handle_error_http_response(
+        new Error('Unauthorized'),
+        '0005',
+      )
+      throw new custom_error(
+        handle_err.error_message,
+        handle_err.error_message_detail,
+        handle_err.error_code,
+        handle_err.status,
+      )
+    }
+
+    const user = await prisma.userTest.findFirst({
+      where: {
+        id: userWithoutPass.id,
+      },
+    })
+
+    if (!user) {
+      const handle_err: error_object = handle_error_http_response(
+        new Error('User not found'),
+        '0005',
+      )
+      throw new custom_error(
+        handle_err.error_message,
+        handle_err.error_message_detail,
+        handle_err.error_code,
+        handle_err.status,
+      )
+    }
+
+    const passwordMatches = await bcrypt.compare(
+      body.oldPassword,
+      user.password!,
+    )
+
+    if (passwordMatches) {
+      const hashedPassword = await bcrypt.hash(body.newPassword, 10)
+      const updatedUser = await prisma.userTest.update({
+        where: { id: user.id },
+        data: {
+          password: hashedPassword,
+        },
+      })
+      return updatedUser
+    } else {
+      const handle_err: error_object = handle_error_http_response(
+        new Error('User not found'),
+        '0005',
+      )
+      throw new custom_error(
+        handle_err.error_message,
+        handle_err.error_message_detail,
+        handle_err.error_code,
+        handle_err.status,
+      )
+    }
+  } catch (error) {
+    const handle_err: error_object = handle_error_http_response(
+      error,
+      '0005',
+    )
+    throw new custom_error(
+      handle_err.error_message,
+      handle_err.error_message_detail,
+      handle_err.error_code,
+      handle_err.status,
+    )
   }
 }
