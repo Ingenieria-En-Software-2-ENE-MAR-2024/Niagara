@@ -21,7 +21,11 @@ services:
   app:
     depends_on:
       - postgresdb
-    build: .
+    build:
+      context: .
+      no_cache: true
+      args:
+        POSTGRES_PRISMA_URL: ${POSTGRES_PRISMA_URL}
     restart: unless-stopped
     env_file: ./.env
     ports:
