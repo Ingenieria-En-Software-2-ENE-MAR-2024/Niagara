@@ -26,13 +26,15 @@ function MedicalAppointmetForm() {
     watch
   } = useForm<appointmentData>()
 
+  const medicalArea = watch('medicalArea')
+
   const [idPatient, setIdPatient] = useState<any>(null)
   const [token, setToken] = useState<any>(null)
   const [doctors, setDoctors] = useState<any>([])
 
   const visibleDoctors = useMemo(() => {
-    return doctors.filter((doctor:any) => doctor.speciality === watch('medicalArea'))
-  }, [watch('medicalArea')]);
+    return doctors.filter((doctor:any) => doctor.speciality === medicalArea)
+  }, [medicalArea, doctors]);
 
   //   handleSubmit
   const onSubmit = async (data: appointmentData) => {
