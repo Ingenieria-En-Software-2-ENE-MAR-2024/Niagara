@@ -22,10 +22,13 @@ export const validator_appointment_create = (
 }
 
 const appointment_update_object_body = z.object({
-  hour: z.string().optional(),
-  date: z.string().optional(),
+  start_hour: z.string().optional(),
+  end_hour: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
   id_medic: z.number().optional(),
   id_patient: z.number().optional(),
+  description: z.string().optional()
 })
 
 export type Tappointment_update_body = z.infer<
