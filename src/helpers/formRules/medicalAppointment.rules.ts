@@ -32,10 +32,10 @@ const rules = {
 
   patientId: {
     required: "Se requiere la cédula",
-    pattern: {
-      value: /^[V]-\d{7,9}$/,
-      message: "Formato de CI inválido",
-    },
+    // pattern: {
+    //   value: /^[V]-\d{7,9}$/,
+    //   message: "Formato de CI inválido",
+    // },
   },
 
   description: {

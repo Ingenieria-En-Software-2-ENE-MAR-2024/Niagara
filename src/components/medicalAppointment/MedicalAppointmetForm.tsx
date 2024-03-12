@@ -1,5 +1,5 @@
 'use cliente'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Container } from '../Container'
 import { Button } from '@/components/Button'
 import { SelectField, TextField } from '@/components/Fields'
@@ -23,21 +23,27 @@ function MedicalAppointmetForm() {
     handleSubmit,
     control,
     formState: { errors },
+    watch
   } = useForm<appointmentData>()
 
   const [idPatient, setIdPatient] = useState<any>(null)
   const [token, setToken] = useState<any>(null)
+  const [doctors, setDoctors] = useState<any>([])
+
+  const visibleDoctors = useMemo(() => {
+    return doctors.filter((doctor:any) => doctor.speciality === watch('medicalArea'))
+  }, [watch('medicalArea')]);
 
   //   handleSubmit
   const onSubmit = async (data: appointmentData) => {
     const {
-      name,
-      lastName,
+      // name,
+      // lastName,
       date,
       description,
       doctor,
-      medicalArea,
-      patientId,
+      // medicalArea,
+      // patientId,
       time,
     } = data
 
@@ -46,13 +52,13 @@ function MedicalAppointmetForm() {
       end_hour: time,
       start_date: date,
       end_date: date,
-      id_medic: 3,
+      id_medic: parseInt(doctor),
       id_patient: idPatient,
-      description: 'Esta es una descripcin',
+      description,
     }
 
     console.log(dataSend)
-
+     
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments`,
@@ -82,6 +88,32 @@ function MedicalAppointmetForm() {
     getSession().then((result) => {
       setIdPatient(result?.user?.id)
       setToken(result?.user?.accessToken)
+      const fetchUsers = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/medicAll`,
+            {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${result?.user?.accessToken}`,
+              },
+            },
+          )
+          if (!response.ok) {
+            const errorText = await response.text()
+            console.log('an error ocurred fetching the users')
+            console.log(errorText)
+            return
+          }
+          // logica
+          const medicAll = await response.json()
+          setDoctors(medicAll)
+        } catch (e) {
+          return
+        }
+      }
+      fetchUsers()
     })
   }, [])
 
@@ -184,12 +216,20 @@ function MedicalAppointmetForm() {
               defaultValue=""
               rules={rules.medicalArea}
               render={({ field }) => (
-                <TextField
+                <SelectField
                   {...field}
-                  label="Area o especialidad médica"
-                  type="text"
+                  label="Área o especialidad médica"
                   className=""
-                />
+                >
+                  <option disabled value="">Seleccione un área médica</option>
+                  {doctors.map((doctor: any) => {
+                    return (
+                      <option key={doctor.id} value={doctor.speciality}>
+                        {doctor.speciality}
+                      </option>
+                    )
+                  })}
+                </SelectField>
               )}
             />
             {errors.medicalArea && (
@@ -206,12 +246,20 @@ function MedicalAppointmetForm() {
               defaultValue=""
               rules={rules.doctor}
               render={({ field }) => (
-                <TextField
+                <SelectField
                   {...field}
                   label="Médico o especialista"
-                  type="text"
                   className=""
-                />
+                >
+                  <option disabled value="">Seleccione un doctor </option>
+                  {visibleDoctors.map((doctor: any) => {
+                    return (
+                      <option key={doctor.id} value={doctor.id}>
+                        {doctor.name}
+                      </option>
+                    )
+                  })}
+                </SelectField>
               )}
             />
             {errors.doctor && (
