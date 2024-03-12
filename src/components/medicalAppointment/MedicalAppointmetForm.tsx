@@ -6,6 +6,8 @@ import { SelectField, TextField } from '@/components/Fields'
 import { useForm, Controller } from 'react-hook-form'
 import rules from '@/helpers/formRules/medicalAppointment.rules'
 import { getSession } from 'next-auth/react'
+import Swal from 'sweetalert2'
+import { useRouter } from 'next/navigation'
 
 interface appointmentData {
   name: string
@@ -23,8 +25,10 @@ function MedicalAppointmetForm() {
     handleSubmit,
     control,
     formState: { errors },
-    watch
+    watch,
   } = useForm<appointmentData>()
+
+  const router = useRouter()
 
   const medicalArea = watch('medicalArea')
 
@@ -33,8 +37,8 @@ function MedicalAppointmetForm() {
   const [doctors, setDoctors] = useState<any>([])
 
   const visibleDoctors = useMemo(() => {
-    return doctors.filter((doctor:any) => doctor.speciality === medicalArea)
-  }, [medicalArea, doctors]);
+    return doctors.filter((doctor: any) => doctor.speciality === medicalArea)
+  }, [medicalArea, doctors])
 
   //   handleSubmit
   const onSubmit = async (data: appointmentData) => {
@@ -59,8 +63,6 @@ function MedicalAppointmetForm() {
       description,
     }
 
-    console.log(dataSend)
-     
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments`,
@@ -70,7 +72,7 @@ function MedicalAppointmetForm() {
             'Content-Type': 'application/json',
             'access-token': `Bearer ${token}`,
           },
-          body: JSON.stringify( dataSend ),
+          body: JSON.stringify(dataSend),
         },
       )
 
@@ -79,7 +81,16 @@ function MedicalAppointmetForm() {
         console.log('Appointment could not be saved')
         return
       }
-      console.log('Appointment saved')
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Your work has been saved',
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        console.log('Appointment saved')
+        router.push('/')
+      })
     } catch (e) {
       console.log('An error ocurred saving the appointment')
       return
@@ -223,7 +234,9 @@ function MedicalAppointmetForm() {
                   label="Área o especialidad médica"
                   className=""
                 >
-                  <option disabled value="">Seleccione un área médica</option>
+                  <option disabled value="">
+                    Seleccione un área médica
+                  </option>
                   {doctors.map((doctor: any) => {
                     return (
                       <option key={doctor.id} value={doctor.speciality}>
@@ -253,7 +266,9 @@ function MedicalAppointmetForm() {
                   label="Médico o especialista"
                   className=""
                 >
-                  <option disabled value="">Seleccione un doctor </option>
+                  <option disabled value="">
+                    Seleccione un doctor{' '}
+                  </option>
                   {visibleDoctors.map((doctor: any) => {
                     return (
                       <option key={doctor.id} value={doctor.id}>
