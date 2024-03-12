@@ -1,10 +1,11 @@
 'use cliente'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container } from '../Container'
 import { Button } from '@/components/Button'
 import { SelectField, TextField } from '@/components/Fields'
 import { useForm, Controller } from 'react-hook-form'
 import rules from '@/helpers/formRules/medicalAppointment.rules'
+import { getSession } from 'next-auth/react'
 
 interface appointmentData {
   name: string
@@ -24,6 +25,9 @@ function MedicalAppointmetForm() {
     formState: { errors },
   } = useForm<appointmentData>()
 
+  const [idPatient, setIdPatient] = useState<any>(null)
+  const [token, setToken] = useState<any>(null)
+
   //   handleSubmit
   const onSubmit = async (data: appointmentData) => {
     const {
@@ -37,8 +41,49 @@ function MedicalAppointmetForm() {
       time,
     } = data
 
-    console.log(data)
+    const dataSend = {
+      start_hour: time,
+      end_hour: time,
+      start_date: date,
+      end_date: date,
+      id_medic: 3,
+      id_patient: idPatient,
+      description: 'Esta es una descripcin',
+    }
+
+    console.log(dataSend)
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'access-token': `Bearer ${token}`,
+          },
+          body: JSON.stringify( dataSend ),
+        },
+      )
+
+      if (!response.ok) {
+        // console.log(response)
+        console.log('Appointment could not be saved')
+        return
+      }
+      console.log('Appointment saved')
+    } catch (e) {
+      console.log('An error ocurred saving the appointment')
+      return
+    }
   }
+
+  useEffect(() => {
+    getSession().then((result) => {
+      setIdPatient(result?.user?.id)
+      setToken(result?.user?.accessToken)
+    })
+  }, [])
 
   return (
     <Container>
