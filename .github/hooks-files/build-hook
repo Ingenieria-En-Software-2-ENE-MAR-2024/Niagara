@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo Running build
+echo ===============================
+if ! npm run build; then
+    echo Error building. Rejecting commit.
+    exit 1
+fi
+
+exit 0
