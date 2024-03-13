@@ -161,7 +161,7 @@ export default function Register() {
               >
                 <option value="Admin">Admin</option>
                 <option value="Patient">Paciente</option>
-                <option value="Medical">Doctor</option>
+                <option value="Medic">Doctor</option>
               </SelectField>
             )}
           />
