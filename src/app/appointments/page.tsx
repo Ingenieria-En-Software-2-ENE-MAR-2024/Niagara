@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Box,
   IconButton,
@@ -10,7 +10,10 @@ import {
   AppBar,
   Toolbar,
 } from '@mui/material'
-import { Appointment, AppointmentTable } from '../../components/appointmentTable/AppointmentTable'
+import {
+  Appointment,
+  AppointmentTable,
+} from '../../components/appointmentTable/AppointmentTable'
 import { Edit, Delete, ApiOutlined } from '@mui/icons-material'
 import AppointmentFilter from '../../components/appointmentTable/AppointmentFilter'
 import Swal from 'sweetalert2'
@@ -53,11 +56,7 @@ const columns: string[] = [
   'Acciones',
 ]
 
-const columnsToFilter: string[] = [
-  columns[3],
-  columns[4],
-  columns[5],
-]
+const columnsToFilter: string[] = [columns[3], columns[4], columns[5]]
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
@@ -115,14 +114,17 @@ export default function AppointmentTablePage() {
             )
           },
         )
-        setAppointments(appointmentList)
+        setAppointments(allAppointments)
         setFilteredRows(appointmentList)
       } catch (e) {
         console.log(e)
       }
     }
 
-    const handleEditAppointment = (appoint: Appointment, appointmentId: number) => {
+    const handleEditAppointment = (
+      appoint: Appointment,
+      appointmentId: number,
+    ) => {
       handleModal(appoint)
     }
 
@@ -136,7 +138,9 @@ export default function AppointmentTablePage() {
               <IconButton
                 color="primary"
                 className="text-tertiary"
-                onClick={() => handleEditAppointment(appointment, appointment.id)}
+                onClick={() =>
+                  handleEditAppointment(appointment, appointment.id)
+                }
               >
                 <Edit />
               </IconButton>
@@ -157,19 +161,43 @@ export default function AppointmentTablePage() {
       )
     }
 
-    const handleRemoveAppointment = (id: number) => {
-      Swal.fire({
-        title: '¿Estás seguro de eliminar la cita?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Eliminar',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
+    const handleRemoveAppointment = async (id: number) => {
+      try {
+        // Get the session
+        const session = await getSession()
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${id}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'access-token': `Bearer ${session?.user.accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+
+        if (!response.ok) {
+          console.log('an error ocurred deleting the appointment')
+          return
         }
-      })
+
+        Swal.fire({
+          title: '¿Estás seguro de eliminar la cita?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Eliminar',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
+            fetchAppointments(page, pageSize)
+          }
+        })
+      } catch (e) {
+        console.log(e)
+      }
     }
 
     fetchAppointments(page, pageSize)
@@ -208,6 +236,7 @@ export default function AppointmentTablePage() {
             columns={columnsToFilter}
             rows={appointments}
             setFilteredRows={setFilteredRows}
+            setPage={setPage}
           />
           <Grid
             container
@@ -226,11 +255,17 @@ export default function AppointmentTablePage() {
           </Grid>
           <Grid item md={12}>
             <AppointmentTable
-              filteredRows={filteredRows.map(appointment => ({ ...appointment, id: Number(appointment.id) }))}
+              filteredRows={filteredRows.map((appointment) => ({
+                ...appointment,
+                id: Number(appointment.id),
+              }))}
               columns={columns}
               onPageChange={setPage}
               onSizeChange={setPageSize}
-              appointments={appointments.map(appointment => ({ ...appointment, id: Number(appointment.id) }))}
+              appointments={appointments.map((appointment) => ({
+                ...appointment,
+                id: Number(appointment.id),
+              }))}
             />
           </Grid>
         </Box>

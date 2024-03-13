@@ -67,6 +67,18 @@ export const routesInfo: RoutesInfo = {
     roles: ['Patient'],
     test: fulfills_any_role,
   },
+  '/appointmentForm': {
+    roles: ['Patient'],
+    test: fulfills_any_role,
+  },
+  '/appointments': {
+    roles: ['Patient'],
+    test: fulfills_any_role,
+  },
+  '/medicalCalendar': {
+    roles: ['Medic'],
+    test: fulfills_any_role,
+  },
 }
 
 const routesInfoKeys: string[] = Object.keys(routesInfo)

@@ -89,7 +89,7 @@ function MedicalAppointmetForm() {
         timer: 1500,
       }).then(() => {
         console.log('Appointment saved')
-        router.push('/')
+        router.push('/appointments')
       })
     } catch (e) {
       console.log('An error ocurred saving the appointment')
