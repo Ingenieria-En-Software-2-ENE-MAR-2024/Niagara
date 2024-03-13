@@ -63,9 +63,9 @@ export default function Home() {
       // Redirect to the appropriate page based on the user's role
       if (userRole === 'Admin') {
         router.push('/admin')
-      } else if (userRole === 'Paciente') {
+      } else if (userRole === 'Patient') {
         router.push('/niagarahome')
-      } else if (userRole === 'Doctor') {
+      } else if (userRole === 'Medic') {
         router.push('/homeDummy1')
       }
     }

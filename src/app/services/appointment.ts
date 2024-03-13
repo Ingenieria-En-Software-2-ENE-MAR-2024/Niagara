@@ -1,15 +1,15 @@
 import prisma from '../../../prisma/prisma'
 import {
-    add_property,
-    formatDateToDb,
-    formatDateToFront,
-    verifyDate,
+  add_property,
+  formatDateToDb,
+  formatDateToFront,
+  verifyDate,
 } from '../utils/utils'
 import { add_object_to_array } from '../utils/utils'
 import * as bcrypt from 'bcryptjs'
 import {
-    custom_error,
-    handle_error_http_response,
+  custom_error,
+  handle_error_http_response,
 } from '../utils/error_handler'
 import { error_object } from '../interfaces/error'
 import { verifyJwt } from '@/helpers/jwt'
@@ -21,8 +21,8 @@ import {
 
 
 const create_appointment = async (body: Tappointment_create_body) => {
-    try {
-        // Buscamos que el paciente exista y el doctor existan
+  try {
+    // Buscamos que el paciente exista y el doctor existan
 
         const foundPatient = await prisma.userTest.findFirst({
             where: {
@@ -103,8 +103,8 @@ const create_appointment = async (body: Tappointment_create_body) => {
     } catch (error) {
         throw error
     }
-}
 
+}
 
 const read_medic_appointment = async (id: number, date?: string) => {
     try {
@@ -251,8 +251,8 @@ const read_patient_appointment = async (id: number, date?: string) => {
 
 
 const updateAppointment = async (
-    body: Tappointment_update_body,
-    appointmentId: number,
+  body: Tappointment_update_body,
+  appointmentId: number,
 ) => {
     try {
         let start_date
@@ -345,39 +345,39 @@ const updateAppointment = async (
 }
 
 const deleteAppointment = async (appointmentId: number) => {
-    try {
-        // Buscamos que la cita exista
-        const foundAppointment = await prisma.appointment.findFirst({
-            where: {
-                id: appointmentId,
-            },
-        })
+  try {
+    // Buscamos que la cita exista
+    const foundAppointment = await prisma.appointment.findFirst({
+      where: {
+        id: appointmentId,
+      },
+    })
 
-        if (!foundAppointment) {
-            throw new Error('Appointment does not exists')
-        }
-
-        // Creamos la cita
-        const deletedAppointment = await prisma.appointment.delete({
-            where: {
-                id: appointmentId,
-            },
-        })
-
-        if (!deletedAppointment) {
-            throw new Error('Error creating appointment')
-        }
-
-        return deletedAppointment
-    } catch (error) {
-        throw error
+    if (!foundAppointment) {
+      throw new Error('Appointment does not exists')
     }
+
+    // Creamos la cita
+    const deletedAppointment = await prisma.appointment.delete({
+      where: {
+        id: appointmentId,
+      },
+    })
+
+    if (!deletedAppointment) {
+      throw new Error('Error creating appointment')
+    }
+
+    return deletedAppointment
+  } catch (error) {
+    throw error
+  }
 }
 
 export const appointmentService = {
-    create_appointment,
-    updateAppointment,
-    deleteAppointment,
-    read_medic_appointment,
-    read_patient_appointment
+  create_appointment,
+  updateAppointment,
+  deleteAppointment,
+  read_medic_appointment,
+  read_patient_appointment,
 }

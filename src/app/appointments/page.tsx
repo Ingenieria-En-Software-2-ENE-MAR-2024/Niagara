@@ -1,29 +1,45 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Box, IconButton, Tooltip, Grid, Typography } from '@mui/material'
 import {
-  Appointment,
-  MedicalCalendarTable,
-} from '../../components/medicalCalendarTable/MedicalCalendarTable'
-import { Edit, Delete } from '@mui/icons-material'
-import AppointmentFilter from '../../components/medicalCalendarTable/AppointmentFilter'
+  Box,
+  IconButton,
+  Tooltip,
+  Grid,
+  Typography,
+  AppBar,
+  Toolbar,
+} from '@mui/material'
+import { Appointment, AppointmentTable } from '../../components/appointmentTable/AppointmentTable'
+import { Edit, Delete, ApiOutlined } from '@mui/icons-material'
+import AppointmentFilter from '../../components/appointmentTable/AppointmentFilter'
 import Swal from 'sweetalert2'
-import { HeaderNiagara } from '@/components/HeaderNiagara'
-import { useRouter } from 'next/router'
 import { FormEditAppointment } from '@/components/FormEditAppointment'
+import { HeaderNiagara } from '@/components/HeaderNiagara'
 import { getSession } from 'next-auth/react'
 
 const createData = (
+  id: number,
   end_date: string,
   start_hour: string,
-  id: number,
   id_patient: string,
   name_patient: string,
   speciality: string,
+  doctor: string,
+  description: string,
   actions: any,
 ): Appointment => {
-  return { end_date, start_hour, id, id_patient, name_patient, speciality, actions };
+  return {
+    id,
+    end_date,
+    start_hour,
+    id_patient,
+    name_patient,
+    speciality,
+    doctor,
+    description,
+    actions,
+  }
 }
 
 const columns: string[] = [
@@ -32,9 +48,16 @@ const columns: string[] = [
   'ID Paciente',
   'Nombre y Apellido',
   'Área o Especialidad',
+  'Médico o Especialista',
+  'Descripción',
   'Acciones',
 ]
-const columnsToFilter: string[] = [columns[2], columns[3], columns[4]]
+
+const columnsToFilter: string[] = [
+  columns[3],
+  columns[4],
+  columns[5],
+]
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
@@ -55,37 +78,39 @@ export default function AppointmentTablePage() {
   useEffect(() => {
     const fetchAppointments = async (page: number, pageSize: number) => {
       try {
+        // Get the session
         const session = await getSession()
-        
-        const response = await fetch(`${baseUrl}/api/appointments/medic`, {
+
+        const response = await fetch(`${baseUrl}/api/appointments/patient`, {
           method: 'GET',
           headers: {
             'access-token': `Bearer ${session?.user.accessToken}`,
             'Content-Type': 'application/json',
           },
-          body: null,
         })
         if (!response.ok) {
           const errorText = await response.text()
           console.log('an error ocurred fetching the appointments')
-          console.log(errorText)
-          return
+          throw new Error(errorText)
         }
+
+        const allAppointments = await response.json()
+        console.log(allAppointments)
 
         const startIndex = page * pageSize
         const endIndex = startIndex + pageSize
-        const allAppoint = await response.json()
-        console.log(allAppoint)
-        const appointmentsSliced = allAppoint.slice(startIndex, endIndex)
+        const appointmentsSliced = allAppointments.slice(startIndex, endIndex)
         const appointmentList = appointmentsSliced.map(
           (appointment: Appointment) => {
             return createData(
+              appointment.id,
               appointment.end_date,
               appointment.start_hour,
-              appointment.id,
               appointment.id_patient,
               appointment.name_patient,
               appointment.speciality,
+              appointment.doctor,
+              appointment.description,
               createActionsComponent({ appointment }), // Remove the empty string argument
             )
           },
@@ -93,12 +118,12 @@ export default function AppointmentTablePage() {
         setAppointments(appointmentList)
         setFilteredRows(appointmentList)
       } catch (e) {
-        return
+        console.log(e)
       }
     }
 
     const handleEditAppointment = (appoint: Appointment, appointmentId: number) => {
-        handleModal(appoint)
+      handleModal(appoint)
     }
 
     const createActionsComponent: React.FC<{ appointment: Appointment }> = ({
@@ -132,38 +157,19 @@ export default function AppointmentTablePage() {
       )
     }
 
-    const handleRemoveAppointment = async (id: number) => {
-      const result = await Swal.fire({
+    const handleRemoveAppointment = (id: number) => {
+      Swal.fire({
         title: '¿Estás seguro de eliminar la cita?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Eliminar',
-      })
-
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${baseUrl}/api/appointments/${id}`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: null,
-          })
-
-          if (!response.ok) {
-            console.log('La cita no pudo ser eliminada')
-            return
-          }
-
-          console.log('Cita eliminada')
-        } catch (e) {
-          console.log('Ocurrió un error al eliminar la cita')
-          return
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
         }
-        Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
-      }
+      })
     }
 
     fetchAppointments(page, pageSize)
@@ -171,17 +177,33 @@ export default function AppointmentTablePage() {
 
   return (
     <>
-      <HeaderNiagara />
-      {open && (
-        <FormEditAppointment
-          open={open}
-          setOpen={setOpen}
-          data={dataModal}
-          onChangedUsers={async () => setPageSize(pageSize + 1)}
-        />
-      )}
       <Box className="box-content">
-        <Box sx={{ p: 4 }} className="pt-24">
+        {/* <AppBar
+          position="fixed"
+          style={{ justifyItems: 'center', alignItems: 'center' }}
+          className="bg-tertiary"
+        >
+          <Toolbar className="navbar">
+            <Typography
+              variant="h5"
+              component="div"
+              className="font-bold"
+              sx={{ flexGrow: 1 }}
+            >
+              {`Gestión de Citas Médicas`}
+            </Typography>
+          </Toolbar>
+        </AppBar> */}
+        <HeaderNiagara />
+        {open && (
+          <FormEditAppointment
+            open={open}
+            setOpen={setOpen}
+            data={dataModal}
+            onChangedUsers={async () => setPageSize(pageSize + 1)}
+          />
+        )}
+        <Box sx={{ p: 4 }} className="pt-4">
           <AppointmentFilter
             columns={columnsToFilter}
             rows={appointments}
@@ -198,17 +220,17 @@ export default function AppointmentTablePage() {
                 variant="h5"
                 className="welcome-text text-center text-white"
               >
-                Calendario Médico
+                Detalle de las Citas Médicas
               </Typography>
             </Box>
           </Grid>
           <Grid item md={12}>
-            <MedicalCalendarTable
-              filteredRows={filteredRows}
+            <AppointmentTable
+              filteredRows={filteredRows.map(appointment => ({ ...appointment, id: Number(appointment.id) }))}
               columns={columns}
               onPageChange={setPage}
               onSizeChange={setPageSize}
-              appointments={appointments}
+              appointments={appointments.map(appointment => ({ ...appointment, id: Number(appointment.id) }))}
             />
           </Grid>
         </Box>

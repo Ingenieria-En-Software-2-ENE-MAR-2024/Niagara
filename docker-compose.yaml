@@ -28,6 +28,7 @@ services:
     env_file: ./.env
     ports:
       - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+      - 3001:3001
     environment:
       - DB_HOST=postgresdb
       - DB_USER=$POSTGRESDB_USER
@@ -50,3 +51,4 @@ networks:
       driver: default
       config:
         - subnet: 192.168.41.0/24
+        

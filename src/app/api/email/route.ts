@@ -1,11 +1,10 @@
+import { post_email } from '@/app/controllers/email'
 import { NextRequest, NextResponse } from 'next/server'
-import { appointmentController } from '@/app/controllers/appointment'
 
-export async function GET( req: NextRequest,
-    params: { params: { id: string } }) {
+export async function POST(req: NextRequest) {
   try {
-    const new_appointment = await appointmentController.get_medic_appointment(req,params)
-    return NextResponse.json(new_appointment, { status: 201 })
+    const email_response = await post_email(req)
+    return NextResponse.json(email_response, { status: 201 })
   } catch (err: any) {
     const error_json = {
       error_message: err.error_message,
@@ -15,5 +14,3 @@ export async function GET( req: NextRequest,
     return NextResponse.json(error_json, { status: err.status })
   }
 }
-
-

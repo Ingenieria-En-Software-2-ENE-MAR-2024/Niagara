@@ -8,20 +8,22 @@ import {
   Paper,
   TablePagination,
 } from '@mui/material'
-import UserTableCellStyle from '../userTable/UserTableCellStyle'
-import UserTableRowStyle from '../userTable/UserTableRowStyle'
+import AppointmentTableRowStyle from './AppointmentTableRowStyle'
+import AppointmentTableCellStyle from './AppointmentTableCellStyle'
 
 export interface Appointment {
-  end_date: string
-  start_hour: string
-  id: number
-  id_patient: string
-  name_patient: string
-  speciality: string
-  actions: any
+  id: number;
+  end_date: string;
+  start_hour: string;
+  id_patient: string;
+  name_patient: string;
+  speciality: string;
+  doctor: string;
+  description: string;
+  actions: any;
 }
 
-interface MedicalCalendarTableProps {
+interface AppointmentTableProps {
   columns: string[]
   filteredRows: Appointment[]
   appointments: Appointment[]
@@ -29,7 +31,7 @@ interface MedicalCalendarTableProps {
   onSizeChange?: (pageSize: number) => void
 }
 
-export const MedicalCalendarTable: React.FC<MedicalCalendarTableProps> = ({
+export const AppointmentTable: React.FC<AppointmentTableProps> = ({
   columns,
   filteredRows,
   appointments,
@@ -45,10 +47,7 @@ export const MedicalCalendarTable: React.FC<MedicalCalendarTableProps> = ({
    * @param {String} newRowsPerPage - The new number of Appointments per page.
    * @returns the page number where the first Appointment will be located after changing the number of rows per page.
    */
-  const calculateOnResizePage = (
-    firstAppointmentIndex: any,
-    newRowsPerPage: any,
-  ) => {
+  const calculateOnResizePage = (firstAppointmentIndex: any, newRowsPerPage: any) => {
     return Math.floor(firstAppointmentIndex / newRowsPerPage)
   }
 
@@ -81,36 +80,44 @@ export const MedicalCalendarTable: React.FC<MedicalCalendarTableProps> = ({
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <UserTableCellStyle
+                <AppointmentTableCellStyle
                   sx={column === 'Actions' ? { textAlign: 'center' } : {}}
                   key={index}
                 >
                   {column}
-                </UserTableCellStyle>
+                </AppointmentTableCellStyle>
               ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredRows &&
               filteredRows.map((row, index) => (
-                <UserTableRowStyle key={index}>
-                  <UserTableCellStyle align="left">
+                <AppointmentTableRowStyle key={index}>
+                  <AppointmentTableCellStyle align="left">
                     {row.end_date}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">
+                  </AppointmentTableCellStyle>
+                  <AppointmentTableCellStyle align="left">
                     {row.start_hour}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">{row.id}</UserTableCellStyle>
-                  <UserTableCellStyle align="left">
+                  </AppointmentTableCellStyle>
+                  <AppointmentTableCellStyle align="left">
+                    {row.id_patient}
+                  </AppointmentTableCellStyle>
+                  <AppointmentTableCellStyle align="left">
                     {row.name_patient}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">
+                  </AppointmentTableCellStyle>
+                  <AppointmentTableCellStyle align="left">
                     {row.speciality}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">
+                  </AppointmentTableCellStyle>
+									<AppointmentTableCellStyle align="left">
+                    {row.doctor}
+                  </AppointmentTableCellStyle>
+									<AppointmentTableCellStyle align="left">
+                    {row.description}
+                  </AppointmentTableCellStyle>
+                  <AppointmentTableCellStyle align="left">
                     {row.actions}
-                  </UserTableCellStyle>
-                </UserTableRowStyle>
+                  </AppointmentTableCellStyle>
+                </AppointmentTableRowStyle>
               ))}
           </TableBody>
         </Table>

@@ -61,6 +61,7 @@ const error_message_dict: error_message_dictionary = {
   '0008': 'Error deleting appointment',
   '0100': 'Body not found on request',
   '0101': 'Access Token not found on request',
+  '0200': 'Error sending email',
 }
 
 function get_message_for_code(code: string): string {
