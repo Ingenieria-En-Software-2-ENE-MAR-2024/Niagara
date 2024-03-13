@@ -12,8 +12,8 @@ type RoutesInfo = {
 
 const roleHierarchy: RoleHierarchy = {
   Admin: ['Admin'],
-  Medic: ['Medic'],
-  Patient: ['Medic', 'Patient'],
+  Medical: ['Medical'],
+  Patient: ['Medical', 'Patient'],
   User2: [],
   User: [],
 }
@@ -52,7 +52,7 @@ export const routesInfo: RoutesInfo = {
     test: fulfills_any_role,
   },
   '/homeDummy1': {
-    roles: ['Medic'],
+    roles: ['Medical'],
     test: fulfills_any_role,
   },
   '/homeDummy2': {

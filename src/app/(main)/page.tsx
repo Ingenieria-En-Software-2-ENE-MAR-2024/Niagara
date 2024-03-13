@@ -52,7 +52,7 @@ export default function Home() {
       }
     } else {
       const session = await getSession()
-      // console.log('session', session)
+      console.log('session', session)
       const userRole = session?.user?.role
 
       // Redirect to the appropriate page based on the user's role
@@ -60,7 +60,7 @@ export default function Home() {
         router.push('/admin')
       } else if (userRole === 'Patient') {
         router.push('/niagarahome')
-      } else if (userRole === 'Medic') {
+      } else if (userRole === 'Medical') {
         router.push('/homeDummy1')
       }
     }
