@@ -12,15 +12,15 @@ import AppointmentTableRowStyle from './AppointmentTableRowStyle'
 import AppointmentTableCellStyle from './AppointmentTableCellStyle'
 
 export interface Appointment {
-  id: number;
-  end_date: string;
-  start_hour: string;
-  id_patient: string;
-  name_patient: string;
-  speciality: string;
-  doctor: string;
-  description: string;
-  actions: any;
+  id: number
+  end_date: string
+  start_hour: string
+  id_patient: string
+  name_patient: string
+  speciality: string
+  doctor: string
+  description: string
+  actions: any
 }
 
 interface AppointmentTableProps {
@@ -47,7 +47,10 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
    * @param {String} newRowsPerPage - The new number of Appointments per page.
    * @returns the page number where the first Appointment will be located after changing the number of rows per page.
    */
-  const calculateOnResizePage = (firstAppointmentIndex: any, newRowsPerPage: any) => {
+  const calculateOnResizePage = (
+    firstAppointmentIndex: any,
+    newRowsPerPage: any,
+  ) => {
     return Math.floor(firstAppointmentIndex / newRowsPerPage)
   }
 
@@ -73,6 +76,20 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
     if (onPageChange !== undefined) onPageChange(newPage)
   }
 
+  const addOneDay = (dateString: string) => {
+    const [day, month, year] = dateString.split('/');
+    const isoDateString = `${year}-${month}-${day}`;
+  
+    const date = new Date(isoDateString);
+    date.setDate(date.getDate() + 2);
+  
+    const newDay = String(date.getDate()).padStart(2, '0');
+    const newMonth = String(date.getMonth() + 1).padStart(2, '0');
+    const newYear = date.getFullYear();
+  
+    return `${newDay}/${newMonth}/${newYear}`;
+  };
+
   return (
     <>
       <TableContainer component={Paper} sx={{ marginTop: '10px' }}>
@@ -94,7 +111,7 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
               filteredRows.map((row, index) => (
                 <AppointmentTableRowStyle key={index}>
                   <AppointmentTableCellStyle align="left">
-                    {row.end_date}
+                    {addOneDay(row.end_date)}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">
                     {row.start_hour}
@@ -108,10 +125,10 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
                   <AppointmentTableCellStyle align="left">
                     {row.speciality}
                   </AppointmentTableCellStyle>
-									<AppointmentTableCellStyle align="left">
+                  <AppointmentTableCellStyle align="left">
                     {row.doctor}
                   </AppointmentTableCellStyle>
-									<AppointmentTableCellStyle align="left">
+                  <AppointmentTableCellStyle align="left">
                     {row.description}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">

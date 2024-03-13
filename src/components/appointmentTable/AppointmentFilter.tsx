@@ -2,17 +2,20 @@ import React, { useState } from 'react'
 import { MenuItem, TextField, Button } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
+import Link from 'next/link'
 
 interface TableFilterProps {
   columns: string[]
   rows: any[]
   setFilteredRows: React.Dispatch<React.SetStateAction<any[]>>
+  setPage: React.Dispatch<React.SetStateAction<number>>
 }
 
 const TableFilter: React.FC<TableFilterProps> = ({
   columns,
   rows,
   setFilteredRows,
+  setPage
 }) => {
   const [filterColumn, setFilterColumn] = useState<string>('') // Column to filter
   const [filterText, setFilterText] = useState<string>('') // Text column to filter
@@ -49,6 +52,7 @@ const TableFilter: React.FC<TableFilterProps> = ({
       )
       setFilteredRows(filteredRows)
     }
+    setPage(0);
   }
 
   return (
@@ -100,7 +104,7 @@ const TableFilter: React.FC<TableFilterProps> = ({
       <Button
         className="bg-tertiary"
         variant="contained"
-        onClick={handleFilter}
+        component={Link} href="/appointmentForm"
         style={{
           height: '50px',
           alignItems: 'center',
