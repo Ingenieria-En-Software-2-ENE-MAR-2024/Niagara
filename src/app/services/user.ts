@@ -24,6 +24,17 @@ export const create_user = async (body: user_body_create) => {
         password: await bcrypt.hash(body.password, 10),
       },
     })
+
+    if (body.role === "Medic" && body.speciality) {
+      await prisma.medic.create({
+        data: {
+          userId: new_user.id,
+          name: body.name,
+          speciality: body.speciality
+        }
+      })
+    }
+
     const { password, ...userWithoutPass } = new_user
 
     return userWithoutPass

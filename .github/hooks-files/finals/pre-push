@@ -10,7 +10,7 @@ fi
 echo Running ESLint
 echo ===============================
 if ! npm run lint; then
-    echo ESLint has warning or errors. Fix them before commiting.
+    echo ESLint has warning or errors. Fix them before pushing.
     exit 1
 fi
 
@@ -27,5 +27,13 @@ fi
 
 echo =============================================
 echo All of Jest tests passed.
+
+echo Running build
+echo ===============================
+if ! npm run build; then
+    echo Error building. Rejecting push.
+    exit 1
+fi
+
 echo Accepting push.
 exit 0
