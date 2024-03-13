@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField } from '@/components/Fields';
 import { AuthLayout } from '@/components/AuthLayout';
 import { Button } from '@/components/Button';
-import { useRouter } from 'next/router';
+import {useRouter} from "next/router";
 import Snackbar from '@mui/material/Snackbar';
 import Alert, { AlertColor } from '@mui/material/Alert';
 
@@ -36,7 +36,7 @@ export function FormChangePassword() {
             return;
         }
     
-        // Aquí se enviaría la data al servidor
+        /*
         const response = await fetch('http://localhost:3000/api/user', {
             method: 'POST',
             headers: {
@@ -44,7 +44,7 @@ export function FormChangePassword() {
             },
             body: JSON.stringify({ oldPassword, newPassword, compareNewPassword }),
         });
-    
+
         if (!response.ok) {
             console.error('Error:', response.status, response.statusText);
             setMessage('No se pudo cambiar la contraseña');
@@ -52,12 +52,15 @@ export function FormChangePassword() {
             setMessageType('error');
             return;
         }
-        
+
         const data = await response.json();
         console.log(data);
+        */
         setMessage('Se cambió la contraseña exitosamente');
-        setMessageType('success');
         setOpen(true);
+        setMessageType('success');
+        return;
+        
     }
     
     const useCancel = () => {
