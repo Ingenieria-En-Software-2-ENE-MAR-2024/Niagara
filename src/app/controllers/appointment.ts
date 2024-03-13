@@ -47,8 +47,6 @@ const post_appointment = async (req: NextRequest) => {
     }
 }
 
-
-
 const get_medic_appointment = async (req: NextRequest,{ params }: { params: { id: string } }) => {
   try {
    
@@ -57,6 +55,39 @@ const get_medic_appointment = async (req: NextRequest,{ params }: { params: { id
     let accessToken = headers().get('access-token')
 
   
+
+    if (!accessToken) {
+        const handle_err: error_object = handle_error_http_response(new Error("Unauthorized"), '0101')
+        throw new custom_error(
+            handle_err.error_message,
+            handle_err.error_message_detail,
+            handle_err.error_code,
+            handle_err.status,
+        )
+      }
+
+    const user_payload = verifyJwt(accessToken);
+    const new_appointment = await appointmentService.read_medic_appointment(user_payload.id,date)
+
+    return new_appointment
+  } catch (error: any) {
+    const handle_err: error_object = handle_error_http_response(error, '0002')
+    throw new custom_error(
+      handle_err.error_message,
+      handle_err.error_message_detail,
+      handle_err.error_code,
+      handle_err.status,
+    )
+  }
+}
+
+
+const get_patient_appointment = async (req: NextRequest,{ params }: { params: { id: string } }) => {
+  try {
+
+    const date : any= req.nextUrl.searchParams.get('date')
+   
+    let accessToken = headers().get('access-token')
 
         if (!accessToken) {
             const handle_err: error_object = handle_error_http_response(new Error("Unauthorized"), '0101')
@@ -68,32 +99,13 @@ const get_medic_appointment = async (req: NextRequest,{ params }: { params: { id
             )
         }
 
-    const user_payload = verifyJwt(accessToken);
-    const new_appointment = await appointmentService.read_medic_appointment(user_payload.id,date)
-
+        const user_payload = await verifyJwt(accessToken);
+  
+        const new_appointment = await appointmentService.read_patient_appointment(user_payload.id,date)
+    
         return new_appointment
-    } catch (error: any) {
-        const handle_err: error_object = handle_error_http_response(error, '0002')
-        throw new custom_error(
-            handle_err.error_message,
-            handle_err.error_message_detail,
-            handle_err.error_code,
-            handle_err.status,
-        )
-    }
-}
-
-
-
-const get_patient_appointment = async (req: NextRequest,{ params }: { params: { id: string } }) => {
-  try {
-
-    const date : any= req.nextUrl.searchParams.get('date')
-   
-    let accessToken = headers().get('access-token')
-
-    if (!accessToken) {
-        const handle_err: error_object = handle_error_http_response(new Error("Unauthorized"), '0101')
+      } catch (error: any) {
+        const handle_err: error_object = handle_error_http_response(error, '0003')
         throw new custom_error(
           handle_err.error_message,
           handle_err.error_message_detail,
@@ -101,22 +113,7 @@ const get_patient_appointment = async (req: NextRequest,{ params }: { params: { 
           handle_err.status,
         )
       }
-    const user_payload = await verifyJwt(accessToken);
-  
-    const new_appointment = await appointmentService.read_patient_appointment(user_payload.id,date)
-
-        return new_appointment
-    } catch (error: any) {
-        const handle_err: error_object = handle_error_http_response(error, '0003')
-        throw new custom_error(
-            handle_err.error_message,
-            handle_err.error_message_detail,
-            handle_err.error_code,
-            handle_err.status,
-        )
-    }
-}
-
+  }
 
 const updateAppointment = async (
     req: NextRequest,
@@ -125,16 +122,6 @@ const updateAppointment = async (
     try {
         let body = await req.json()
         const data = validator_appointment_update(body)
-
-        // export const get_user = async (
-        //   req: NextRequest,
-        //   { params }: { params: { id: string } },
-        // ) => {
-        //   try {
-        //     let user
-        //     let prams_id = params.id
-        //     let id = parseInt(prams_id)
-        //     user = await read_user(id)
 
         const accessToken = headers().get('access-token')
 
