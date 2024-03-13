@@ -59,6 +59,8 @@ const error_message_dict: error_message_dictionary = {
   '0006': 'Error creating appointment',
   '0007': 'Error updating appointment',
   '0008': 'Error deleting appointment',
+  '0009': 'Error reading medic',
+  '0010': 'Error listing medics',
   '0100': 'Body not found on request',
   '0101': 'Access Token not found on request',
   '0200': 'Error sending email',
