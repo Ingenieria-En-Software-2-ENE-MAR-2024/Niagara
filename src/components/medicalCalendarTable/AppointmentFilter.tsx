@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { MenuItem, TextField, Button } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
+import AddIcon from '@mui/icons-material/Add'
+import Link from 'next/link'
 
 interface TableFilterProps {
   columns: string[]
@@ -91,9 +93,22 @@ const TableFilter: React.FC<TableFilterProps> = ({
           height: '50px',
           alignItems: 'center',
           justifyContent: 'center',
+          marginRight: '10px',
         }}
       >
         <SearchIcon />
+      </Button>
+      <Button
+        className="bg-tertiary"
+        variant="contained"
+        component={Link} href="/appointmentForm"
+        style={{
+          height: '50px',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <AddIcon />
       </Button>
     </div>
   )

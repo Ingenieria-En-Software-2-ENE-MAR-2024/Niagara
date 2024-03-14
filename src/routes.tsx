@@ -68,7 +68,7 @@ export const routesInfo: RoutesInfo = {
     test: fulfills_any_role,
   },
   '/appointmentForm': {
-    roles: ['Patient'],
+    roles: ['Patient', 'Medic'],
     test: fulfills_any_role,
   },
   '/appointments': {
