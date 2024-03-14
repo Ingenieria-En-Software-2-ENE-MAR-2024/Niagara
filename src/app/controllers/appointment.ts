@@ -10,7 +10,6 @@ import {
     validator_appointment_create,
     validator_appointment_update,
 } from '../validators/appointment'
-import { get_medical_appointment } from './medical_appointment'
 import { verifyJwt } from '@/helpers/jwt'
 
 const post_appointment = async (req: NextRequest) => {

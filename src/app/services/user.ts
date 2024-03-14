@@ -13,24 +13,37 @@ import {
 } from '../utils/error_handler'
 import { error_object } from '../interfaces/error'
 import { verifyJwt } from '@/helpers/jwt'
+import { BorderAll } from '@mui/icons-material'
 
 export const create_user = async (body: user_body_create) => {
   try {
+
+    if(body.role?.toLowerCase() === "medic" && body.speciality===undefined){
+      throw new Error('Need specify the specialy')
+    }
+
     const new_user = await prisma.userTest.create({
       data: {
         name: body.name,
         email: body.email ?? '',
-        role: body.role,
+        ci: body.ci,
         password: await bcrypt.hash(body.password, 10),
       },
     })
 
-    if (body.role === "Medic" && body.speciality) {
+    if (body.role?.toLowerCase() === "medic" && body.speciality!==undefined) {
       await prisma.medic.create({
         data: {
-          userId: new_user.id,
-          name: body.name,
+          medic_id: new_user.id,
           speciality: body.speciality
+        }
+      })
+    }
+
+    if (body.role?.toLowerCase() === "patient") {
+      await prisma.patient.create({
+        data: {
+          patient_id: new_user.id
         }
       })
     }
@@ -134,8 +147,7 @@ export const update_my_user = async (id: number, body: user_body_update) => {
         id: id,
       },
       data: {
-        name: body.name,
-        role: body.role,
+        name: body.name
       },
     })
 

@@ -39,8 +39,25 @@ export const formatDateToDb = (date: string) => {
 }
 
 export const formatDateToFront = (date: Date) => {
-  // formateamos la fecha para salida en formato  dd/mm/yyyy
-  return new Date(date).toLocaleDateString('en-GB')
+ // formateamos la fecha para salida en formato dd/mm/yyyy hh:mm:ss
+ const formattedDate = new Date(date);
+
+ // Obtenemos los componentes de la fecha
+ const day = formattedDate.getDate();
+ const month = formattedDate.getMonth() + 1; // Se suma 1 porque los meses comienzan en 0
+ const year = formattedDate.getFullYear();
+
+ // Obtenemos los componentes de la hora
+ const hours = formattedDate.getHours().toString().padStart(2, '0');
+ const minutes = formattedDate.getMinutes().toString().padStart(2, '0');
+ const seconds = formattedDate.getSeconds().toString().padStart(2, '0');
+
+ // Formateamos la fecha y la hora
+ const formattedDateString = `${day}/${month}/${year}`;
+ const formattedTimeString = `${hours}:${minutes}:${seconds}`;
+
+ // Retornamos la fecha y la hora formateadas
+ return `${formattedDateString} ${formattedTimeString}`;
 }
 
 export const verifyDate = (date: Date) => {

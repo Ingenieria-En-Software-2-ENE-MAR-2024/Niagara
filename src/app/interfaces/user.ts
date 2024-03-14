@@ -2,6 +2,7 @@ export interface user_body_create {
   name: string
   email: string
   role?: string
+  ci: string
   password: string
   speciality? : string
 }
@@ -13,7 +14,6 @@ export interface filters {
 
 export interface user_body_update {
   name: string
-  role?: string
 }
 
 export interface user_body_update_password{
