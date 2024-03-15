@@ -1,13 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { FormChangePassword } from '@/components/FormChangePassword'
+import { FormChangePassword } from '@/components/FormChangePassword';
+import Menu from '@/components/Menu';
 
 
 export default function ChangePassword() {
   return (
 
-    <FormChangePassword />
+    <div>
+      <Menu/>
+      <FormChangePassword />
+    </div>
 
   )
 }

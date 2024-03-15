@@ -18,7 +18,7 @@ import { Edit, Delete, ApiOutlined } from '@mui/icons-material'
 import AppointmentFilter from '../../components/appointmentTable/AppointmentFilter'
 import Swal from 'sweetalert2'
 import { FormEditAppointment } from '@/components/FormEditAppointment'
-import { HeaderNiagara } from '@/components/HeaderNiagara'
+import Menu  from '@/components/Menu'
 import { getSession } from 'next-auth/react'
 
 const createData = (
@@ -222,7 +222,7 @@ export default function AppointmentTablePage() {
             </Typography>
           </Toolbar>
         </AppBar> */}
-        <HeaderNiagara />
+        <Menu/>
         {open && (
           <FormEditAppointment
             open={open}

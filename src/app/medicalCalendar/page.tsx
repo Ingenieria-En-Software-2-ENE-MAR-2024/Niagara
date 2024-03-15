@@ -9,7 +9,7 @@ import {
 import { Edit, Delete } from '@mui/icons-material'
 import AppointmentFilter from '../../components/medicalCalendarTable/AppointmentFilter'
 import Swal from 'sweetalert2'
-import { HeaderNiagara } from '@/components/HeaderNiagara'
+import Menu from '@/components/Menu'
 import { useRouter } from 'next/router'
 import { FormEditAppointment } from '@/components/FormEditAppointment'
 import { getSession } from 'next-auth/react'
@@ -171,7 +171,7 @@ export default function AppointmentTablePage() {
 
   return (
     <>
-      <HeaderNiagara />
+      <Menu/>
       {open && (
         <FormEditAppointment
           open={open}
