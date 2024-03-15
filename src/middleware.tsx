@@ -24,5 +24,8 @@ export const config = {
     '/homeDummy3/:path*',
     '/niagarahome/:path*',
     '/admin/:path*',
+    '/appointmentForm/:path*',
+    '/appointments/:path*',
+    '/medicalCalendar/:path*',
   ],
 }

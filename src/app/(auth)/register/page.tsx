@@ -160,8 +160,8 @@ export default function Register() {
                 label="Tipo de usuario"
               >
                 <option value="Admin">Admin</option>
-                <option value="Paciente">Paciente</option>
-                <option value="Doctor">Doctor</option>
+                <option value="Patient">Paciente</option>
+                <option value="Medic">Doctor</option>
               </SelectField>
             )}
           />

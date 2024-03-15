@@ -3,12 +3,9 @@ run-name: Checks docker containers sanity
 
 on  :
   push:
-      branches:
-          - release
   pull_request:
       types: [opened, reopened]
-      branches:
-          - release
+  workflow_dispatch:
             
 jobs:
     check-compose:

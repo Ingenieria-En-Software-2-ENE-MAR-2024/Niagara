@@ -20,10 +20,11 @@ export function signJwtAccessToken(
 export function verifyJwt(token: string) {
   try {
     const secret_key = process.env.JWT_SECRET || 'turing0210'
-    const decoded = jwt.verify(token, secret_key!)
+    const cleanedToken = token.replace('Bearer ', '')
+    const decoded = jwt.verify(cleanedToken, secret_key!)
     return decoded as JwtPayload
   } catch (error) {
     console.log(error)
-    return null
+    throw new Error('Invalid token')
   }
 }

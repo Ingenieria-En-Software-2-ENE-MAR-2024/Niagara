@@ -5,6 +5,7 @@ on  :
     push:
     pull_request:
         types: [opened, reopened]
+    workflow_dispatch:
 
 jobs:
     check-build:
@@ -18,6 +19,9 @@ jobs:
         
             - name: Install dependencies for CI
               run : npm ci
+
+            - name: Prisma installation and generation
+              run : npm install -g prisma && prisma generate
 
             - name: Build project
               run : npm run build
@@ -34,6 +38,9 @@ jobs:
 
             - name: Install dependencies for CI
               run : npm ci
+
+            - name: Prisma installation and generation
+              run : npm install -g prisma && prisma generate
 
             - name: Linter
               run : npm run lint
