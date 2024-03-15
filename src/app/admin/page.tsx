@@ -1,4 +1,5 @@
 'use client'
+
 import { useState, useEffect } from 'react'
 import {
   Box,
@@ -18,6 +19,7 @@ import {
 } from '../../components/adminModal/AdminUserModals'
 import TableFilter from '../../components/userTable/TableFilter'
 import { Edit, Delete } from '@mui/icons-material'
+import { signOut } from 'next-auth/react'
 
 export interface UserNoActions {
   id: number
@@ -49,7 +51,6 @@ const columns: string[] = [
   'Actions',
 ]
 const columnsToFilter: string[] = [columns[0], columns[1], columns[2]]
-
 
 export default function AdminPage() {
   const [creating, setCreating] = useState<boolean>(false)
@@ -94,13 +95,16 @@ export default function AdminPage() {
   useEffect(() => {
     const fetchUsers = async (page: number, pageSize: number) => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/users`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: null,
           },
-          body: null,
-        })
+        )
         if (!response.ok) {
           const errorText = await response.text()
           console.log('an error ocurred fetching the users')
@@ -164,6 +168,10 @@ export default function AdminPage() {
     fetchUsers(page, pageSize)
   }, [page, pageSize])
 
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' })
+  }
+
   return (
     <>
       {creating && (
@@ -196,6 +204,12 @@ export default function AdminPage() {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               {`Administrator Dahsboard`}
             </Typography>
+            <Button
+              onClick={handleLogout}
+              className="rounded-md bg-primary px-3 py-3 text-sm font-medium text-white hover:bg-gray-700"
+            >
+              Cerrar Sesión
+            </Button>
           </Toolbar>
         </AppBar>
         <Box sx={{ p: 4 }} className="pt-24">
@@ -208,7 +222,6 @@ export default function AdminPage() {
             <Typography variant="h5" className="welcome-text">
               User List
             </Typography>
-            
           </Grid>
           <Grid item md={12}>
             <TableFilter

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { Button } from '@/components/Button'
+import { getSession } from 'next-auth/react'
 
 interface MenuItem {
   title: string
@@ -16,6 +17,7 @@ interface NavigationMenuProps {
 const NavigationMenu: React.FC<NavigationMenuProps> = ({ menuItems }) => {
   const [openSubMenuIndex, setOpenSubMenuIndex] = useState<number | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const [userRole, setUserRole] = useState<string | null>(null)
 
   const handleSubMenuToggle = (index: number) => {
     setOpenSubMenuIndex(openSubMenuIndex === index ? null : index)
@@ -36,6 +38,25 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ menuItems }) => {
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/' })
+  }
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession()
+      setUserRole(session?.user?.role || null)
+    }
+    fetchSession()
+  }, [])
+
+  const getHomeRoute = () => {
+    switch (userRole) {
+      case 'Patient':
+        return '/niagarahome'
+      case 'Medic':
+        return '/homeDummy1'
+      default:
+        return '/'
+    }
   }
 
   const renderSubMenu = (subMenuItems: MenuItem[], parentIndex: number) => {
@@ -92,14 +113,13 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ menuItems }) => {
     )
   }
 
-
   return (
     <nav className="bg-tertiary" ref={menuRef}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <Link href="/" aria-label="Home">
+              <Link href={getHomeRoute()} aria-label="Home">
                 <h1 className="mb-5 mt-5 text-2xl font-bold text-white">
                   Niagara
                 </h1>

@@ -132,7 +132,7 @@ function MedicalAppointmetForm() {
 
   return (
     <Container>
-      <h1 className="mb-4 text-center text-2xl font-medium tracking-tight text-gray-900">
+      <h1 className="mt-4 mb-4 text-center text-2xl font-medium tracking-tight text-gray-900">
         Agendar cita médica{' '}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)}>
