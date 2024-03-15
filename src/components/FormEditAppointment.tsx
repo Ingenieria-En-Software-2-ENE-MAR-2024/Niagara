@@ -36,7 +36,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   onChangedUsers = undefined,
 }) => {
   console.log(data)
-
+  
   const [date, setDate] = useState<Date>(data.end_date)
   const [time, setTime] = useState(data.start_hour)
   const [description, setDescription] = useState(data.description)
@@ -49,6 +49,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
     }
 
     try {
+      console.log(data);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${data.id}`,
         {
@@ -101,6 +102,13 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
     return `${year}-${formattedMonth}-${formattedDay}`
   }
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedDate = new Date(e.target.value);
+    // Incrementar la fecha seleccionada en un día
+    selectedDate.setDate(selectedDate.getDate() + 1);
+    setDate(selectedDate);
+  };
 
   useEffect(() => {
     setDate(data.end_date)
@@ -163,7 +171,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
             <Grid item xs={12}>
               <TextField
                 value={formatDate(date)}
-                onChange={(e) => setDate(new Date(e.target.value))}
+                onChange={handleDateChange}
                 label="Fecha (dd/mm/yy)"
                 type="date"
                 className="mt-6"
