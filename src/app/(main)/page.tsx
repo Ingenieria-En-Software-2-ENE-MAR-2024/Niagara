@@ -10,13 +10,14 @@ import { useForm, Controller } from 'react-hook-form'
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import bgMedicine from '../../../public/bgMedicine.jpg'
-import { redirect } from '../../../node_modules/next/navigation'
 
 interface FormData {
   name: string
   email: string
   password: string
   role: string
+  speciality: string
+  ci: string
 }
 
 export default function Home() {

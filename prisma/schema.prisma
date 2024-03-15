@@ -15,6 +15,7 @@ model UserTest {
   email     String @unique
   password  String
   ci String @unique
+  role      String
   Medic Medic?
   Patient Patient?
   Admin Admin?

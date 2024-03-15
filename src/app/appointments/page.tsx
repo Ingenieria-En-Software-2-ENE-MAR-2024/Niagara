@@ -28,7 +28,7 @@ const createData = (
   id_patient: string,
   name_patient: string,
   speciality: string,
-  doctor: string,
+  name_doctor: string,
   description: string,
   actions: any,
 ): Appointment => {
@@ -39,7 +39,7 @@ const createData = (
     id_patient,
     name_patient,
     speciality,
-    doctor,
+    name_doctor,
     description,
     actions,
   }
@@ -108,7 +108,7 @@ export default function AppointmentTablePage() {
               appointment.id_patient,
               appointment.name_patient,
               appointment.speciality,
-              appointment.doctor,
+              appointment.name_doctor,
               appointment.description,
               createActionsComponent({ appointment }), // Remove the empty string argument
             )

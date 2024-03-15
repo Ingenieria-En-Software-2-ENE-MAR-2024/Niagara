@@ -14,6 +14,8 @@ interface FormData {
   email: string
   password: string
   role: string
+  speciality: string
+  ci: string
 }
 
 export default function Register() {

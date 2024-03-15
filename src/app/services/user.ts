@@ -28,6 +28,7 @@ export const create_user = async (body: user_body_create) => {
         email: body.email ?? '',
         ci: body.ci,
         password: await bcrypt.hash(body.password, 10),
+        role: body.role,
       },
     })
 
