@@ -10,6 +10,7 @@ import {
   DialogTitle,
   Grid,
 } from '@mui/material'
+import { getSession } from 'next-auth/react'
 
 interface AppointmentData {
   id: number
@@ -41,6 +42,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   const [time, setTime] = useState(data.start_hour)
   const [description, setDescription] = useState(data.description)
   const [changeReason, setChangeReason] = useState('')
+  const [token, setToken] = useState<any>(null)
   console.log(date);
 
   const handleSubmitDialog = async () => {
@@ -50,6 +52,8 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
     }
 
     try {
+      const [day, month, year] = date.split('/');
+      const dateSend = `${month}/${day}/${year}`
       console.log(data);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${data.id}`,
@@ -57,12 +61,14 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
+            'access-token': `Bearer ${token}`,
           },
           body: JSON.stringify({
-            end_date: date,
             start_hour: time,
+            end_hour: time,
+            start_date: dateSend,
+            end_date: dateSend,
             description: description,
-            change_reason: changeReason,
           }),
         },
       )
@@ -126,6 +132,12 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
     setTime(data.start_hour)
     setDescription(data.description)
   }, [data])
+
+  useEffect(() => {
+    getSession().then((result) => {
+      setToken(result?.user?.accessToken)
+    })
+  }, [])
 
   return (
     <>
