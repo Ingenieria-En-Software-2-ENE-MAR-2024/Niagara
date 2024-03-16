@@ -53,11 +53,16 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${data.id}`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ data }),
+          body: JSON.stringify({
+            end_date: date,
+            start_hour: time,
+            description: description,
+            change_reason: changeReason,
+          }),
         },
       )
 
