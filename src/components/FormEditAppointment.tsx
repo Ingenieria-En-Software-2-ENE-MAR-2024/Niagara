@@ -35,16 +35,13 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   setOpen,
   data,
   onChangedUsers = undefined,
-}) => {
-  console.log(data)
-  
+}) => {  
   const [date, setDate] = useState(data.start_date)
   const [time, setTime] = useState(data.start_hour)
   const [description, setDescription] = useState(data.description)
   const [changeReason, setChangeReason] = useState('')
   const [token, setToken] = useState<any>(null)
-  console.log(date);
-
+  
   const handleSubmitDialog = async () => {
     if (time === '' || description === '') {
       console.log('Faltaron datos.')
@@ -53,8 +50,8 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
     try {
       const [day, month, year] = date.split('/');
-      const dateSend = `${month}/${day}/${year}`
-      console.log(data);
+      const newDay = day === "01" ? "01" : (parseInt(day, 10) - 1).toString();
+      const dateSend = `${month}/${newDay}/${year}`;
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${data.id}`,
         {
@@ -108,10 +105,6 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
     const formattedDay = day < 10 ? '0' + day : day
     const formattedMonth = month < 10 ? '0' + month : month
-    console.log(day)
-    console.log(month)
-    console.log(year)
-
     return `${formattedDay}/${formattedMonth}/${year}`
   }
 
@@ -128,7 +121,11 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   };
 
   useEffect(() => {
-    setDate(data.start_date)
+    const [day, month, year] = data.start_date.split('/');
+    const newDay = parseInt(day, 10) + 1;
+    const formattedDay = newDay < 10 ? '0' + newDay : newDay.toString();
+    const dateReceive = `${formattedDay}/${month}/${year}`;
+    setDate(dateReceive);
     setTime(data.start_hour)
     setDescription(data.description)
   }, [data])
