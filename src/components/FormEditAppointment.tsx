@@ -13,7 +13,7 @@ import {
 
 interface AppointmentData {
   id: number
-  end_date: Date
+  start_date: string
   start_hour: string
   id_patient: string
   name_patient: string
@@ -37,10 +37,11 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 }) => {
   console.log(data)
   
-  const [date, setDate] = useState<Date>(data.end_date)
+  const [date, setDate] = useState(data.start_date)
   const [time, setTime] = useState(data.start_hour)
   const [description, setDescription] = useState(data.description)
   const [changeReason, setChangeReason] = useState('')
+  console.log(date);
 
   const handleSubmitDialog = async () => {
     if (time === '' || description === '') {
@@ -90,28 +91,33 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   }
 
   const formatDate = (date: Date): string => {
-    if (!(date instanceof Date)) {
-      return ''
-    }
     const day = date.getDate()
     const month = date.getMonth() + 1
     const year = date.getFullYear()
 
     const formattedDay = day < 10 ? '0' + day : day
     const formattedMonth = month < 10 ? '0' + month : month
+    console.log(day)
+    console.log(month)
+    console.log(year)
 
-    return `${year}-${formattedMonth}-${formattedDay}`
+    return `${formattedDay}/${formattedMonth}/${year}`
   }
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedDate = new Date(e.target.value);
     // Incrementar la fecha seleccionada en un día
     selectedDate.setDate(selectedDate.getDate() + 1);
-    setDate(selectedDate);
+    setDate(formatDate(selectedDate));
+  };
+
+  const formatDateToYMD = (dateString: string) => {
+    const [day, month, year] = dateString.split('/');
+    return `${year}-${month}-${day}`;
   };
 
   useEffect(() => {
-    setDate(data.end_date)
+    setDate(data.start_date)
     setTime(data.start_hour)
     setDescription(data.description)
   }, [data])
@@ -170,7 +176,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
             <Grid item xs={12}>
               <TextField
-                value={formatDate(date)}
+                value={formatDateToYMD(date)}
                 onChange={handleDateChange}
                 label="Fecha (dd/mm/yy)"
                 type="date"
