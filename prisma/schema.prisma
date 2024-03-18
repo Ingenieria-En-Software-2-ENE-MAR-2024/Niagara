@@ -12,43 +12,43 @@ datasource db {
 model UserTest {
   id        Int      @id @default(autoincrement())
   name      String
-  email     String
-  role      String?
+  email     String @unique
   password  String
+  ci String @unique
+  role      String?
   Medic Medic?
-  Appointments Appointment[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
-
+  Patient Patient?
+  Admin Admin?
 }
 
 model Medic {
-  id        Int      @id @default(autoincrement())
-  name      String
-  userId    Int @unique
-  user    UserTest @relation(fields: [userId], references: [id])
+  medic_id        Int      @id
+  user    UserTest @relation(fields: [medic_id], references: [id])
   speciality String
   Appointments Appointment[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
 }
+
+model Admin {
+  admin_id        Int      @id
+  user    UserTest @relation(fields: [admin_id], references: [id])
+}
+
+model Patient {
+  patient_id        Int      @id
+  user    UserTest @relation(fields: [patient_id], references: [id])
+  Appointments Appointment[]
+}
+
 
 model Appointment {
   id        Int      @id @default(autoincrement())
   start_date DateTime
   end_date DateTime
-  start_hour String
-  end_hour String
-  id_medic  Int
-  medic     Medic    @relation(fields: [id_medic], references: [id])
-  id_patient   Int
-  user      UserTest @relation(fields: [id_patient], references: [id])
+  medic_id  Int
+  patient_id   Int
+  medic     Medic    @relation(fields: [medic_id], references: [medic_id])
+  patient      Patient @relation(fields: [patient_id], references: [patient_id])
   description String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
 }
 
 model Forms {

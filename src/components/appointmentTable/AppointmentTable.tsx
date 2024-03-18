@@ -17,8 +17,8 @@ export interface Appointment {
   start_hour: string
   id_patient: string
   name_patient: string
+  name_doctor: string
   speciality: string
-  doctor: string
   description: string
   actions: any
 }
@@ -126,7 +126,7 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
                     {row.speciality}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">
-                    {row.doctor}
+                    {row.name_doctor}
                   </AppointmentTableCellStyle>
                   <AppointmentTableCellStyle align="left">
                     {row.description}

@@ -18,7 +18,7 @@ export const getMedic = async (id: number) => {
   try {
     const medicFound = await prisma.medic.findFirst({
       where: {
-        id: id,
+        medic_id: id,
       },
     })
 

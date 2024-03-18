@@ -1,12 +1,10 @@
 import { z } from 'zod'
 
 const appointment_create_object_body = z.object({
-  start_hour: z.string(),
-  end_hour: z.string(),
   start_date: z.string(),
   end_date: z.string(),
-  id_medic: z.number(),
-  id_patient: z.number(),
+  medic_id: z.number(),
+  patient_id: z.number(),
   description: z.string()
 })
 
@@ -22,12 +20,10 @@ export const validator_appointment_create = (
 }
 
 const appointment_update_object_body = z.object({
-  start_hour: z.string().optional(),
-  end_hour: z.string().optional(),
   start_date: z.string().optional(),
   end_date: z.string().optional(),
-  id_medic: z.number().optional(),
-  id_patient: z.number().optional(),
+  medic_id: z.number().optional(),
+  patient_id: z.number().optional(),
   description: z.string().optional()
 })
 

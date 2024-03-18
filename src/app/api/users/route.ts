@@ -2,13 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { get_users, post_user } from '@/app/controllers/user'
 import { z } from 'zod'
 
-z.object({
-  name: z.string(),
-  email: z.string().email(),
-  password: z.string(),
-  role: z.string(),
-})
-
 export async function POST(req: NextRequest) {
   try {
     // console.log('LLego al route de post user')
