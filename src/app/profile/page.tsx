@@ -38,16 +38,16 @@ export default function Profile() {
     const name = 'prueba';
     const username = '@prueba';
     const email = 'prueba@email.com';
-
+    
     return (
         <div>
             <Menu/>
             
-            {//role === 'Pacient' ? (
+            {//role === 'Patient' ? (
                 <PacientProfile user={{ name, username, email }}/>
             /*) : role === 'Medic' ? (
                 <h1>¡Hola doctor!</h1>
-            ) : null*/}
+            ) : null?*/}
             
         </div>
     )
