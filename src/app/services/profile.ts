@@ -40,8 +40,13 @@ export const obtain_profile = async (user_id: number) => {
 
 export const create_empty_profile = async (user_id: number) => {
   try {
+    const profile = await prisma.profile.findFirst({
+      where: {
+        user_id: user_id,
+      }
+    })
 
-    if (await obtain_profile(user_id))
+    if (profile)
       throw Error('User already has a profile.')
 
     const user_profile = await prisma.profile.create({
