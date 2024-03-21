@@ -7,8 +7,7 @@ import { Typography } from '@mui/material'
 type PacientProps = {
   user: {
     name: string
-    username: string
-    //id: string;
+    ci: string;
     email: string
   }
 }
@@ -41,25 +40,6 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
           component="h1"
           style={{ fontWeight: 'bold' }}
         >
-          Usuario:
-        </Typography>
-        <Typography
-          variant="body2"
-          component="h2"
-          style={{
-            marginLeft: '20px',
-            marginBottom: '32px',
-            fontStyle: 'italic',
-          }}
-          gutterBottom
-        >
-          {user.username}
-        </Typography>
-        <Typography
-          variant="body1"
-          component="h1"
-          style={{ fontWeight: 'bold' }}
-        >
           Cédula de Identidad:
         </Typography>
         <Typography
@@ -72,7 +52,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
           }}
           gutterBottom
         >
-          12.345.678
+          {user.ci}
         </Typography>
         <Typography
           variant="body1"
