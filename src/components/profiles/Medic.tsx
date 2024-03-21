@@ -4,7 +4,7 @@ import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@/components/Button'
 import { Typography } from '@mui/material'
 
-type PacientProps = {
+type MedicProps = {
   user: {
     name: string
     username: string
@@ -13,9 +13,9 @@ type PacientProps = {
   }
 }
 
-export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
+export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
   return (
-    <AuthLayout title="Perfil de Paciente" subtitle={`¡Hola ${user.name}!`}>
+    <AuthLayout title="Perfil de Doctor" subtitle={`¡Hola ${user.name}!`}>
       <div>
         <Typography
           variant="body1"

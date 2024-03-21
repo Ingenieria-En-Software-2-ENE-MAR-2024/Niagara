@@ -1,12 +1,25 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { PacientProfile } from '@/components/profiles/Pacient';
-import Menu from '@/components/Menu';
+import React, { useState, useEffect } from 'react'
+import { PacientProfile } from '@/components/profiles/Pacient'
+import { MedicProfile } from '@/components/profiles/Medic'
+import Menu from '@/components/Menu'
+import { getSession } from 'next-auth/react'
 
 export default function Profile() {
-    /*
+  const [role, setRole] = useState('')
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await getSession()
+      const userRole = session?.user?.role
+      setRole(userRole as string)
+    }
+
+    fetchSession()
+  }, [])
+
+  /*
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     //const [id, setId] = useState('');
@@ -35,20 +48,18 @@ export default function Profile() {
         fetchData();
     }, []);
     */
-    const name = 'prueba';
-    const username = '@prueba';
-    const email = 'prueba@email.com';
-    
-    return (
-        <div>
-            <Menu/>
-            
-            {//role === 'Patient' ? (
-                <PacientProfile user={{ name, username, email }}/>
-            /*) : role === 'Medic' ? (
-                <h1>¡Hola doctor!</h1>
-            ) : null?*/}
-            
-        </div>
-    )
+  const name = 'prueba'
+  const username = '@prueba'
+  const email = 'prueba@email.com'
+
+  return (
+    <div>
+      <Menu />
+      {role === 'Patient' ? (
+        <PacientProfile user={{ name, username, email }} />
+      ) : role === 'Medic' ? (
+        <MedicProfile user={{ name, username, email }} />
+      ) : null}
+    </div>
+  )
 }
