@@ -11,7 +11,6 @@ export async function GET(
   try {
     const profile = await get_profile(req, params)
     const accessToken = req.headers.get('authorization')
-    console.log(accessToken)
     if (!accessToken || !verifyJwt(accessToken))
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     

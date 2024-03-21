@@ -14,6 +14,7 @@ import {
 import { error_object } from '../interfaces/error'
 import { verifyJwt } from '@/helpers/jwt'
 import { BorderAll } from '@mui/icons-material'
+import { create_empty_profile } from './profile'
 
 export const create_user = async (body: user_body_create) => {
   try {
@@ -50,6 +51,7 @@ export const create_user = async (body: user_body_create) => {
     }
 
     const { password, ...userWithoutPass } = new_user
+    await create_empty_profile(new_user.id)
 
     return userWithoutPass
   } catch (error) {
