@@ -18,7 +18,6 @@ export interface Appointment {
   id_patient: string
   name_patient: string
   speciality: string
-  description: string
   actions: any
 }
 

@@ -15,15 +15,15 @@ import { FormEditAppointment } from '@/components/FormEditAppointment'
 import { getSession } from 'next-auth/react'
 
 const createData = (
+  id: number,
   end_date: string,
   start_hour: string,
-  id: number,
   id_patient: string,
   name_patient: string,
   speciality: string,
-  actions: any,
+  actions: any
 ): Appointment => {
-  return { end_date, start_hour, id, id_patient, name_patient, speciality, actions };
+  return { id, end_date, start_hour, id_patient, name_patient, speciality, actions };
 }
 
 const columns: string[] = [
@@ -80,9 +80,9 @@ export default function AppointmentTablePage() {
         const appointmentList = appointmentsSliced.map(
           (appointment: Appointment) => {
             return createData(
+              appointment.id,
               appointment.end_date,
               appointment.start_hour,
-              appointment.id,
               appointment.id_patient,
               appointment.name_patient,
               appointment.speciality,
@@ -133,36 +133,41 @@ export default function AppointmentTablePage() {
     }
 
     const handleRemoveAppointment = async (id: number) => {
-      const result = await Swal.fire({
-        title: '¿Estás seguro de eliminar la cita?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Eliminar',
-      })
+      try {
+        // Get the session
+        const session = await getSession()
 
-      if (result.isConfirmed) {
-        try {
-          const response = await fetch(`${baseUrl}/api/appointments/${id}`, {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: null,
-          })
+        Swal.fire({
+          title: '¿Estás seguro de eliminar la cita?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Eliminar',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${id}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  'access-token': `Bearer ${session?.user.accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+              },
+            )
 
-          if (!response.ok) {
-            console.log('La cita no pudo ser eliminada')
-            return
+            if (!response.ok) {
+              console.log('an error ocurred deleting the appointment')
+              return
+            }
+
+            Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
+            fetchAppointments(page, pageSize)
           }
-
-          console.log('Cita eliminada')
-        } catch (e) {
-          console.log('Ocurrió un error al eliminar la cita')
-          return
-        }
-        Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
+        })
+      } catch (e) {
+        console.log(e)
       }
     }
 
