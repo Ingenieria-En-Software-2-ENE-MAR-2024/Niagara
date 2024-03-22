@@ -13,12 +13,12 @@ import AppointmentTableCellStyle from './AppointmentTableCellStyle'
 
 export interface Appointment {
   id: number
-  end_date: string
+  start_date: string
   start_hour: string
   id_patient: string
   name_patient: string
-  name_doctor: string
   speciality: string
+  name_medic: string
   description: string
   actions: any
 }
@@ -76,19 +76,21 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
     if (onPageChange !== undefined) onPageChange(newPage)
   }
 
-  const addOneDay = (dateString: string) => {
-    const [day, month, year] = dateString.split('/');
-    const isoDateString = `${year}-${month}-${day}`;
-  
-    const date = new Date(isoDateString);
-    date.setDate(date.getDate() + 2);
-  
-    const newDay = String(date.getDate()).padStart(2, '0');
-    const newMonth = String(date.getMonth() + 1).padStart(2, '0');
-    const newYear = date.getFullYear();
-  
-    return `${newDay}/${newMonth}/${newYear}`;
-  };
+  // const addOneDay = (dateString: string) => {
+  //   const [day, month, year] = dateString.split('/');
+  //   const isoDateString = `${year}-${month}-${day}`;
+
+  //   const date = new Date(isoDateString);
+  //   date.setDate(date.getDate() + 2);
+
+  //   const newDay = String(date.getDate()).padStart(2, '0');
+  //   const newMonth = String(date.getMonth() + 1).padStart(2, '0');
+  //   const newYear = date.getFullYear();
+
+  //   return `${newDay}/${newMonth}/${newYear}`;
+  // };
+
+  console.log(filteredRows)
 
   return (
     <>
@@ -108,34 +110,45 @@ export const AppointmentTable: React.FC<AppointmentTableProps> = ({
           </TableHead>
           <TableBody>
             {filteredRows &&
-              filteredRows.map((row, index) => (
-                <AppointmentTableRowStyle key={index}>
-                  <AppointmentTableCellStyle align="left">
-                    {addOneDay(row.end_date)}
-                  </AppointmentTableCellStyle>
-                  <AppointmentTableCellStyle align="left">
-                    {row.start_hour}
-                  </AppointmentTableCellStyle>
-                  <AppointmentTableCellStyle align="left">
-                    {row.id_patient}
-                  </AppointmentTableCellStyle>
-                  <AppointmentTableCellStyle align="left">
-                    {row.name_patient}
-                  </AppointmentTableCellStyle>
-                  <AppointmentTableCellStyle align="left">
-                    {row.speciality}
-                  </AppointmentTableCellStyle>
-                  <AppointmentTableCellStyle align="left">
-                    {row.name_doctor}
-                  </AppointmentTableCellStyle>
-                  <AppointmentTableCellStyle align="left">
-                    {row.description}
-                  </AppointmentTableCellStyle>
-                  <AppointmentTableCellStyle align="left">
-                    {row.actions}
-                  </AppointmentTableCellStyle>
-                </AppointmentTableRowStyle>
-              ))}
+              filteredRows.map((row, index) => {
+                // Split the date and time
+                const [date, time] = row.start_date.split(' ')
+
+                // Format the time
+                const [hour, minute] = time.split(':')
+                const formattedTime = `${hour}:${minute} ${
+                  parseInt(hour) >= 12 ? 'PM' : 'AM'
+                }`
+
+                return (
+                  <AppointmentTableRowStyle key={index}>
+                    <AppointmentTableCellStyle align="left">
+                      {date}
+                    </AppointmentTableCellStyle>
+                    <AppointmentTableCellStyle align="left">
+                      {formattedTime}
+                    </AppointmentTableCellStyle>
+                    <AppointmentTableCellStyle align="left">
+                      {row.id_patient}
+                    </AppointmentTableCellStyle>
+                    <AppointmentTableCellStyle align="left">
+                      {row.name_patient}
+                    </AppointmentTableCellStyle>
+                    <AppointmentTableCellStyle align="left">
+                      {row.speciality}
+                    </AppointmentTableCellStyle>
+                    <AppointmentTableCellStyle align="left">
+                      {row.name_medic}
+                    </AppointmentTableCellStyle>
+                    <AppointmentTableCellStyle align="left">
+                      {row.description}
+                    </AppointmentTableCellStyle>
+                    <AppointmentTableCellStyle align="left">
+                      {row.actions}
+                    </AppointmentTableCellStyle>
+                  </AppointmentTableRowStyle>
+                )
+              })}
           </TableBody>
         </Table>
       </TableContainer>

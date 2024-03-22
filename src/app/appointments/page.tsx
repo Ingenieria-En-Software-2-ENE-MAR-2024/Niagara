@@ -18,28 +18,28 @@ import { Edit, Delete, ApiOutlined } from '@mui/icons-material'
 import AppointmentFilter from '../../components/appointmentTable/AppointmentFilter'
 import Swal from 'sweetalert2'
 import { FormEditAppointment } from '@/components/FormEditAppointment'
-import Menu  from '@/components/Menu'
+import Menu from '@/components/Menu'
 import { getSession } from 'next-auth/react'
 
 const createData = (
   id: number,
-  end_date: string,
+  start_date: string,
   start_hour: string,
   id_patient: string,
   name_patient: string,
   speciality: string,
-  name_doctor: string,
+  name_medic: string,
   description: string,
   actions: any,
 ): Appointment => {
   return {
     id,
-    end_date,
+    start_date,
     start_hour,
     id_patient,
     name_patient,
     speciality,
-    name_doctor,
+    name_medic,
     description,
     actions,
   }
@@ -103,12 +103,12 @@ export default function AppointmentTablePage() {
           (appointment: Appointment) => {
             return createData(
               appointment.id,
-              appointment.end_date,
+              appointment.start_date,
               appointment.start_hour,
               appointment.id_patient,
               appointment.name_patient,
               appointment.speciality,
-              appointment.name_doctor,
+              appointment.name_medic,
               appointment.description,
               createActionsComponent({ appointment }), // Remove the empty string argument
             )
@@ -166,22 +166,6 @@ export default function AppointmentTablePage() {
         // Get the session
         const session = await getSession()
 
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${id}`,
-          {
-            method: 'DELETE',
-            headers: {
-              'access-token': `Bearer ${session?.user.accessToken}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        )
-
-        if (!response.ok) {
-          console.log('an error ocurred deleting the appointment')
-          return
-        }
-
         Swal.fire({
           title: '¿Estás seguro de eliminar la cita?',
           icon: 'warning',
@@ -189,8 +173,24 @@ export default function AppointmentTablePage() {
           confirmButtonColor: '#3085d6',
           cancelButtonColor: '#d33',
           confirmButtonText: 'Eliminar',
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${id}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  'access-token': `Bearer ${session?.user.accessToken}`,
+                  'Content-Type': 'application/json',
+                },
+              },
+            )
+
+            if (!response.ok) {
+              console.log('an error ocurred deleting the appointment')
+              return
+            }
+
             Swal.fire('¡Eliminado!', 'La cita ha sido eliminada.', 'success')
             fetchAppointments(page, pageSize)
           }
@@ -222,7 +222,7 @@ export default function AppointmentTablePage() {
             </Typography>
           </Toolbar>
         </AppBar> */}
-        <Menu/>
+        <Menu />
         {open && (
           <FormEditAppointment
             open={open}

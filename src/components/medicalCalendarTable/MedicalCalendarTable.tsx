@@ -12,12 +12,13 @@ import UserTableCellStyle from '../userTable/UserTableCellStyle'
 import UserTableRowStyle from '../userTable/UserTableRowStyle'
 
 export interface Appointment {
+  id: number
   end_date: string
   start_hour: string
-  id: number
   id_patient: string
   name_patient: string
   speciality: string
+  description: string
   actions: any
 }
 
@@ -92,26 +93,37 @@ export const MedicalCalendarTable: React.FC<MedicalCalendarTableProps> = ({
           </TableHead>
           <TableBody>
             {filteredRows &&
-              filteredRows.map((row, index) => (
-                <UserTableRowStyle key={index}>
-                  <UserTableCellStyle align="left">
-                    {row.end_date}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">
-                    {row.start_hour}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">{row.id}</UserTableCellStyle>
-                  <UserTableCellStyle align="left">
-                    {row.name_patient}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">
-                    {row.speciality}
-                  </UserTableCellStyle>
-                  <UserTableCellStyle align="left">
-                    {row.actions}
-                  </UserTableCellStyle>
-                </UserTableRowStyle>
-              ))}
+              filteredRows.map((row, index) => {
+                // Split the date and time
+                const [date, time] = row.end_date.split(' ')
+
+                // Format the time
+                const [hour, minute] = time.split(':')
+                const formattedTime = `${hour}:${minute} ${
+                  parseInt(hour) >= 12 ? 'PM' : 'AM'
+                }`
+
+                return (
+                  <UserTableRowStyle key={index}>
+                    <UserTableCellStyle align="left">{date}</UserTableCellStyle>
+                    <UserTableCellStyle align="left">
+                      {formattedTime}
+                    </UserTableCellStyle>
+                    <UserTableCellStyle align="left">
+                      {row.id}
+                    </UserTableCellStyle>
+                    <UserTableCellStyle align="left">
+                      {row.name_patient}
+                    </UserTableCellStyle>
+                    <UserTableCellStyle align="left">
+                      {row.speciality}
+                    </UserTableCellStyle>
+                    <UserTableCellStyle align="left">
+                      {row.actions}
+                    </UserTableCellStyle>
+                  </UserTableRowStyle>
+                )
+              })}
           </TableBody>
         </Table>
       </TableContainer>

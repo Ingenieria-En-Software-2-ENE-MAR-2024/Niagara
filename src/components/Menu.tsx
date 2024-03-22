@@ -7,7 +7,8 @@ import { getSession } from 'next-auth/react'
 
 type MenuItem = {
   title: string
-  subMenuItems: {
+  link?: string
+  subMenuItems?: {
     title: string
     link: string
   }[]
@@ -34,14 +35,12 @@ const Menu: React.FC = () => {
       if (userRole === 'Medic') {
         items.push({
           title: 'Calendario Médico',
-          subMenuItems: [
-            { title: 'Calendario Médico', link: '/medicalCalendar' },
-          ],
+          link: '/medicalCalendar'
         })
       } else if (userRole === 'Patient') {
         items.push({
           title: 'Gestión de Citas',
-          subMenuItems: [{ title: 'Gestión de Citas', link: '/appointments' }],
+          link: '/appointments'
         })
       }
 

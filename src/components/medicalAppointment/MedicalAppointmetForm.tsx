@@ -122,6 +122,7 @@ function MedicalAppointmetForm() {
           // logica
           const medicAll = await response.json()
           setDoctors(medicAll)
+          console.log(medicAll)
         } catch (e) {
           return
         }

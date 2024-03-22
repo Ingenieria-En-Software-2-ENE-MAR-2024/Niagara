@@ -19,7 +19,7 @@ interface AppointmentData {
   id_patient: string
   name_patient: string
   speciality: string
-  doctor: string
+  name_medic: string
   description: string
 }
 
@@ -35,23 +35,28 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   setOpen,
   data,
   onChangedUsers = undefined,
-}) => {  
-  const [date, setDate] = useState(data.start_date)
-  const [time, setTime] = useState(data.start_hour)
+}) => {
+  const [date, time] = data.start_date.split(' ')
+  const [hour, minute] = time.split(':')
+  const formattedTime = `${hour}:${minute} ${
+    parseInt(hour) >= 12 ? 'PM' : 'AM'
+  }`
+  const [dateEdited, setDateEdited] = useState(date)
+  const [timeEdited, setTimeEdited] = useState(formattedTime)
   const [description, setDescription] = useState(data.description)
   const [changeReason, setChangeReason] = useState('')
   const [token, setToken] = useState<any>(null)
-  
+
   const handleSubmitDialog = async () => {
     if (time === '' || description === '') {
       console.log('Faltaron datos.')
       return
     }
-
+  
     try {
-      const [day, month, year] = date.split('/');
-      const newDay = day === "01" ? "01" : (parseInt(day, 10) - 1).toString();
-      const dateSend = `${month}/${newDay}/${year}`;
+      const [day, month, year] = date.split('/')
+      const newDay = day === '01' ? '01' : (parseInt(day, 10) - 1).toString()
+      const dateSend = `${year}/${month}/${newDay} ${timeEdited}`
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${data.id}`,
         {
@@ -61,17 +66,15 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
             'access-token': `Bearer ${token}`,
           },
           body: JSON.stringify({
-            start_hour: time,
-            end_hour: time,
+            patient_id: data.id_patient,
             start_date: dateSend,
             end_date: dateSend,
             description: description,
           }),
         },
       )
-
+  
       if (!response.ok) {
-        // console.log(response)
         console.log('Appointment could not be edited')
         return
       }
@@ -109,26 +112,18 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   }
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedDate = new Date(e.target.value);
+    const selectedDate = new Date(e.target.value)
     // Incrementar la fecha seleccionada en un día
-    selectedDate.setDate(selectedDate.getDate() + 1);
-    setDate(formatDate(selectedDate));
-  };
+    selectedDate.setDate(selectedDate.getDate() + 1)
+    setDateEdited(formatDate(selectedDate))
+  }
 
   const formatDateToYMD = (dateString: string) => {
-    const [day, month, year] = dateString.split('/');
-    return `${year}-${month}-${day}`;
-  };
-
-  useEffect(() => {
-    const [day, month, year] = data.start_date.split('/');
-    const newDay = parseInt(day, 10) + 1;
-    const formattedDay = newDay < 10 ? '0' + newDay : newDay.toString();
-    const dateReceive = `${formattedDay}/${month}/${year}`;
-    setDate(dateReceive);
-    setTime(data.start_hour)
-    setDescription(data.description)
-  }, [data])
+    const [day, month, year] = dateString.split('/')
+    const formattedDay = day.padStart(2, '0')
+    const formattedMonth = month.padStart(2, '0')
+    return `${year}-${formattedMonth}-${formattedDay}`
+  }
 
   useEffect(() => {
     getSession().then((result) => {
@@ -147,7 +142,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
         maxWidth="sm"
       >
         <DialogTitle id="alert-dialog-title">
-          {'Editción de la cita médica'}
+          {'Edición de la cita médica'}
         </DialogTitle>
 
         <DialogContent>
@@ -181,7 +176,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
             <Grid item xs={12}>
               <TextField
-                value={data.doctor}
+                value={data.name_medic}
                 label="Médico o Especialista"
                 disabled
                 className="mt-6"
@@ -190,7 +185,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
             <Grid item xs={12}>
               <TextField
-                value={formatDateToYMD(date)}
+                value={formatDateToYMD(dateEdited)}
                 onChange={handleDateChange}
                 label="Fecha (dd/mm/yy)"
                 type="date"
@@ -200,8 +195,8 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
             <Grid item xs={12}>
               <SelectField
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
+                value={formattedTime}
+                onChange={(e) => setTimeEdited(e.target.value)}
                 label="Hora"
                 className="mt-6"
               >
