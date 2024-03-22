@@ -25,11 +25,12 @@ export default function Register() {
     handleSubmit,
     control,
     formState: { errors },
+    watch,
   } = useForm<FormData>()
 
   // handle submit
   const onSubmit = async (data: FormData) => {
-    const { name, email, password, role } = data
+    const { name, email, ci, password, role, speciality } = data
 
     // console.log('data', data)
 
@@ -40,7 +41,7 @@ export default function Register() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password, role }),
+        body: JSON.stringify({ name, email, ci, password, role, speciality }),
       },
     )
 
@@ -126,6 +127,31 @@ export default function Register() {
             </p>
           )}
           <Controller
+            name="ci"
+            control={control}
+            defaultValue=""
+            rules={{
+              required: 'Se requiere cédula',
+              pattern: {
+                value: /^[0-9]{7,8}$/i,
+                message: 'Cédula inválida',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Cédula de identidad"
+                type="text"
+                className="col-span-full mt-6"
+              />
+            )}
+          />
+          {errors.ci && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.ci?.message?.toString()}
+            </p>
+          )}
+          <Controller
             name="password"
             control={control}
             defaultValue=""
@@ -167,6 +193,31 @@ export default function Register() {
               </SelectField>
             )}
           />
+
+          {watch('role') === 'Medic' && (
+            <Controller
+              name="speciality"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: 'Se requiere especialidad',
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Especialidad"
+                  type="text"
+                  className="col-span-full mt-6"
+                />
+              )}
+            />
+          )}
+
+          {errors.speciality && (
+            <p className="col-span-full mt-2 text-sm text-red-500">
+              {errors.speciality?.message?.toString()}
+            </p>
+          )}
         </div>
 
         <Button type="submit" className="mt-8 w-full bg-primary">

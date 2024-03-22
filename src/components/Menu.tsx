@@ -23,8 +23,9 @@ const Menu: React.FC = () => {
 
       let items: MenuItem[] = [
         {
-          title: 'Configuración',
+          title: 'Perfil',
           subMenuItems: [
+            { title: 'Ver Perfil', link: '/profile'},
             { title: 'Cambio de contraseña', link: '/changePassword' },
           ],
         },

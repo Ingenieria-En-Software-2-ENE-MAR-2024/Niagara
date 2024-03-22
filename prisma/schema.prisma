@@ -1,73 +1,89 @@
 generator client {
   provider = "prisma-client-js"
-  
 }
 
 datasource db {
-    provider = "postgresql"
-    url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-    
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL") // uses connection pooling
 }
 
 model UserTest {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String @unique
-  password  String
-  ci String @unique
-  role      String?
-  Medic Medic?
-  Patient Patient?
-  Admin Admin?
+  id       Int      @id @default(autoincrement())
+  name     String
+  email    String   @unique
+  password String
+  ci       String   @unique
+  role     String?
+  Medic    Medic?
+  Patient  Patient?
+  Admin    Admin?
+  profile  Profile?
 }
 
 model Medic {
-  medic_id        Int      @id
-  user    UserTest @relation(fields: [medic_id], references: [id])
-  speciality String
+  medic_id     Int           @id
+  user         UserTest      @relation(fields: [medic_id], references: [id])
+  speciality   String
   Appointments Appointment[]
 }
 
 model Admin {
-  admin_id        Int      @id
-  user    UserTest @relation(fields: [admin_id], references: [id])
+  admin_id Int      @id
+  user     UserTest @relation(fields: [admin_id], references: [id])
 }
 
 model Patient {
-  patient_id        Int      @id
-  user    UserTest @relation(fields: [patient_id], references: [id])
+  patient_id   Int           @id
+  user         UserTest      @relation(fields: [patient_id], references: [id])
   Appointments Appointment[]
 }
 
-
 model Appointment {
-  id        Int      @id @default(autoincrement())
-  start_date DateTime
-  end_date DateTime
-  medic_id  Int
-  patient_id   Int
-  medic     Medic    @relation(fields: [medic_id], references: [medic_id])
-  patient      Patient @relation(fields: [patient_id], references: [patient_id])
+  id          Int      @id @default(autoincrement())
+  start_date  DateTime
+  end_date    DateTime
+  medic_id    Int
+  patient_id  Int
+  medic       Medic    @relation(fields: [medic_id], references: [medic_id])
+  patient     Patient  @relation(fields: [patient_id], references: [patient_id])
   description String
 }
 
 model Forms {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   title     String
   questions Json
   answers   Answers[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-
 }
 
 model Answers {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   questions Json
   id_form   Int
-  form      Forms    @relation(fields:[id_form], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  form      Forms     @relation(fields: [id_form], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+}
+
+model Profile {
+  user_id        Int      @id
+  user           UserTest @relation(fields: [user_id], references: [id])
+  vision         String?  @default("")
+  skills         String[] @default([])
+  ed_lvl         EdLevel  @default(NONE)
+  prof_formation String[] @default([])
+  events         String[] @default([])
+  presentations  String[] @default([])
+  publications   String[] @default([])
+  grants         String[] @default([])
+}
+
+enum EdLevel {
+  NONE
+  PREG
+  POSTG
 }
