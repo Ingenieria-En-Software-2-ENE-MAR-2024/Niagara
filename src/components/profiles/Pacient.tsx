@@ -3,19 +3,19 @@ import { TextField } from '@/components/Fields'
 import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@mui/material'
 import { Typography } from '@mui/material'
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from '@mui/icons-material/Edit'
 import { FormEditProfile } from '@/components/profiles/FormEditProfile'
-
-type EdLevel = 'Ninguna educación' | 'Pregrado' | 'Postgrado'
 
 type PacientProps = {
   user: {
     name: string
     ci: string
     email: string
+  }
+  data: {
     vision?: string
     skills?: string[]
-    ed_lvl?: EdLevel
+    ed_lvl?: string
     prof_formation?: string[]
     events?: string[]
     presentations?: string[]
@@ -24,7 +24,7 @@ type PacientProps = {
   }
 }
 
-export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
+export const PacientProfile: React.FC<PacientProps> = ({ user, data }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [dataModal, setDataModal] = useState<any>(null)
 
@@ -37,51 +37,55 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
     handleModal(data)
   }
 
-  
+  enum EdLevelDisplay {
+    NONE = 'Ninguna educación',
+    PREG = 'Pregrado',
+    POSTG = 'Postgrado',
+  }
+
   return (
     <div>
-      <h1 style={{
-        textAlign: 'center',
-        marginTop: '50px',
-        justifyContent: 'center',
-        fontWeight: 'bold',
-        fontSize: '2.0rem',
-        letterSpacing: 'tight',
-        color: 'gray.900'
-      }}>
+      <h1
+        style={{
+          textAlign: 'center',
+          marginTop: '50px',
+          justifyContent: 'center',
+          fontWeight: 'bold',
+          fontSize: '2.0rem',
+          letterSpacing: 'tight',
+          color: 'gray.900',
+        }}
+      >
         ¡Hola {user.name}!
       </h1>
       {open && (
-          <FormEditProfile
-            open={open}
-            setOpen={setOpen}
-            data={dataModal}
-          />
-        )}
-          <div className="flex justify-end">
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              style={{
-                minWidth: 'auto',
-                backgroundColor: '#1e1b4b',
-                borderRadius: '5px',
-                marginBottom: '0%',
-              }}
-              onClick={() => handleEditProfile({ user })}
-            >
-              Editar perfil
-            </Button>
-          </div>
+        <FormEditProfile open={open} setOpen={setOpen} data={dataModal} />
+      )}
+      <div className="flex justify-end">
+        <Button
+          variant="contained"
+          startIcon={<EditIcon />}
+          style={{
+            minWidth: 'auto',
+            backgroundColor: '#1e1b4b',
+            borderRadius: '5px',
+            marginBottom: '0%',
+          }}
+          onClick={() => handleEditProfile({ user, data })}
+        >
+          Editar perfil
+        </Button>
+      </div>
 
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        marginTop: '0%'
-      }}>
-        
-        <AuthLayout title='' subtitle='Información Personal'>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          marginTop: '0%',
+        }}
+      >
+        <AuthLayout title="" subtitle="Información Personal">
           <div>
             <Typography
               variant="body1"
@@ -142,10 +146,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             </Typography>
           </div>
         </AuthLayout>
-        <AuthLayout 
-          title="" 
-          subtitle="Información Profesional" 
-          >
+        <AuthLayout title="" subtitle="Información Profesional">
           <Typography
             variant="body1"
             component="h1"
@@ -163,7 +164,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.vision || 'No proporcionado'}
+            {data.vision || 'No proporcionado'}
           </Typography>
           <Typography
             variant="body1"
@@ -182,7 +183,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.skills?.join(', ') || 'No proporcionado'}
+            {data.skills?.join(', ') || 'No proporcionado'}
           </Typography>
           <Typography
             variant="body1"
@@ -201,18 +202,20 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.ed_lvl || 'No proporcionado'}
+            {(data.ed_lvl &&
+              EdLevelDisplay[data.ed_lvl as keyof typeof EdLevelDisplay]) ||
+              'No proporcionado'}
           </Typography>
-          <Typography 
-            variant="body1" 
-            component="h1" 
+          <Typography
+            variant="body1"
+            component="h1"
             style={{ fontWeight: 'bold' }}
           >
             Experiencia Profesional:
           </Typography>
-          <Typography 
-            variant="body2" 
-            component="h2" 
+          <Typography
+            variant="body2"
+            component="h2"
             style={{
               marginLeft: '20px',
               marginBottom: '32px',
@@ -220,7 +223,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.prof_formation?.join(', ') || 'No proporcionado'}
+            {data.prof_formation?.join(', ') || 'No proporcionado'}
           </Typography>
           <Typography
             variant="body1"
@@ -239,7 +242,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.events?.join(', ') || 'No proporcionado'}
+            {data.events?.join(', ') || 'No proporcionado'}
           </Typography>
           <Typography
             variant="body1"
@@ -258,7 +261,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.presentations?.join(', ') || 'No proporcionado'}
+            {data.presentations?.join(', ') || 'No proporcionado'}
           </Typography>
           <Typography
             variant="body1"
@@ -277,7 +280,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.publications?.join(', ') || 'No proporcionado'}
+            {data.publications?.join(', ') || 'No proporcionado'}
           </Typography>
           <Typography
             variant="body1"
@@ -296,7 +299,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user }) => {
             }}
             gutterBottom
           >
-            {user.grants?.join(', ') || 'No proporcionado'}
+            {data.grants?.join(', ') || 'No proporcionado'}
           </Typography>
         </AuthLayout>
       </div>

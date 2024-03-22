@@ -8,16 +8,16 @@ import EditIcon from '@mui/icons-material/Edit'
 import { CirclesBackground } from '@/components/CirclesBackground'
 import { FormEditProfile } from '@/components/profiles/FormEditProfile'
 
-type EdLevel = 'Ninguna educación' | 'Pregrado' | 'Postgrado'
-
 type MedicProps = {
   user: {
     name: string
     ci: string
     email: string
+  }
+  data: {
     vision?: string
     skills?: string[]
-    ed_lvl?: EdLevel
+    ed_lvl?: string
     prof_formation?: string[]
     events?: string[]
     presentations?: string[]
@@ -26,7 +26,7 @@ type MedicProps = {
   }
 }
 
-export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
+export const MedicProfile: React.FC<MedicProps> = ({ user, data }) => {
   const [open, setOpen] = useState<boolean>(false)
   const [dataModal, setDataModal] = useState<any>(null)
 
@@ -39,17 +39,19 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
     handleModal(data)
   }
 
+  enum EdLevelDisplay {
+    NONE = 'Ninguna educación',
+    PREG = 'Pregrado',
+    POSTG = 'Postgrado',
+  }
+
   return (
     <>
       <main className="flex min-h-full overflow-hidden bg-cover bg-center bg-no-repeat pt-16">
         <div className="mx-auto flex w-full max-w-6xl flex-col px-4">
-				{open && (
-          <FormEditProfile
-            open={open}
-            setOpen={setOpen}
-            data={dataModal}
-          />
-        )}
+          {open && (
+            <FormEditProfile open={open} setOpen={setOpen} data={dataModal} />
+          )}
           <div className="flex justify-end">
             <Button
               variant="contained"
@@ -59,7 +61,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                 backgroundColor: '#1e1b4b',
                 borderRadius: '5px',
               }}
-              onClick={() => handleEditProfile({ user })}
+              onClick={() => handleEditProfile({ user, data })}
             >
               Editar perfil
             </Button>
@@ -113,7 +115,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Visión
                 </Typography>
                 <Typography variant="body2">
-                  {user.vision || 'No proporcionado'}
+                  {data.vision || 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>
@@ -126,7 +128,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Habilidades
                 </Typography>
                 <Typography variant="body2">
-                  {user.skills?.join(', ') || 'No proporcionado'}
+                  {data.skills?.join(', ') || 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>
@@ -139,7 +141,11 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Formación Profesional
                 </Typography>
                 <Typography variant="body2">
-                  {user.ed_lvl || 'No proporcionado'}
+                  {(data.ed_lvl &&
+                    EdLevelDisplay[
+                      data.ed_lvl as keyof typeof EdLevelDisplay
+                    ]) ||
+                    'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>
@@ -152,7 +158,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Experiencia Profesional
                 </Typography>
                 <Typography variant="body2">
-                  {user.prof_formation?.join(', ') || 'No proporcionado'}
+                  {data.prof_formation?.join(', ') || 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>
@@ -165,7 +171,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Cursos y Eventos
                 </Typography>
                 <Typography variant="body2">
-                  {user.events?.join(', ') || 'No proporcionado'}
+                  {data.events?.join(', ') || 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>
@@ -178,7 +184,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Presentaciones
                 </Typography>
                 <Typography variant="body2">
-                  {user.presentations?.join(', ') || 'No proporcionado'}
+                  {data.presentations?.join(', ') || 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>
@@ -191,7 +197,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Publicaciones
                 </Typography>
                 <Typography variant="body2">
-                  {user.publications?.join(', ') || 'No proporcionado'}
+                  {data.publications?.join(', ') || 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>
@@ -208,7 +214,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user }) => {
                   Becas y Reconocimientos
                 </Typography>
                 <Typography variant="body2">
-                  {user.grants?.join(', ') || 'No proporcionado'}
+                  {data.grants?.join(', ') || 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>

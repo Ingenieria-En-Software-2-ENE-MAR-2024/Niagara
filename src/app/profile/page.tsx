@@ -13,12 +13,12 @@ export default function Profile() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [ci, setCi] = useState('')
+  const [data, setData] = useState({})
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const session = await getSession()
-        console.log(session)
         const userId = session?.user?.id
         setRole(session?.user?.role as string)
         setName(session?.user?.name as string)
@@ -30,13 +30,14 @@ export default function Profile() {
           {
             method: 'GET',
             headers: {
-              'access-token': `Bearer ${session?.user.accessToken}`,
+              // 'access-token': `Bearer ${session?.user.accessToken}`,
               'Content-Type': 'application/json',
             },
           },
         )
-
-        console.log(response)
+        
+        const data = await response.json()
+        setData(data)        
 
         if (!response.ok) {
           console.log('an error ocurred fetching the profile data')
@@ -53,9 +54,9 @@ export default function Profile() {
     <div>
       <Menu />
       {role === 'Patient' ? (
-        <PacientProfile user={{ name, ci, email }} />
+        <PacientProfile user={{ name, ci, email}} data={data} />
       ) : role === 'Medic' ? (
-        <MedicProfile user={{ name, ci, email }} />
+        <MedicProfile user={{ name, ci, email}} data={data}/>
       ) : null}
     </div>
   )
