@@ -5,6 +5,7 @@ import { Button } from '@/components/Button';
 import {useRouter} from "next/router";
 import Snackbar from '@mui/material/Snackbar';
 import Alert, { AlertColor } from '@mui/material/Alert';
+import { getSession } from 'next-auth/react';
 
 
 export function FormChangePassword() {
@@ -15,6 +16,8 @@ export function FormChangePassword() {
     const [message, setMessage] = useState('');
     const [open, setOpen] = useState(false);
     const [messageType, setMessageType] = useState('');
+    const [token, setToken] = useState('')
+
 
     const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -35,16 +38,20 @@ export function FormChangePassword() {
             setErrorMessage('*Por favor, llene todos los campos.');
             return;
         }
-    
-        /*
-        const response = await fetch('http://localhost:3000/api/user', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        
+        
+        const session = await getSession()
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/changePassword`, 
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'access-token': `Bearer ${session?.user.accessToken}`
             },
             body: JSON.stringify({ oldPassword, newPassword, compareNewPassword }),
         });
 
+        console.log(session?.user.accessToken);
         if (!response.ok) {
             console.error('Error:', response.status, response.statusText);
             setMessage('No se pudo cambiar la contraseña');
@@ -55,7 +62,7 @@ export function FormChangePassword() {
 
         const data = await response.json();
         console.log(data);
-        */
+
         setMessage('Se cambió la contraseña exitosamente');
         setOpen(true);
         setMessageType('success');

@@ -19,7 +19,7 @@ const Menu: React.FC = () => {
   useEffect(() => {
     const fetchSession = async () => {
       const session = await getSession()
-      const userRole = session?.user?.role
+      const userRole = session?.user.role
 
       let items: MenuItem[] = [
         {

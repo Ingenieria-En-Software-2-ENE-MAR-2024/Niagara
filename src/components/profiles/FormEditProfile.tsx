@@ -97,8 +97,13 @@ export const FormEditProfile: React.FC<ModalUserProps> = ({
   
   const handleArrayChange = (event: React.ChangeEvent<HTMLInputElement>, field: any) => {
     const { value } = event.target;
-    const arrayValue = value.split(',').map(item => item.trim());
-    field.onChange(arrayValue);
+
+    if (value.includes(',')) {
+      const arrayValue = value.split(',').map(item => item.trim());
+      field.onChange(arrayValue);
+    } else {
+      field.onChange(value);
+    }
   }
   
 
