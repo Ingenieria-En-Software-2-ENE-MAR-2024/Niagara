@@ -19,6 +19,7 @@ model UserTest {
   Medic Medic?
   Patient Patient?
   Admin Admin?
+  PasswordExpiration PasswordExpiration?
 }
 
 model Medic {
@@ -70,4 +71,10 @@ model Answers {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+}
+
+model PasswordExpiration {
+  user_id         Int       @id
+  expirationDate  DateTime
+  user            UserTest  @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

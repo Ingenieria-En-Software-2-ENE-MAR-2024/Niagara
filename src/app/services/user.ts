@@ -236,3 +236,29 @@ export const update_my_user_password = async (
     )
   }
 }
+
+export const insertPasswordExpiration = async (userId: number): Promise<void> => {
+  try {
+    const currentDate = new Date();
+    const expirationDate = new Date();
+    expirationDate.setFullYear(currentDate.getFullYear() + 1); // Agrega un año a la fecha actual
+
+    await prisma.passwordExpiration.create({
+      data: {
+        user_id: userId,
+        expirationDate: expirationDate,
+      },
+    });
+
+  } catch (error) {
+    const handle_err = handle_error_http_response(error, '0005');
+    throw new custom_error(
+      handle_err.error_message,
+      handle_err.error_message_detail,
+      handle_err.error_code,
+      handle_err.status
+    );
+  
+   
+  }
+};

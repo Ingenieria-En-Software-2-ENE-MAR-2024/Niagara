@@ -12,6 +12,7 @@ import {
   delete_my_user,
   update_my_user,
   update_my_user_password,
+  insertPasswordExpiration,
 } from '../services/user'
 import { error_object } from '../interfaces/error'
 import { validator_user_update } from '@/app/validators/user'
@@ -22,6 +23,7 @@ export const post_user = async (req: NextRequest) => {
     const body = await req.json()
     const data = validator_user_create(body)
     const new_user = await create_user(data)
+    await insertPasswordExpiration(new_user.id)
 
     return new_user
   } catch (error: any) {
