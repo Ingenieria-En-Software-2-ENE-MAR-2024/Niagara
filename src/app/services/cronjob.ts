@@ -26,11 +26,9 @@ const checkPasswordsExpiry = async () => {
         },
       },
     })
-    console.log(expiratedPassword)
     for (const {
       user: { name, email },
     } of expiratedPassword) {
-      console.log("Enviando email a: ", email)
       await send_email(
         {
           address: EMAIL_ADDRESS || '',
@@ -58,7 +56,6 @@ const checkPasswordsExpiry = async () => {
         `,
         },
       )
-      console.log("Enviado con exito a: ", email)
 
     }
   } catch (error) {
@@ -68,10 +65,10 @@ const checkPasswordsExpiry = async () => {
 }
 
 export const execute_cronjob = async () => {
-  cron.schedule('* * * * *', async () => {
-    console.log("Entro")
+  cron.schedule('0 0 * * *', async () => {
+    console.log("Ejecutando cron job")
     await checkPasswordsExpiry()
-    console.log("Termino")
+    console.log("Termino cron job")
     
   })
 }
