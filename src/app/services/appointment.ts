@@ -366,6 +366,7 @@ const updateAppointment = async (
         const newAppointmentData = {
             start_date: body.start_date ? start_date : foundAppointment.start_date,
             end_date: body.end_date ? end_date : foundAppointment.end_date,
+            description: body.description ? body.description : foundAppointment.description,
         }
 
         // Creamos la cita
