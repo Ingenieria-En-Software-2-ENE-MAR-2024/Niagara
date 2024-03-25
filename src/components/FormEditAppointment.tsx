@@ -38,13 +38,17 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   data,
   onChangedUsers = undefined,
 }) => {
+  const [dataInit, setDataInit] = useState(data)
   const [date, time] = data.start_date.split(' ')
-  const [hour, minute] = time.split(':')
-  const formattedTime = `${hour}:${minute} ${
-    parseInt(hour) >= 12 ? 'PM' : 'AM'
-  }`
+  useEffect(() => {
+    const [hour, minute] = data.start_date.split(' ')[1].split(':')
+    const formattedTime = `${hour}:${minute} ${parseInt(hour) >= 12 ? 'PM' : 'AM'}`
+    setTimeEdited(formattedTime)
+  }, [data.start_date])
+
+  const [timeEdited, setTimeEdited] = useState<string | undefined>(undefined)
+
   const [dateEdited, setDateEdited] = useState(date)
-  const [timeEdited, setTimeEdited] = useState(formattedTime)
   const [description, setDescription] = useState(data.description)
   const [changeReason, setChangeReason] = useState('')
   const [token, setToken] = useState<any>(null)
@@ -54,22 +58,18 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
       Swal.fire(
         '¡Error!',
         'Por favor, complete todos los campos para continuar.',
-        'error'
+        'error',
       )
       return
     }
     try {
       const [day, month, year] = dateEdited.split('/')
       const newDay = parseInt(day, 10).toString().padStart(2, '0')
-      const dateSend = `${year}/${month}/${newDay} ${timeEdited}`  
-      
+      const dateSend = `${year}/${month}/${newDay} ${timeEdited}`
+
       if (isNaN(new Date(dateSend).getTime())) {
-        Swal.fire(
-          '¡Error!',
-          'La fecha y la hora son obligatorias.',
-          'error'
-        );
-        return;
+        Swal.fire('¡Error!', 'La fecha y la hora son obligatorias.', 'error')
+        return
       }
 
       const response = await fetch(
@@ -97,8 +97,8 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
       Swal.fire(
         '¡Cambio realizado con éxito!',
         'La cita ha sido editada.',
-        'success'
-      );
+        'success',
+      )
       console.log('Appointment edited')
       if (onChangedUsers != undefined) onChangedUsers()
     } catch (e) {
@@ -155,11 +155,16 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
   }, [])
 
   const handleTimeChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    // console.log(e.target.value)
     setTimeEdited(e.target.value as string)
+  
+    // Actualiza data.start_date con la nueva fecha y hora
+    const newDate = `${dateEdited} ${e.target.value}`
+    setDataInit(prevData => ({ ...prevData, start_date: newDate }))
   }
 
-  const handleDescriptionChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<{ value: unknown }>,
+  ) => {
     setDescription(e.target.value as string)
   }
 
