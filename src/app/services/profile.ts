@@ -21,18 +21,7 @@ export const obtain_profile = async (user_id: number) => {
         404
       )
 
-    return {
-      user_id: user_id,
-      vision: "To help people",
-      skills: ["Skill A", "Skill B"],
-      ed_lvl: EdLevel.PREG,
-      prof_formation: ["San Luis", "USB"],
-      events: ["Event A", "Event B"],
-      presentations: ["PA", "PB"],
-      publications: ["Discovery", "National"],
-      grants: ["GA", "GB"]
-    }
-    //return user_profile
+    return user_profile
   } catch (err) {
       throw err
   }

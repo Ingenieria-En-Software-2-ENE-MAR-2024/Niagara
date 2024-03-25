@@ -1,10 +1,22 @@
 import React, { useState } from 'react'
-import { TextField } from '@/components/Fields'
 import { AuthLayout } from '@/components/AuthLayout'
 import { Button } from '@mui/material'
 import { Typography } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit'
 import { FormEditProfile } from '@/components/profiles/FormEditProfile'
+
+enum EdLevel {
+  NONE = 'NONE',
+  PREG = 'PREG',
+  POSTG = 'POSTG',
+}
+
+const EdLevelDisplay = {
+  [EdLevel.NONE]: 'Ninguna educación',
+  [EdLevel.PREG]: 'Pregrado',
+  [EdLevel.POSTG]: 'Postgrado',
+}
+
 
 type PacientProps = {
   user: {
@@ -15,7 +27,7 @@ type PacientProps = {
   data: {
     vision?: string
     skills?: string[]
-    ed_lvl?: string
+    ed_lvl?: EdLevel
     prof_formation?: string[]
     events?: string[]
     presentations?: string[]
@@ -35,12 +47,6 @@ export const PacientProfile: React.FC<PacientProps> = ({ user, data }) => {
 
   const handleEditProfile = (data: PacientProps) => {
     handleModal(data)
-  }
-
-  enum EdLevelDisplay {
-    NONE = 'Ninguna educación',
-    PREG = 'Pregrado',
-    POSTG = 'Postgrado',
   }
 
   return (
@@ -202,9 +208,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user, data }) => {
             }}
             gutterBottom
           >
-            {(data.ed_lvl &&
-              EdLevelDisplay[data.ed_lvl as keyof typeof EdLevelDisplay]) ||
-              'No proporcionado'}
+            {EdLevelDisplay[data.ed_lvl as keyof typeof EdLevelDisplay] || 'No proporcionado'}
           </Typography>
           <Typography
             variant="body1"

@@ -8,6 +8,18 @@ import EditIcon from '@mui/icons-material/Edit'
 import { CirclesBackground } from '@/components/CirclesBackground'
 import { FormEditProfile } from '@/components/profiles/FormEditProfile'
 
+enum EdLevel {
+  NONE = 'NONE',
+  PREG = 'PREG',
+  POSTG = 'POSTG',
+}
+
+const EdLevelDisplay = {
+  [EdLevel.NONE]: 'Ninguna educación',
+  [EdLevel.PREG]: 'Pregrado',
+  [EdLevel.POSTG]: 'Postgrado',
+}
+
 type MedicProps = {
   user: {
     name: string
@@ -17,7 +29,7 @@ type MedicProps = {
   data: {
     vision?: string
     skills?: string[]
-    ed_lvl?: string
+    ed_lvl?: EdLevel
     prof_formation?: string[]
     events?: string[]
     presentations?: string[]
@@ -39,11 +51,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user, data }) => {
     handleModal(data)
   }
 
-  enum EdLevelDisplay {
-    NONE = 'Ninguna educación',
-    PREG = 'Pregrado',
-    POSTG = 'Postgrado',
-  }
+
 
   return (
     <>
@@ -141,11 +149,7 @@ export const MedicProfile: React.FC<MedicProps> = ({ user, data }) => {
                   Formación Profesional
                 </Typography>
                 <Typography variant="body2">
-                  {(data.ed_lvl &&
-                    EdLevelDisplay[
-                      data.ed_lvl as keyof typeof EdLevelDisplay
-                    ]) ||
-                    'No proporcionado'}
+                  {data.ed_lvl ? EdLevelDisplay[data.ed_lvl] : 'No proporcionado'}
                 </Typography>
               </CardContent>
             </Card>

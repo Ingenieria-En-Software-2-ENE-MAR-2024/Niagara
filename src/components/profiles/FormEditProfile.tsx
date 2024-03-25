@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,ChangeEvent } from 'react'
 import { TextField, SelectField } from '@/components/Fields'
 import { Button } from '@/components/Button'
 import {
@@ -11,25 +11,25 @@ import {
   Grid,
 } from '@mui/material'
 import { getSession } from 'next-auth/react'
-import { SelectChangeEvent } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 
+
+enum EdLevelDisplay {
+  NONE = 'Ninguna educación',
+  PREG = 'Pregrado',
+  POSTG = 'Postgrado',
+}
 interface data {
-  user: {
-    name: string
-    ci: string
-    email: string
-  }
-  data: {
-    vision?: string
-    skills?: string[]
-    ed_lvl?: string
-    prof_formation?: string[]
-    events?: string[]
-    presentations?: string[]
-    publications?: string[]
-    grants?: string[]
-  }
+  
+  vision?: ''
+  skills?: []
+  ed_lvl?: EdLevelDisplay
+  prof_formation?: []
+  events?: []
+  presentations?: []
+  publications?: []
+  grants?: []
+
 }
 
 interface ModalUserProps {
@@ -43,77 +43,77 @@ export const FormEditProfile: React.FC<ModalUserProps> = ({
   setOpen,
   data,
 }) => {
-  const [token, setToken] = useState<any>(null)
-  const [userId, setUserId] = useState<any>(null)
-  const [formData, setFormData] = useState(data)
+  const [token, setToken] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+  const { control, watch } = useForm<data>()
+  const formData = watch()
+  
 
-  const { control } = useForm<data>()
+  console.log(formData)
+  console.log('!!!!!!!!!!!!!!!!!!!')
 
-  //   const handleSubmitDialog = async () => {
-  //     try {
+  const handleSubmitDialog = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile/${userId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'access-token': `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        },
+      )
 
-  //       const response = await fetch(
-  //         `${process.env.NEXT_PUBLIC_BASE_URL}/api/profile/${String(userId)}`,
-  //         {
-  //           method: 'PUT',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //             'access-token': `Bearer ${token}`,
-  //           },
-  //           body: JSON.stringify({
+      if (!response.ok) {
+        console.error('Error:', response.status, response.statusText)
+        return
+      }
+    } catch (e) {
+      console.error('Error:', e)
+      return
+    } finally {
+      setOpen(false)
+    }
+  }
 
-  //           }),
-  //         },
-  //       )
-
-  //       if (!response.ok) {
-  //         // console.log(response)
-  //         console.log('Appointment could not be edited')
-  //         return
-  //       }
-
-  //     } catch (e) {
-  //       console.log('An error ocurred editing the appointment')
-  //       return
-  //     } finally {
-  //       setOpen(false)
-  //     }
-  //   }
-
-  useEffect(() => {
-    getSession().then((result) => {
-      setToken(result?.user?.accessToken)
-      setUserId(result?.user?.id)
-    })
-  }, [])
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault() // Previene la recarga de la página
-
-    // Se manejan los datos del formulario
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    await handleSubmitDialog()
+    console.log('Formulario enviado')
     console.log(formData)
-
-    // Cierra el modal
     setOpen(false)
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Actualiza los datos del formulario
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    })
+  
+  const handleDataChange = (event: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    field.onChange(event.target.value);
   }
 
-  const handleSelectChange = (event: SelectChangeEvent<string>) => {
-    // Actualiza los datos del formulario
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value,
-    })
+  const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>, field: any) => {
+    field.onChange(event.target.value);
   }
+  
+  const handleArrayChange = (event: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    const { value } = event.target;
 
-  console.log(data)
+    if (value.includes(',')) {
+      const arrayValue = value.split(',').map(item => item.trim());
+      field.onChange(arrayValue);
+    } else {
+      field.onChange(value);
+    }
+  }
+  
+
+  useEffect(() => {
+    getSession().then((result) => {
+      setToken(result?.user.accessToken ?? null)
+      setUserId(result?.user.id.toString() ?? null)
+      
+    })
+  }, [data]) 
 
   return (
     <>
@@ -126,98 +126,119 @@ export const FormEditProfile: React.FC<ModalUserProps> = ({
         maxWidth="md" // Cambia a 'md' para una ventana de diálogo más grande
       >
         <DialogTitle id="alert-dialog-title">{'Edición de Perfil'}</DialogTitle>
-
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <Grid container spacing={3}>
               <Grid item xs={6}>
-                <TextField
-                  value={formData.user.name}
-                  onChange={handleChange}
-                  name="name"
-                  label="Nombre y Apellido"
-                  className="mt-6"
+                <Controller 
+                  name='vision'
+                  control={control}
+                  defaultValue={data.vision}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Visión"
+                      className="mt-6"
+                      onChange={(e) => handleDataChange(e, field)}
+                    />
+                  )}
                 />
-                <TextField
-                  value={data.user.ci}
-                  onChange={handleChange}
-                  name="ci"
-                  label="Cédula de Identidad"
-                  className="mt-6"
-                />
-                <TextField
-                  value={data.user.email}
-                  onChange={handleChange}
-                  name="email"
-                  label="Correo Electrónico"
-                  className="mt-6"
-                />
-                <TextField
-                  value={data.data.vision}
-                  onChange={handleChange}
-                  name="vision"
-                  label="Visión"
-                  className="mt-6"
-                />
-                <TextField
-                  value={data.data.skills}
-                  onChange={handleChange}
-                  name="skills"
-                  label="Habilidades"
-                  className="mt-6"
+                <Controller 
+                  name='skills'
+                  control={control}
+                  defaultValue={data.skills}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Habilidades"
+                      className="mt-6"
+                      onChange={(e) => handleArrayChange(e, field)}
+                    />
+                  )}
                 />
                 <Controller
-                  name="data.ed_lvl"
+                  name='ed_lvl'
                   control={control}
-                  defaultValue={data.data.ed_lvl}
+                  defaultValue={data.ed_lvl}
                   render={({ field }) => (
                     <SelectField
                       {...field}
                       className="col-span-full mt-6"
                       label="Formación Profesional"
+                      onChange={(e) => handleSelectChange(e, field)}
                     >
-                      <option value="NONE">Ninguna educación</option>
-                      <option value="PREG">Pregrado</option>
-                      <option value="POSTG">Postgrado</option>
+                      {Object.entries(EdLevelDisplay).map(([value, display]) => (
+                        <option key={value} value={value}>{display}</option>
+                      ))}
                     </SelectField>
+                  )}
+                />
+                <Controller
+                  name='prof_formation'
+                  control={control}
+                  defaultValue={data.prof_formation}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Experiencia Profesional"
+                      className="mt-6"
+                      onChange={(e) => handleArrayChange(e, field)}
+                    />
                   )}
                 />
               </Grid>
               <Grid item xs={6}>
-                <TextField
-                  value={data.data.prof_formation}
-                  onChange={handleChange}
-                  name="prof_formation"
-                  label="Experiencia Profesional"
-                  className="mt-6"
+                <Controller
+                  name='events'
+                  control={control}
+                  defaultValue={data.events}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Eventos"
+                      className="mt-6"
+                      onChange={(e) => handleArrayChange(e, field)}
+                    />
+                  )}
                 />
-                <TextField
-                  value={data.data.events}
-                  onChange={handleChange}
-                  name="events"
-                  label="Cursos y Eventos"
-                  className="mt-6"
+                <Controller
+                  name='presentations'
+                  control={control}
+                  defaultValue={data.presentations}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Presentaciones"
+                      className="mt-6"
+                      onChange={(e) => handleArrayChange(e, field)}
+                    />
+                  )}
                 />
-                <TextField
-                  value={data.data.presentations}
-                  onChange={handleChange}
-                  name="presentations"
-                  label="Presentaciones"
-                  className="mt-6"
+                <Controller
+                  name='publications'
+                  control={control}
+                  defaultValue={data.publications}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Publicaciones"
+                      className="mt-6"
+                      onChange={(e) => handleArrayChange(e, field)}
+                    />
+                  )}
                 />
-                <TextField
-                  value={data.data.publications}
-                  onChange={handleChange}
-                  name="publications"
-                  label="Publicaciones"
-                  className="mt-6"
-                />
-                <TextField
-                  value={data.data.grants}
-                  onChange={handleChange}
-                  name="grants"
-                  label="Becas y Reconocimientos"
-                  className="mt-6"
+                <Controller
+                  name='grants'
+                  control={control}
+                  defaultValue={data.grants}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Becas"
+                      className="mt-6"
+                      onChange={(e) => handleArrayChange(e, field)}
+                    />
+                  )}
                 />
               </Grid>
             </Grid>
