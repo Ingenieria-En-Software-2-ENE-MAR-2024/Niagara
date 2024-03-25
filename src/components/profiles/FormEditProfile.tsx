@@ -88,22 +88,18 @@ export const FormEditProfile: React.FC<ModalUserProps> = ({
 
   
   const handleDataChange = (event: React.ChangeEvent<HTMLInputElement>, field: any) => {
-    field.onChange(event.target.value);
+    field.onChange(event.target.value)
   }
 
   const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>, field: any) => {
-    field.onChange(event.target.value);
+    field.onChange(event.target.value)
   }
   
   const handleArrayChange = (event: React.ChangeEvent<HTMLInputElement>, field: any) => {
-    const { value } = event.target;
-
-    if (value.includes(',')) {
-      const arrayValue = value.split(',').map(item => item.trim());
-      field.onChange(arrayValue);
-    } else {
-      field.onChange(value);
-    }
+    const { value } = event.target
+    const arrayValue = value.split(',')
+    field.onChange(arrayValue)
+  
   }
   
 
