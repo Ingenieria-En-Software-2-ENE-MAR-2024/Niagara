@@ -11,12 +11,14 @@ import {
   Grid,
 } from '@mui/material'
 import { getSession } from 'next-auth/react'
+import Swal from 'sweetalert2'
 
 interface AppointmentData {
   id: number
   start_date: string
   start_hour: string
   id_patient: string
+  id_medic: string
   name_patient: string
   speciality: string
   name_medic: string
@@ -49,14 +51,27 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
   const handleSubmitDialog = async () => {
     if (time === '' || description === '') {
-      console.log('Faltaron datos.')
+      Swal.fire(
+        '¡Error!',
+        'Por favor, complete todos los campos para continuar.',
+        'error'
+      )
       return
     }
-  
     try {
-      const [day, month, year] = date.split('/')
-      const newDay = day === '01' ? '01' : (parseInt(day, 10) - 1).toString()
-      const dateSend = `${year}/${month}/${newDay} ${timeEdited}`
+      const [day, month, year] = dateEdited.split('/')
+      const newDay = parseInt(day, 10).toString().padStart(2, '0')
+      const dateSend = `${year}/${month}/${newDay} ${timeEdited}`  
+      
+      if (isNaN(new Date(dateSend).getTime())) {
+        Swal.fire(
+          '¡Error!',
+          'La fecha y la hora son obligatorias.',
+          'error'
+        );
+        return;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/appointments/${data.id}`,
         {
@@ -67,17 +82,23 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
           },
           body: JSON.stringify({
             patient_id: data.id_patient,
+            medic_id: data.id_medic,
             start_date: dateSend,
             end_date: dateSend,
             description: description,
           }),
         },
       )
-  
+
       if (!response.ok) {
         console.log('Appointment could not be edited')
         return
       }
+      Swal.fire(
+        '¡Cambio realizado con éxito!',
+        'La cita ha sido editada.',
+        'success'
+      );
       console.log('Appointment edited')
       if (onChangedUsers != undefined) onChangedUsers()
     } catch (e) {
@@ -90,8 +111,10 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
   const generateTimeOptions = () => {
     const options = []
-    for (let hour = 8; hour <= 17; hour++) {
-      const timeString = `${hour}:00`
+    for (let hour = 0; hour <= 23; hour++) {
+      const timeString = `${hour % 12 === 0 ? 12 : hour % 12}:00 ${
+        hour >= 12 ? 'PM' : 'AM'
+      }`
       options.push(
         <option key={timeString} value={timeString}>
           {timeString}
@@ -130,6 +153,15 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
       setToken(result?.user?.accessToken)
     })
   }, [])
+
+  const handleTimeChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    // console.log(e.target.value)
+    setTimeEdited(e.target.value as string)
+  }
+
+  const handleDescriptionChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    setDescription(e.target.value as string)
+  }
 
   return (
     <>
@@ -195,8 +227,8 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
             <Grid item xs={12}>
               <SelectField
-                value={formattedTime}
-                onChange={(e) => setTimeEdited(e.target.value)}
+                value={timeEdited}
+                onChange={handleTimeChange}
                 label="Hora"
                 className="mt-6"
               >
@@ -207,7 +239,7 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
             <Grid item xs={12}>
               <TextField
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={handleDescriptionChange}
                 label="Descripción"
                 className="mt-6"
               />
