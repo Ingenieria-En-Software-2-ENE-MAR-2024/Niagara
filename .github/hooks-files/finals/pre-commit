@@ -6,16 +6,15 @@ USERNAME=$(echo "$GIT_INFO" | grep 'user.name' | cut -d '=' -f 2)
 
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 
-curl -X 'POST' \
-  'https://email-service-afdc.onrender.com/email' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "body": "El usuario '$USERNAME' ha utilizado el hook pre-commit el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' a la rama '$BRANCH'"
-}'
-
 if [ "$BRANCH" = "main" ]; then
   echo "You can't commit directly to '"${BRANCH}"' branch"
+  curl -X 'POST' \
+    'https://email-service-afdc.onrender.com/email' \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{
+    "body": "El usuario '$USERNAME' ha utilizado el hook pre-commit el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'. El resultado es: rechzado."
+  }'
   exit 1
 fi
 
@@ -24,7 +23,21 @@ echo ===============================
 if ! npm run lint; then
     echo ESLint has warning or errors. Fix them before commiting.
     exit 1
+    curl -X 'POST' \
+      'https://email-service-afdc.onrender.com/email' \
+      -H 'accept: application/json' \
+      -H 'Content-Type: application/json' \
+      -d '{
+      "body": "El usuario '$USERNAME' ha utilizado el hook pre-commit el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'.  El resultado es: rechazado."
+    }'
 fi
 
 echo All good. Allowing commit to proceed.
+curl -X 'POST' \
+  'https://email-service-afdc.onrender.com/email' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "body": "El usuario '$USERNAME' ha utilizado el hook pre-commit el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'. El resultado es: aceptado."
+}'
 exit 0
