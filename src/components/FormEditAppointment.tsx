@@ -40,10 +40,15 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 }) => {
   const [dataInit, setDataInit] = useState(data)
   const [date, time] = data.start_date.split(' ')
+
   useEffect(() => {
-    const [hour, minute] = data.start_date.split(' ')[1].split(':')
-    const formattedTime = `${hour}:${minute} ${parseInt(hour) >= 12 ? 'PM' : 'AM'}`
-    setTimeEdited(formattedTime)
+    const [hour, minute, second] = data.start_date.split(' ')[1].split(':')
+    const formattedTime = `${hour}:${minute} ${
+      parseInt(hour) >= 12 ? 'PM' : 'AM'
+    }`
+    const timeIn24HourFormat = convertTo24Hour(formattedTime)
+
+    setTimeEdited(timeIn24HourFormat)
   }, [data.start_date])
 
   const [timeEdited, setTimeEdited] = useState<string | undefined>(undefined)
@@ -109,19 +114,17 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
     }
   }
 
-  const generateTimeOptions = () => {
-    const options = []
-    for (let hour = 0; hour <= 23; hour++) {
-      const timeString = `${hour % 12 === 0 ? 12 : hour % 12}:00 ${
-        hour >= 12 ? 'PM' : 'AM'
-      }`
-      options.push(
-        <option key={timeString} value={timeString}>
-          {timeString}
-        </option>,
-      )
+  function convertTo24Hour(time: any) {
+    var [hours, minutes] = time.split(':')
+    var [minutes, meridiem] = minutes.split(' ')
+
+    if (meridiem.toLowerCase() === 'pm' && hours < 12) {
+      hours = parseInt(hours) + 12
+    } else if (meridiem.toLowerCase() === 'am' && hours === '12') {
+      hours = '00'
     }
-    return options
+
+    return `${hours.toString().padStart(2, '0')}:${minutes}`
   }
 
   const formatDate = (date: Date): string => {
@@ -156,10 +159,10 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
 
   const handleTimeChange = (e: React.ChangeEvent<{ value: unknown }>) => {
     setTimeEdited(e.target.value as string)
-  
+
     // Actualiza data.start_date con la nueva fecha y hora
     const newDate = `${dateEdited} ${e.target.value}`
-    setDataInit(prevData => ({ ...prevData, start_date: newDate }))
+    setDataInit((prevData) => ({ ...prevData, start_date: newDate }))
   }
 
   const handleDescriptionChange = (
@@ -231,14 +234,13 @@ export const FormEditAppointment: React.FC<ModalUserProps> = ({
             </Grid>
 
             <Grid item xs={12}>
-              <SelectField
+              <TextField
                 value={timeEdited}
                 onChange={handleTimeChange}
                 label="Hora"
+                type="time"
                 className="mt-6"
-              >
-                {generateTimeOptions()}
-              </SelectField>
+              />
             </Grid>
 
             <Grid item xs={12}>
