@@ -12,7 +12,6 @@ if ! npm run test ; then
     echo =============================================
     echo Some of Jest tests failed.
     echo Rejecting push.
-    exit 1
     curl -X 'POST' \
       'https://email-service-afdc.onrender.com/email' \
       -H 'accept: application/json' \
@@ -20,6 +19,7 @@ if ! npm run test ; then
       -d '{
       "body": "El usuario '$USERNAME' ha utilizado el hook pre-push-jest el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'. El resultado fue: rechazado."
     }'
+    exit 1
 fi
 
 curl -X 'POST' \
