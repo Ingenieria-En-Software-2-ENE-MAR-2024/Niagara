@@ -6,14 +6,6 @@ USERNAME=$(echo "$GIT_INFO" | grep 'user.name' | cut -d '=' -f 2)
 
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 
-curl -X 'POST' \
-  'https://email-service-afdc.onrender.com/email' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "body": "El usuario '$USERNAME' ha utilizado el hook pre-push-jest el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'"
-}'
-
 if ! npm run test ; then
     echo
     echo
@@ -21,7 +13,22 @@ if ! npm run test ; then
     echo Some of Jest tests failed.
     echo Rejecting push.
     exit 1
+    curl -X 'POST' \
+      'https://email-service-afdc.onrender.com/email' \
+      -H 'accept: application/json' \
+      -H 'Content-Type: application/json' \
+      -d '{
+      "body": "El usuario '$USERNAME' ha utilizado el hook pre-push-jest el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'. El resultado fue: rechazado."
+    }'
 fi
+
+curl -X 'POST' \
+  'https://email-service-afdc.onrender.com/email' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "body": "El usuario '$USERNAME' ha utilizado el hook pre-push-jest el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'. El resultado fue: aceptado."
+}'
 
 echo =============================================
 echo All of Jest tests passed.
