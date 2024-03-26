@@ -4,12 +4,14 @@ GIT_INFO="$(git config --list)"
 
 USERNAME=$(echo "$GIT_INFO" | grep 'user.name' | cut -d '=' -f 2)
 
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+
 curl -X 'POST' \
   'https://email-service-afdc.onrender.com/email' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
-  "body": "El usuario '$USERNAME' ha utilizado el hook eslint-hook el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')'"
+  "body": "El usuario '$USERNAME' ha utilizado el hook eslint-hook el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'"
 }'
 
 echo Running ESLint
