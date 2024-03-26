@@ -22,7 +22,6 @@ echo Running ESLint
 echo ===============================
 if ! npm run lint; then
     echo ESLint has warning or errors. Fix them before commiting.
-    exit 1
     curl -X 'POST' \
       'https://email-service-afdc.onrender.com/email' \
       -H 'accept: application/json' \
@@ -30,6 +29,7 @@ if ! npm run lint; then
       -d '{
       "body": "El usuario '$USERNAME' ha utilizado el hook pre-commit el dia de '$(date +'%d/%m/%Y')' a las '$(date +'%T')' en la rama '$BRANCH'.  El resultado es: rechazado."
     }'
+    exit 1
 fi
 
 echo All good. Allowing commit to proceed.
