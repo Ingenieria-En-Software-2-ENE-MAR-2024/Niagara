@@ -8,6 +8,7 @@ import rules from '@/helpers/formRules/medicalAppointment.rules'
 import { getSession } from 'next-auth/react'
 import Swal from 'sweetalert2'
 import { useRouter } from 'next/navigation'
+import { add } from 'date-fns'
 
 interface appointmentData {
   name: string
@@ -40,28 +41,23 @@ function MedicalAppointmetForm() {
     return doctors.filter((doctor: any) => doctor.speciality === medicalArea)
   }, [medicalArea, doctors])
 
-  //   handleSubmit
   const onSubmit = async (data: appointmentData) => {
-    const {
-      // name,
-      // lastName,
-      date,
-      description,
-      doctor,
-      // medicalArea,
-      // patientId,
-      time,
-    } = data
+    const { date, description, doctor, time } = data
+
+    const [year, month, day] = date.split('-')
+
+    const startDate = new Date(`${year}/${month}/${day} ${time}:00`)
+    const endDate = add(startDate, { hours: 1 })
 
     const dataSend = {
-      start_hour: time,
-      end_hour: time,
-      start_date: date,
-      end_date: date,
-      id_medic: parseInt(doctor),
-      id_patient: idPatient,
+      medic_id: visibleDoctors[0].medic_id,
+      patient_id: idPatient,
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString(),
       description,
     }
+
+    console.log(dataSend)
 
     try {
       const response = await fetch(
@@ -77,14 +73,13 @@ function MedicalAppointmetForm() {
       )
 
       if (!response.ok) {
-        // console.log(response)
         console.log('Appointment could not be saved')
         return
       }
       Swal.fire({
         position: 'top-end',
         icon: 'success',
-        title: 'Your work has been saved',
+        title: 'Cita creada exitosamente',
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
@@ -131,9 +126,11 @@ function MedicalAppointmetForm() {
     })
   }, [])
 
+  console.log(visibleDoctors)
+
   return (
     <Container>
-      <h1 className="mt-4 mb-4 text-center text-2xl font-medium tracking-tight text-gray-900">
+      <h1 className="mb-4 mt-4 text-center text-2xl font-medium tracking-tight text-gray-900">
         Agendar cita médica{' '}
       </h1>
       <form onSubmit={handleSubmit(onSubmit)}>

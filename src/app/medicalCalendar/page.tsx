@@ -186,7 +186,7 @@ export default function AppointmentTablePage() {
         />
       )}
       <Box className="box-content">
-        <Box sx={{ p: 4 }} className="pt-24">
+        <Box sx={{ p: 4 }} className="pt-4">
           <AppointmentFilter
             columns={columnsToFilter}
             rows={appointments}
