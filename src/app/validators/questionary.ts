@@ -30,7 +30,7 @@ export const baseQuestionType = z.object({
    * construye el formulario y tendría un json de la forma :
    * 
    * QuestionsType = 
-   * {
+   * [
    *    {
    *      type: "TEXT",
    *     question: "Cual es tu nombre",
@@ -40,7 +40,7 @@ export const baseQuestionType = z.object({
    *    type: "SELECT",
    *    question: "Cual es tu genero",
    *   }
-   * }
+   * ]
    */
 
   /**
@@ -48,16 +48,16 @@ export const baseQuestionType = z.object({
    * a poder enviar al back cuando se responda la pregunta. De igual forma el back tiene que poder
    * parsear para verificar que los datos recibidos son del tipo correcto
    * 
-   * QuestionsAnwsers = {
+   * QuestionsAnwsers = [
    *     ESTARIA MALO
    *    {
    *      question: "Cual es tu nombre",
    *      answer : 1321321321
    *    }
-   * }
+   * ]
    * 
    * 
-   *  QuestionsAnwsers = {
+   *  QuestionsAnwsers = [
    *     
    *    {
    *      question: "Cual es tu nombre",
@@ -74,5 +74,5 @@ export const baseQuestionType = z.object({
    * 
    *     answer : ["Diabetes", "Hipertension"]  
    *  }
-   * }
+   * ]
    */
