@@ -21,7 +21,7 @@ export const send_email = async (
     },
     to,
     subject,
-    text,
+    html: text,
   }
 
   try {

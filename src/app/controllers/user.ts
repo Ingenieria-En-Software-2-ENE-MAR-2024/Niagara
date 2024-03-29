@@ -12,6 +12,8 @@ import {
   delete_my_user,
   update_my_user,
   update_my_user_password,
+  insert_password_expiration,
+  update_password_expiration,
 } from '../services/user'
 import { error_object } from '../interfaces/error'
 import { validator_user_update } from '@/app/validators/user'
@@ -22,6 +24,7 @@ export const post_user = async (req: NextRequest) => {
     const body = await req.json()
     const data = validator_user_create(body)
     const new_user = await create_user(data)
+    await insert_password_expiration(new_user.id)
 
     return new_user
   } catch (error: any) {
@@ -184,6 +187,8 @@ export const update_user_password = async (
     const validatedBody = validator_user_update_password_body(body)
 
     const updatedUser = await update_my_user_password(validatedBody, accessToken)
+
+    await update_password_expiration(updatedUser.id)
 
     return updatedUser
   } catch (error: any) {

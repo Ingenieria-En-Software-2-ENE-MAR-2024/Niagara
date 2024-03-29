@@ -64,6 +64,7 @@ const error_message_dict: error_message_dictionary = {
   '0100': 'Body not found on request',
   '0101': 'Access Token not found on request',
   '0200': 'Error sending email',
+  '0201': 'Error executing cron job'
 }
 
 function get_message_for_code(code: string): string {

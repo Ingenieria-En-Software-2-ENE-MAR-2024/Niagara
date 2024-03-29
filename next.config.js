@@ -16,4 +16,7 @@ const nextConfig = {
     }
 }
 
+
 module.exports = nextConfig
+
+fetch("http://localhost:3000/api/cron").then().catch(()=>{console.log("loading")})
