@@ -22,6 +22,7 @@ model UserTest {
 model Admin {
   admin_id Int      @id
   user     UserTest @relation(fields: [admin_id], references: [id])
+  Questionary Questionary[]
 }
 
 model Medic {
@@ -41,10 +42,11 @@ model Patient {
 
 model Questionary {
   id             Int              @id @default(autoincrement())
-  title          String
+  admin_id       Int
   questionsType  Json
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
+  admin          Admin            @relation(fields: [admin_id], references: [admin_id])
   patientHistory PatientHistory[]
 }
 
