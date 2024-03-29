@@ -43,6 +43,7 @@ export const PacientProfile: React.FC<PacientProps> = ({ user, data }) => {
   const handleModal = (data: PacientProps) => {
     setDataModal(data)
     setOpen(true)
+    window.location.reload()
   }
 
   const handleEditProfile = (data: PacientProps) => {
