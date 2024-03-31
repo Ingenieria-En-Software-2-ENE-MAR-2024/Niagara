@@ -14,7 +14,8 @@ const  QuestionType  = [
 export const baseQuestionType = z.object({
     type: z.enum(QuestionType),
     question: z.string(),
-    
+    section: z.array(z.string()) // es para que el front sepa renderizar las preguntas por secciones  puede ser por ejemplo ["Datos personales"]
+    // Si es de secciones anidadas puede ser ["Datos personales", "Datos de contacto"] donde cada item representa un nivel de la seccion anidada.
     // si el tipo es  multiple se aceptara un array de strings
     // Si es de tipo text o select se aceptara un string
     // Si es de tipo number se aceptara un number nada de floats solo enteros
