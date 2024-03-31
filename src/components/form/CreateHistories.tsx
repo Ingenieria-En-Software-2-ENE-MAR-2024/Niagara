@@ -31,7 +31,7 @@ export default function History() {
         })
     }
 
-    const addQuestion = (sectionIndex) => {
+    const addQuestion = (sectionIndex: number) => {
         const newSections = [...form.sections]
         newSections[sectionIndex].questions.push({
             question: '',
