@@ -62,7 +62,7 @@ export default function Home() {
       } else if (userRole === 'Patient') {
         router.push('/niagarahome')
       } else if (userRole === 'Medic') {
-        router.push('/homeDummy1')
+        router.push('/homeMedic')
       }
     }
   }

@@ -51,7 +51,7 @@ export const routesInfo: RoutesInfo = {
     roles: ['Admin'],
     test: fulfills_any_role,
   },
-  '/homeDummy1': {
+  '/homeMedic': {
     roles: ['Medic'],
     test: fulfills_any_role,
   },
@@ -77,6 +77,18 @@ export const routesInfo: RoutesInfo = {
   },
   '/medicalCalendar': {
     roles: ['Medic'],
+    test: fulfills_any_role,
+  },
+  '/profile': {
+    roles: ['Patient', 'Medic'],
+    test: fulfills_any_role,
+  },
+  '/changePassword': {
+    roles: ['Patient', 'Medic'],
+    test: fulfills_any_role,
+  },
+  '/createMedicalHistory': {
+    roles: ['Admin'],
     test: fulfills_any_role,
   },
 }

@@ -19,7 +19,7 @@ export const config = {
   matcher: [
     '/login/:path*',
     '/homeAuth/:path*',
-    '/homeDummy1/:path*',
+    '/homeMedic/:path*',
     '/homeDummy2/:path*',
     '/homeDummy3/:path*',
     '/niagarahome/:path*',
@@ -27,5 +27,8 @@ export const config = {
     '/appointmentForm/:path*',
     '/appointments/:path*',
     '/medicalCalendar/:path*',
+    '/profile/:path*',
+    '/changePassword/:path*',
+    '/createMedicalHistory/:path*',
   ],
 }
