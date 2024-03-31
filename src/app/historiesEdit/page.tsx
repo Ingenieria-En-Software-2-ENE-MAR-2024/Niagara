@@ -9,7 +9,7 @@ export default function HistoriesEditPage() {
     <>
       <div className="flex min-h-screen flex-col items-center justify-center py-2">
         <h1>Aqui esta lo de nestor</h1>
-        <Form/>
+        {/*<Form/> */}
         <h1>Aqui esta lo nuevo</h1>
         <Histories/>
       </div>
