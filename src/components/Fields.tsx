@@ -71,6 +71,67 @@ export const SelectField = React.forwardRef<
   )
 })
 
+export const SingleSelectComponent = React.forwardRef<
+  HTMLSelectElement,
+  Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> & {
+    label?: string
+    className?: string
+    options: string[]
+  }
+>(({ label, className, options, ...props }, ref) => {
+  let id = useId()
+
+  return (
+    <div className={className}>
+      {label && <Label id={id}>{label}</Label>}
+      <select
+        ref={ref}
+        id={id}
+        {...props}
+        className={clsx(formClasses, 'pr-8')}
+      >
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+})
+
+export const MultiSelectComponent = React.forwardRef<
+  HTMLSelectElement,
+  Omit<React.ComponentPropsWithoutRef<'select'>, 'id'> & {
+    label?: string
+    className?: string
+    options: string[]
+  }
+>(({ label, className, options, ...props }, ref) => {
+  let id = useId()
+
+  return (
+    <div className={className}>
+      {label && <Label id={id}>{label}</Label>}
+      <select
+        ref={ref}
+        id={id}
+        {...props}
+        className={clsx(formClasses, 'pr-8')}
+        multiple
+      >
+        {options.map((option, index) => (
+          <option key={index} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+})
+
 TextField.displayName = 'TextField'
 TextArea.displayName = 'TextArea'
 SelectField.displayName = 'SelectField'
+SingleSelectComponent.displayName = 'SingleSelectComponent'
+MultiSelectComponent.displayName = 'MultiSelectComponent'
