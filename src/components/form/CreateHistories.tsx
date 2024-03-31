@@ -40,7 +40,7 @@ export default function History() {
         setForm({...form, sections: newSections})
     }
 
-    const onSubmit = form => {
+    const onSubmit = (form: any) => {
         console.log(form)
     }
 
