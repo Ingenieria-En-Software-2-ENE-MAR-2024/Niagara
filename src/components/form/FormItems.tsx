@@ -20,7 +20,5 @@ export interface IFormQuestion {
 export const components: any = {
   'short-text': ShortTextComponent,
   'long-text': LongTextComponent,
-  // 'single-choice': SingleChoiceComponent,
-  // 'multiple-choice': MultipleChoiceComponent,
-  // 'file-upload': FileUploadComponent,
+
 }

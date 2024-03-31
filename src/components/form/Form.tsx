@@ -22,6 +22,7 @@ export default function Form() {
     error: null,
   })
 
+
   const serverUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function Form() {
 
   const onSubmit = async ({ data }: any) => {
     console.log(data)
+
     axios
       .post(`${serverUrl}/api/forms`, {
         id_form: formData.data.id,
@@ -51,6 +53,7 @@ export default function Form() {
       .catch((error) => {
         console.error('Error:', error)
       })
+
   }
 
   return (
@@ -78,24 +81,17 @@ export default function Form() {
 
                     if (Component) {
                       return (
-                        // <Component
-                        //   key={index}
-                        //   label={field.label}
-                        //   options={field.options}
-                        //   register={register(`data[${index}].answer`)}
-                        // />
                         <Controller
                         key={index}
                           name={`data[${index}].answer`}
                           control={control}
                           defaultValue=""
                           render={({ field: myfield }) => (
-                            // <TextField {...field} label="Correo electrónico" type="email" />
+    
                             <Component
                               
                               label={label}
                               {...myfield}
-                            // options={field.options}
                             />
                           )}
                         />
@@ -108,12 +104,9 @@ export default function Form() {
                           control={control}
                           defaultValue=""
                           render={({ field: myfield }) => (
-                            // <TextField {...field} label="Correo electrónico" type="email" />
                             <SelectField
-                              
                               label={label}
                               {...myfield}
-                            // options={field.options}
                             >
                               {
                                 options.map((option: any, index: number) => { 
