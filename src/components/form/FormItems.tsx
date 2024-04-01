@@ -1,13 +1,15 @@
 import {
-TextField as ShortTextComponent,
-SelectField as SingleChoiceComponent,
-TextArea as LongTextComponent,
+  TextField as ShortTextComponent,
+  TextArea as LongTextComponent,
+  SelectField as SingleChoiceComponent,
+  SingleSelectComponent,
+  MultiSelectComponent
 } from '../Fields'
-
-  
 
 export const components: any = {
   'short-text': ShortTextComponent,
   'long-text': LongTextComponent,
-
+  'single-choice': SingleChoiceComponent,
+  'single-select': SingleSelectComponent,
+  'multi-select': MultiSelectComponent
 }
