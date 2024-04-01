@@ -11,5 +11,5 @@ export const components: any = {
   'long-text': LongTextComponent,
   'single-choice': SingleChoiceComponent,
   'single-select': SingleSelectComponent,
-  'multi-select': MultiSelectComponent
+  'multi-select': MultiSelectComponent,
 }

@@ -16,6 +16,7 @@ export default function History() {
           {
             question: '',
             type: '',
+            answers: '',
             options: '',
           },
         ],
@@ -34,6 +35,7 @@ export default function History() {
             {
               question: '',
               type: '',
+              answers: '',
               options: '',
             },
           ],
@@ -47,6 +49,7 @@ export default function History() {
     newSections[sectionIndex].questions.push({
       question: '',
       type: '',
+      answers: '',
       options: '',
     })
     setForm({ ...form, sections: newSections })
@@ -123,15 +126,17 @@ export default function History() {
                         <option value="">
                           Selecciona el tipo de respuesta
                         </option>
-                        <option value="text">Texto</option>
-                        <option value="number">Número</option>
-                        <option value="options">Opciones</option>
+                        <option value="TEXT">Texto</option>
+                        <option value="NUMBER">Número</option>
+                        <option value="DATE">Fecha</option>
+                        <option value="SIMPLE_SELECT">Selección Simple</option>
+                        <option value="MULTIPLE_SELECT">Selección Múltiple</option>
                       </select>
                     )}
                   />
                 </div>
 
-                {question.type === 'options' && (
+                {(question.type === "SIMPLE_SELECT" || question.type === "MULTIPLE_SELECT" ) && (
                   <Controller
                     name={`section-${sectionIndex}-question-${questionIndex}-options`}
                     control={control}
