@@ -20,22 +20,47 @@ model UserTest {
   profile  Profile?
 }
 
-model Medic {
-  medic_id     Int           @id
-  user         UserTest      @relation(fields: [medic_id], references: [id])
-  speciality   String
-  Appointments Appointment[]
-}
-
 model Admin {
   admin_id Int      @id
   user     UserTest @relation(fields: [admin_id], references: [id])
+  Questionary Questionary[]
+}
+
+model Medic {
+  medic_id       Int              @id
+  user           UserTest         @relation(fields: [medic_id], references: [id])
+  speciality     String
+  Appointments   Appointment[]
+  patientHistory PatientHistory[]
 }
 
 model Patient {
-  patient_id   Int           @id
-  user         UserTest      @relation(fields: [patient_id], references: [id])
-  Appointments Appointment[]
+  patient_id     Int             @id
+  user           UserTest        @relation(fields: [patient_id], references: [id])
+  Appointments   Appointment[]
+  patientHistory PatientHistory?
+}
+
+model Questionary {
+  id             Int              @id @default(autoincrement())
+  admin_id       Int
+  questionsType  Json
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  admin          Admin            @relation(fields: [admin_id], references: [admin_id])
+  patientHistory PatientHistory[]
+}
+
+model PatientHistory {
+  patient_id       Int         @id
+  medic_id         Int
+  questionsAnwsers Json
+  questionary_id   Int
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  questionary      Questionary @relation(fields: [questionary_id], references: [id])
+  patient          Patient     @relation(fields: [patient_id], references: [patient_id])
+  medic            Medic       @relation(fields: [medic_id], references: [medic_id])
 }
 
 model Appointment {
