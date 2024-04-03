@@ -13,6 +13,7 @@ const  QuestionsType  = [
 
 export const history_template_schema = z.object({
     type: z.enum(QuestionsType),
+    options: z.array(z.string()).optional(),
     question: z.string(),
     section: z.array(z.string()) // es para que el front sepa renderizar las preguntas por secciones  puede ser por ejemplo ["Datos personales"]
     // Si es de secciones anidadas puede ser ["Datos personales", "Datos de contacto"] donde cada item representa un nivel de la seccion anidada.
@@ -149,6 +150,16 @@ const validateQuestionsEquality = (questions1: any[], questions2: any[]): boolea
         if (questions1[i].question !== questions2[i].question) {
             return false;
         }
+
+        if(questions1[i].type=== "SIMPLE_SELECT" ||questions1[i].type=== "SIMPLE_SELECT_OTHERS"){
+           if(!(questions1[i].options.includes(questions2[i].answer)))
+            return false;
+        }
+
+        if(questions1[i].type=== "MULTIPLE_SELECT" ||questions1[i].type=== "MULTIPLE_SELECT_OTHERS"){
+            if(!(questions2[i].answer.every((elemento: any) => questions1[i].options.includes(elemento))))
+             return false;
+         }
     }
     return true;
 };
@@ -191,7 +202,7 @@ const validateAnswers = (questions: any[], answers: any[]): boolean => {
 // Función de validación completa
 export const validateQuestionnaire = (questions: any[], answers: any[]): boolean => {
     if (!validateQuestionsEquality(questions, answers)) {
-        throw new Error('Error validating answers, questions do not match');
+        throw new Error('Error validating answers, questions or Selection answers do not match');
     }
     if (!validateAnswers(questions, answers)) {
        throw new Error('Error validating answers, answers types are not correct')
