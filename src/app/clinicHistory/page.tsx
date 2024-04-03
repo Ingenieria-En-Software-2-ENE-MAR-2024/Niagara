@@ -17,7 +17,7 @@ interface HistoryProps {
   }
 }
 
-const History: React.FC<HistoryProps> = () => {
+const History: React.FC = () => {
   const data = {
     patient_id: 2,
     questionary_id: 1,
