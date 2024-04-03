@@ -139,8 +139,84 @@ const obtain_medical_history = async () => {
     }
 }
 
+const update_medical_history = async (medic_id:number,body: Tmedic_history_create_body) => {
+  try {
+      const found_admin = await await prisma.medic.findFirst({
+          where: {
+            user:{
+              id: medic_id
+            }
+          },
+      });
+
+      if (!found_admin) {
+          throw new Error('medic does not exists')
+      }
+
+      const found_patient = await await prisma.patient.findFirst({
+          where: {
+            user:{
+              id: body.patient_id
+            }
+          },
+      });
+
+    if (!found_patient) {
+        throw new Error('patient does not exists')
+    }
+
+      const updated_medical_history = await prisma.patientHistory.update({
+          where: { patient_id: body.patient_id },
+          data: body,
+      })
+      
+      if (!updated_medical_history) {
+          throw new Error('Error updating medical History')
+      }
+
+      const read_medicalHistory = await prisma.patientHistory.findUnique({
+          where: {
+              patient_id:updated_medical_history.patient_id
+          },
+          include: {
+              patient: {
+                include:{
+                  user:{
+                      select:{
+                          name: true,
+                          email: true,
+                          ci: true,
+                          password:false
+                      }
+                  }
+                }
+              } ,
+              medic:{
+                include:{
+                  user: {
+                      select:{
+                          name: true,
+                          email: true,
+                          ci: true,
+                          password:false
+                      }
+                  }
+                }
+              },
+              questionary:true
+            }
+      }) 
+     
+    
+      return read_medicalHistory;
+  } catch (error) {
+      throw error
+  }
+}
+
 export const medicalHistoryTemplateService = {
     create_medical_history,
-    obtain_medical_history
+    obtain_medical_history,
+    update_medical_history,
   }
   
