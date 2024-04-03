@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { components } from './FormItems'
 import { Controller, useForm } from 'react-hook-form'
+import { getSession } from 'next-auth/react'
 import { Button } from '../Button'
 import { SelectField } from '../Fields'
 import AddIcon from '@mui/icons-material/Add'
+import Swal from 'sweetalert2'
 
 interface Question {
   type: string;
@@ -17,6 +19,7 @@ interface TransformedData {
 }
 
 export default function History() {
+  const [token, setToken] = useState<any>(null)
   const { control, handleSubmit } = useForm()
   const [form, setForm] = useState({
     sections: [
@@ -65,7 +68,11 @@ export default function History() {
     setForm({ ...form, sections: newSections })
   }
 
-  const onSubmit = (form: any) => {
+  const onSubmit = async (form: any) => {
+
+    getSession().then((result) => {
+      setToken(result?.user?.accessToken)
+    })
 
     const transformedData: TransformedData = {
       QuestionType: [],
@@ -110,6 +117,40 @@ export default function History() {
     })
 
     console.log(transformedData)
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/historyTemplate`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'access-token': `Bearer ${token}`,
+          },
+          body: JSON.stringify(transformedData),
+        },
+      )
+  
+      if (!response.ok) {
+        console.log('Las preguntas del historial clínico no se pudieron enviar')
+        return
+      }
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Las preguntas del historial clínico se enviaron correctamente',
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        console.log('Las preguntas del historial clínico se guardaron')
+
+      })
+    } catch (e) {
+      console.log('Ocurrió un error al guardar las preguntas del historial clínico')
+      return
+    }
+
+
   }
 
   const handleTypeChange = (
