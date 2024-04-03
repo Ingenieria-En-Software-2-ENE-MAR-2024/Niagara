@@ -104,13 +104,32 @@ const create_medical_history = async (medic_id:number,body: Tmedic_history_creat
 const obtain_medical_history = async () => {
   try {
     const read_medicalHistory= {
-      patient_id: 4,
-      medic_id: 1,
-      questionary_id: 13,
-      questionsAnwsers: [
-        { question: 'Cual es tu nombre', answer: 'Jonathan' },
-        { question: 'Cual es tu genero', answer: 'Femenino' },
-        { question: 'Cual es tu edado', answer: 25 }
+      "patient_id": 2,
+      "questionary_id": 2,
+      "QuestionsAnwsers": [
+        {
+          "question": "Cual es tu nombre",
+          "answer": "Jonathan bautista"
+        },
+        {
+          "question": "Cual es su genero",
+          "answer": "Masculino"
+        },
+        {
+          "question": "Cuantas enfermedades tiene",
+          "answer": [
+            "Opcion1",
+            "Opcion3"
+          ]
+        },
+        {
+          "question": "Fecha de nacimiento",
+          "answer": "1999-23-03"
+        },
+        {
+          "question": "Cual es tu edad",
+          "answer": 25
+        }
       ]
     }
     return read_medicalHistory;

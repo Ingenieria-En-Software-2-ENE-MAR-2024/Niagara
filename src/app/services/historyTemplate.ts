@@ -61,20 +61,32 @@ const create_history_template = async (admin_id:number,body: Thistory_template_c
         admin_id: 2,
         questionsType: [
           {
-            type: 'TEXT',
-            section: ['Datos personales'],
-            question: 'Cual es tu nombre',
+            "type": "TEXT",
+            "question": "Cual es tu nombre",
+             "section":["Datos personales"]
+           },
+          {
+           "type": "SIMPLE_SELECT",
+            "question": "Cual es su genero",
+           "options": ["Masculino","Femenino"],
+           "section":["Datos personales"]
+          },
+        {
+           "type": "MULTIPLE_SELECT",
+           "question": "Cuantas enfermedades tiene",
+           "options": ["Opcion1","Opcion2","Opcion3"],
+           "section":["Datos personales","Paciente"]
+          },
+        {
+           "type": "DATE",
+           "question": "Fecha de nacimiento",
+           "section":["Datos personales","Paciente"]
           },
           {
-            type: 'SIMPLE_SELECT',
-            section: ['Datos personales'],
-            question: 'Cual es tu genero',
-          },
-          {
-            type: 'NUMBER',
-            section: ['Datos personales'],
-            question: 'Cual es tu edado',
-          },
+           "type": "NUMBER",
+           "question": "Cual es tu edad",
+            "section":["Datos personales"]
+          }
         ],
         createdAt: '2024-04-03T17:53:00.417Z',
         updatedAt: '2024-04-03T17:53:00.417Z',
