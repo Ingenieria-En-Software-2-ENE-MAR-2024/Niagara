@@ -101,8 +101,27 @@ const create_medical_history = async (medic_id:number,body: Tmedic_history_creat
   
   }
 
+const obtain_medical_history = async () => {
+  try {
+    const read_medicalHistory= {
+      patient_id: 4,
+      medic_id: 1,
+      questionary_id: 13,
+      questionsAnwsers: [
+        { question: 'Cual es tu nombre', answer: 'Jonathan' },
+        { question: 'Cual es tu genero', answer: 'Femenino' },
+        { question: 'Cual es tu edado', answer: 25 }
+      ]
+    }
+    return read_medicalHistory;
+
+    } catch (error) {
+      throw error
+    }
+}
 
 export const medicalHistoryTemplateService = {
     create_medical_history,
+    obtain_medical_history
   }
   

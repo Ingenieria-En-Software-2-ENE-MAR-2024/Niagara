@@ -45,8 +45,40 @@ const post_history_template = async (req: NextRequest) => {
     }
 }
 
+const get_history_template = async (req: NextRequest) => {
+    try {
+        let accessToken = headers().get('access-token')
+
+        if (!accessToken) {
+            const handle_err: error_object = handle_error_http_response(
+                new Error('Unauthorized'),
+                '0101',
+            )
+            throw new custom_error(
+                handle_err.error_message,
+                handle_err.error_message_detail,
+                handle_err.error_code,
+                handle_err.status,
+            )
+        }
+        const user_payload = verifyJwt(accessToken);
+        const new_historyTemplate = await  historyTemplateService.obtain_all_history_template()
+
+        return  new_historyTemplate;
+    } catch (error: any) {
+        const handle_err: error_object = handle_error_http_response(error, '0300')
+        throw new custom_error(
+            handle_err.error_message,
+            handle_err.error_message_detail,
+            handle_err.error_code,
+            handle_err.status,
+        )
+    }
+}
+
 
 export const historyTemplateController = {
     post_history_template,
+    get_history_template
    
 }
