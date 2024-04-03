@@ -40,7 +40,11 @@ const Menu: React.FC = () => {
       } else if (userRole === 'Patient') {
         items.push({
           title: 'Gestión de Citas',
-          link: '/appointments'
+          link: '/appointments',
+        })
+        items.push({
+          title: 'Ver historial clínico',
+          link: '/clinicHistory',
         })
       }
 
