@@ -1,10 +1,20 @@
 import { useEffect, useState } from 'react'
 import { components } from './FormItems'
-import axios from 'axios'
 import { Controller, useForm } from 'react-hook-form'
 import { Button } from '../Button'
 import { SelectField } from '../Fields'
 import AddIcon from '@mui/icons-material/Add'
+
+interface Question {
+  type: string;
+  question: string;
+  section: string[];
+  options: string[];
+}
+
+interface TransformedData {
+  QuestionType: Question[];
+}
 
 export default function History() {
   const { control, handleSubmit } = useForm()
@@ -56,7 +66,50 @@ export default function History() {
   }
 
   const onSubmit = (form: any) => {
-    console.log(form)
+
+    const transformedData: TransformedData = {
+      QuestionType: [],
+    };
+
+    // Extraer las claves del formulario
+    const keys = Object.keys(form)
+
+    // Agrupar las preguntas por sección
+    const sections: any = {}
+    keys.forEach((key) => {
+      const [prefix, sectionIndex, question, questionIndex, field] =
+        key.split('-')
+      if (prefix === 'section' && question) {
+        if (!sections[sectionIndex]) {
+          sections[sectionIndex] = {
+            title: form[`section-${sectionIndex}`],
+            questions: [],
+          }
+        }
+        if (!sections[sectionIndex].questions[questionIndex]) {
+          sections[sectionIndex].questions[questionIndex] = {
+            type: '',
+            question: form.sections[sectionIndex].questions[questionIndex].question,
+            options: '',
+          }
+        }
+        sections[sectionIndex].questions[questionIndex][field] = form[key]
+      }
+    })
+
+    // Transformar las secciones y preguntas al formato requerido
+    Object.values(sections).forEach((section: any) => {
+      section.questions.forEach((question: any) => {
+        transformedData.QuestionType.push({
+          type: question.type,
+          question: question.question,
+          section: [section.title],
+          options: question.options ? question.options.split(',') : [],
+        })
+      })
+    })
+
+    console.log(transformedData)
   }
 
   const handleTypeChange = (
@@ -85,7 +138,7 @@ export default function History() {
                 {...field}
                 type="text"
                 placeholder="Título de la sección"
-                className="w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500 mb-2"
+                className="mb-2 w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
               />
             )}
           />
@@ -93,7 +146,7 @@ export default function History() {
             {section.questions.map((question, questionIndex) => (
               <div key={questionIndex} className="w-full space-y-2">
                 <Controller
-                  name={`section-${sectionIndex}-question-${questionIndex}`}
+                  name={`sections[${sectionIndex}].questions[${questionIndex}].question`}
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
@@ -130,13 +183,16 @@ export default function History() {
                         <option value="NUMBER">Número</option>
                         <option value="DATE">Fecha</option>
                         <option value="SIMPLE_SELECT">Selección Simple</option>
-                        <option value="MULTIPLE_SELECT">Selección Múltiple</option>
+                        <option value="MULTIPLE_SELECT">
+                          Selección Múltiple
+                        </option>
                       </select>
                     )}
                   />
                 </div>
 
-                {(question.type === "SIMPLE_SELECT" || question.type === "MULTIPLE_SELECT" ) && (
+                {(question.type === 'SIMPLE_SELECT' ||
+                  question.type === 'MULTIPLE_SELECT') && (
                   <Controller
                     name={`section-${sectionIndex}-question-${questionIndex}-options`}
                     control={control}
@@ -166,7 +222,7 @@ export default function History() {
       <Button type="button" onClick={addSection} className="bg-primary">
         <AddIcon className="mr-1 inline-block h-5 w-5" /> Agregar Sección
       </Button>
-      <div className='flex justify-center'>
+      <div className="flex justify-center">
         <Button type="submit" className="bg-primary">
           Enviar
         </Button>
