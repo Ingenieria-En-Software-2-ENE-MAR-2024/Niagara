@@ -60,7 +60,7 @@ const Menu: React.FC = () => {
             link: '/appointments',
           },
         )
-      } else if (userRole === 'Admin') {
+      } else if (userRole === 'admin') {
         items.push(
           {
             title: 'Creación Historias Clínicas',

@@ -54,7 +54,7 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ menuItems }) => {
         return '/niagarahome'
       case 'Medic':
         return '/homeMedic'
-      case 'Admin':
+      case 'admin':
         return '/admin'
       default:
         return '/'

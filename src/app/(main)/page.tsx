@@ -56,7 +56,7 @@ export default function Home() {
       const userRole = session?.user?.role
 
       // Redirect to the appropriate page based on the user's role
-      if (userRole === 'Admin') {
+      if (userRole === 'admin') {
         router.push('/admin')
       } else if (userRole === 'Patient') {
         router.push('/niagarahome')

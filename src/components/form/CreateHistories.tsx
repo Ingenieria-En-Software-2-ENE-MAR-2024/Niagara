@@ -114,7 +114,7 @@ export default function History() {
       })
     })
 
-    console.log(transformedData)
+    // console.log(transformedData)
 
     try {
       const response = await fetch(
@@ -128,7 +128,6 @@ export default function History() {
           body: JSON.stringify(transformedData),
         },
       )
-      console.log(token)
       if (!response.ok) {
         console.log('Las preguntas del historial clínico no se pudieron enviar')
         return

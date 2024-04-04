@@ -180,14 +180,14 @@ export default function Register() {
           <Controller
             name="role"
             control={control}
-            defaultValue="Admin"
+            defaultValue="Patient"
             render={({ field }) => (
               <SelectField
                 {...field}
                 className="col-span-full mt-6"
                 label="Tipo de usuario"
               >
-                <option value="Admin">Admin</option>
+                <option value="admin">Admin</option>
                 <option value="Patient">Paciente</option>
                 <option value="Medic">Doctor</option>
               </SelectField>
