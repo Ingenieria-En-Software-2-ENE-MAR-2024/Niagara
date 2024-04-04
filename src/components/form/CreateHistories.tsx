@@ -69,10 +69,8 @@ export default function History() {
   }
 
   const onSubmit = async (form: any) => {
-
-    getSession().then((result) => {
-      setToken(result?.user?.accessToken)
-    })
+    const session = await getSession()
+    const token = session?.user?.accessToken
 
     const transformedData: TransformedData = {
       QuestionType: [],
@@ -130,7 +128,7 @@ export default function History() {
           body: JSON.stringify(transformedData),
         },
       )
-  
+      console.log(token)
       if (!response.ok) {
         console.log('Las preguntas del historial clínico no se pudieron enviar')
         return
