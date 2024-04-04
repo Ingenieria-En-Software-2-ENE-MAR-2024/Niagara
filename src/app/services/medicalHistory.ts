@@ -165,9 +165,16 @@ const update_medical_history = async (medic_id:number,body: Tmedic_history_creat
         throw new Error('patient does not exists')
     }
 
+      const medicalHistoryData = {
+          patient_id:body.patient_id,
+          medic_id,
+          questionary_id : body.questionary_id,
+          questionsAnwsers: body.QuestionsAnwsers
+      }
+
       const updated_medical_history = await prisma.patientHistory.update({
           where: { patient_id: body.patient_id },
-          data: body,
+          data: medicalHistoryData,
       })
       
       if (!updated_medical_history) {
