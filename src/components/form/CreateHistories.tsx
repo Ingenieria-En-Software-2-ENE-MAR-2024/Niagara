@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import { components } from './FormItems'
 import { Controller, useForm } from 'react-hook-form'
 import { getSession } from 'next-auth/react'
 import { Button } from '../Button'
-import { SelectField } from '../Fields'
 import AddIcon from '@mui/icons-material/Add'
 import Swal from 'sweetalert2'
 
