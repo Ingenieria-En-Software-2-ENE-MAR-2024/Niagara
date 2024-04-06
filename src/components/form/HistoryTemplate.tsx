@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 
+
 export type Question = {
   type: string;
   question: string;
@@ -13,11 +14,11 @@ type TemplateProps = {
 }
 
 const OptionTypes: { [key: string]: string } = {
-    "TEXT": "Texto",
-    "NUMBER": "Número",
-    "DATE": "Fecha",
-    "SIMPLE_SELECT": "Selección Simple",
-    "MULTIPLE_SELECT": "Selección Múltiple"
+  "TEXT": "Texto",
+  "NUMBER": "Número",
+  "DATE": "Fecha",
+  "SIMPLE_SELECT": "Selección Simple",
+  "MULTIPLE_SELECT": "Selección Múltiple"
 }
 
 export const Template: React.FC<TemplateProps> = ({ items }) => {
