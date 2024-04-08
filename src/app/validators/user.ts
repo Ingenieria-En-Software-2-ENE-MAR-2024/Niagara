@@ -37,3 +37,14 @@ export const validator_user_update_password_body = (body: TUser_update_password_
   const its_validated = user_update_password_body.parse(body)
   return its_validated
 }
+
+
+const user_data = z.object({
+  id: z.number(),
+  role: z.string(),
+})
+
+export const validator_user_data = (body: any) => {
+  const its_validated = user_data.parse(body)
+  return its_validated
+}

@@ -9,6 +9,7 @@ import { validator_history_template, validator_medic_history } from '../validato
 import { verifyJwt } from '@/helpers/jwt'
 import { historyTemplateService } from '../services/historyTemplate'
 import { medicalHistoryTemplateService } from '../services/medicalHistory'
+import {validator_user_data } from '../validators/user'
 
 
 
@@ -47,7 +48,74 @@ const post_medical_history = async (req: NextRequest) => {
 }
 
 
+const get_medical_history = async (req: NextRequest, patient_id: string) => {
+    try {
+        let accessToken = headers().get('access-token')
+
+        if (!accessToken) {
+            const handle_err: error_object = handle_error_http_response(
+                new Error('Unauthorized'),
+                '0101',
+            )
+            throw new custom_error(
+                handle_err.error_message,
+                handle_err.error_message_detail,
+                handle_err.error_code,
+                handle_err.status,
+            )
+        }
+
+        const user_payload = verifyJwt(accessToken);
+        const user = validator_user_data(user_payload)
+        const medical_history = await  medicalHistoryTemplateService.medical_history_by_id(user, Number(patient_id))
+
+        return medical_history
+    } catch (error: any) {
+        const handle_err: error_object = handle_error_http_response(error, '0401')
+        throw new custom_error(
+            handle_err.error_message,
+            handle_err.error_message_detail,
+            handle_err.error_code,
+            handle_err.status,
+        )
+    }
+}
+
+const put_medical_history = async (req: NextRequest) => {
+    try {
+        const body = await req.json()
+        const data = validator_medic_history(body)
+
+        let accessToken = headers().get('access-token')
+
+        if (!accessToken) {
+            const handle_err: error_object = handle_error_http_response(
+                new Error('Unauthorized'),
+                '0101',
+            )
+            throw new custom_error(
+                handle_err.error_message,
+                handle_err.error_message_detail,
+                handle_err.error_code,
+                handle_err.status,
+            )
+        }
+        const user_payload = verifyJwt(accessToken);
+        const updated_medical_history = await  medicalHistoryTemplateService.update_medical_history(user_payload.id,data)
+
+        return updated_medical_history
+    } catch (error: any) {
+        const handle_err: error_object = handle_error_http_response(error, '0400')
+        throw new custom_error(
+            handle_err.error_message,
+            handle_err.error_message_detail,
+            handle_err.error_code,
+            handle_err.status,
+        )
+    }
+}
 export const medicalHistoryController = {
     post_medical_history,
-   
+    get_medical_history,
+    put_medical_history,
 }

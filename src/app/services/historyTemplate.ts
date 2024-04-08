@@ -42,7 +42,24 @@ const create_history_template = async (admin_id:number,body: Thistory_template_c
   }
 
 
-export const historyTemplateService = {
-    create_history_template,
+  const obtain_all_history_template = async () => {
+    try {
+      const found_admin = await prisma.admin.findFirst()
+  
+      if (!found_admin) {
+        throw new Error('Admin does not exists')
+      }
+  
+      const all_history_template = await prisma.questionary.findMany()
+      
+      return all_history_template
+    } catch (error) {
+      throw error
+    }
   }
   
+  
+  export const historyTemplateService = {
+    create_history_template,
+    obtain_all_history_template,
+  }
