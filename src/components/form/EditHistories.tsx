@@ -5,6 +5,7 @@ import { Button } from '../Button'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import Swal from 'sweetalert2'
+import { v4 as uuidv4 } from 'uuid'
 
 interface Question {
   type: string
@@ -18,11 +19,11 @@ interface TransformedData {
 }
 
 const OptionTypes: { [key: string]: string } = {
-  "TEXT": "Texto",
-  "NUMBER": "Número",
-  "DATE": "Fecha",
-  "SIMPLE_SELECT": "Selección Simple",
-  "MULTIPLE_SELECT": "Selección Múltiple"
+  TEXT: 'Texto',
+  NUMBER: 'Número',
+  DATE: 'Fecha',
+  SIMPLE_SELECT: 'Selección Simple',
+  MULTIPLE_SELECT: 'Selección Múltiple',
 }
 
 export default function EditHistory() {
@@ -31,28 +32,33 @@ export default function EditHistory() {
   const [form, setForm] = useState({
     sections: [
       {
-        title: "Datos Personales",
+        id: uuidv4(),
+        title: 'Datos Personales',
         questions: [
           {
-            question: "Nombre",
-            type: "TEXT",
+            id: uuidv4(),
+            question: 'Nombre',
+            type: 'TEXT',
             answers: '',
             options: '',
           },
           {
-            question: "Género",
-            type: "SIMPLE_SELECT",
+            id: uuidv4(),
+            question: 'Género',
+            type: 'SIMPLE_SELECT',
             answers: '',
-            options: ["Masculino", "Femenino", "Otro"],
+            options: ['Masculino', 'Femenino', 'Otro'],
           },
         ],
       },
       {
-        title: "Datos Laborales",
+        id: uuidv4(),
+        title: 'Datos Laborales',
         questions: [
           {
-            question: "Ocupación",
-            type: "TEXT",
+            id: uuidv4(),
+            question: 'Ocupación',
+            type: 'TEXT',
             answers: '',
             options: '',
           },
@@ -62,14 +68,16 @@ export default function EditHistory() {
   })
 
   const addSection = () => {
-    setForm(prevForm => ({
+    setForm((prevForm) => ({
       ...prevForm,
       sections: [
         ...prevForm.sections,
         {
+          id: uuidv4(), 
           title: '',
           questions: [
             {
+              id: uuidv4(), 
               question: '',
               type: '',
               answers: '',
@@ -80,37 +88,54 @@ export default function EditHistory() {
       ],
     }))
   }
-  
-  const removeSection = (sectionIndex: number) => {
-    setForm(prevForm => {
+
+  const removeSection = (sectionId: string) => {
+    setForm((prevForm) => {
       return {
         ...prevForm,
-        sections: prevForm.sections.filter((_, index) => index !== sectionIndex),
+        sections: prevForm.sections.filter(
+          (section) => section.id !== sectionId,
+        ),
       }
     })
   }
-  
+
   const addQuestion = (sectionIndex: number) => {
-    setForm(prevForm => {
-      const newSections = [...prevForm.sections]
-      newSections[sectionIndex].questions.push({
+    setForm((prevForm) => {
+      // Hacer una copia profunda del estado anterior
+      const newForm = JSON.parse(JSON.stringify(prevForm))
+  
+      // Agregar una nueva pregunta a la sección correspondiente
+      newForm.sections[sectionIndex].questions.push({
+        id: uuidv4(),
         question: '',
         type: '',
         answers: '',
         options: '',
       })
+  
+      // Devolver el nuevo estado
+      return newForm
+    })
+  }
+
+  const removeQuestion = (sectionId: string, questionId: string) => {
+    setForm((prevForm) => {
+      const newSections = prevForm.sections.map((section) => {
+        if (section.id === sectionId) {
+          return {
+            ...section,
+            questions: section.questions.filter(
+              (question) => question.id !== questionId,
+            ),
+          }
+        } else {
+          return section
+        }
+      })
       return { ...prevForm, sections: newSections }
     })
   }
-  
-  const removeQuestion = (sectionIndex: number, questionIndex: number) => {
-    setForm(prevForm => {
-      const newSections = [...prevForm.sections]
-      newSections[sectionIndex].questions.splice(questionIndex, 1)
-      return { ...prevForm, sections: newSections }
-    })
-  }
-  
 
   const onSubmit = async (form: any) => {
     const session = await getSession()
@@ -138,7 +163,8 @@ export default function EditHistory() {
         if (!sections[sectionIndex].questions[questionIndex]) {
           sections[sectionIndex].questions[questionIndex] = {
             type: '',
-            question: form.sections[sectionIndex].questions[questionIndex].question,
+            question:
+              form.sections[sectionIndex].questions[questionIndex].question,
             options: '',
           }
         }
@@ -191,7 +217,6 @@ export default function EditHistory() {
       return
     }
     */
-
   }
 
   const handleTypeChange = (
@@ -208,10 +233,10 @@ export default function EditHistory() {
     <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
       {form.sections.map((section, sectionIndex) => (
         <div
-          key={sectionIndex}
+          key={section.id}
           className="space-y-2 border-b-2 border-gray-200 pb-4"
         >
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <Controller
               name={`section-${sectionIndex}`}
               control={control}
@@ -221,13 +246,13 @@ export default function EditHistory() {
                   {...field}
                   type="text"
                   placeholder="Título de la sección"
-                  className="mb-2 w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500 mr-2"
+                  className="mb-2 mr-2 w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
                 />
               )}
             />
             <Button
               type="button"
-              onClick={() => removeSection(sectionIndex)}
+              onClick={() => removeSection(section.id)}
               className="bg-red-500 p-1"
             >
               <DeleteIcon className="mr-1 inline-block h-5 w-5" />
@@ -235,20 +260,29 @@ export default function EditHistory() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {section.questions.map((question, questionIndex) => (
-              <div key={questionIndex} className="w-full space-y-2">
-                <Controller
-                  name={`sections[${sectionIndex}].questions[${questionIndex}].question`}
-                  control={control}
-                  defaultValue={section.questions[questionIndex].question}
-                  render={({ field }) => (
-                    <input
-                      {...field}
-                      type="text"
-                      placeholder="Pregunta"
-                      className="w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
-                    />
-                  )}
-                />
+              <div key={question.id} className="w-full space-y-2">
+                <div className="flex items-center justify-between">
+                  <Controller
+                    name={`sections[${sectionIndex}].questions[${questionIndex}].question`}
+                    control={control}
+                    defaultValue={section.questions[questionIndex].question}
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="text"
+                        placeholder="Pregunta"
+                        className="w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
+                      />
+                    )}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => removeQuestion(section.id, question.id)}
+                    className="bg-red-500 ml-2 p-1"
+                  >
+                    <DeleteIcon className="mr-1 inline-block h-5 w-5" />
+                  </Button>
+                </div>
                 <div className="w-full">
                   <Controller
                     name={`section-${sectionIndex}-question-${questionIndex}-type`}
@@ -296,13 +330,6 @@ export default function EditHistory() {
                     )}
                   />
                 )}
-                <Button
-                  type="button"
-                  onClick={() => removeQuestion(sectionIndex, questionIndex)}
-                  className="bg-red-500"
-                >
-                  <DeleteIcon className="mr-1 inline-block h-5 w-5" />
-                </Button>
               </div>
             ))}
           </div>
@@ -311,7 +338,8 @@ export default function EditHistory() {
             onClick={() => addQuestion(sectionIndex)}
             className="bg-primary"
           >
-            <AddIcon className="mr-1 inline-block h-5 w-5" />Agregar Pregunta
+            <AddIcon className="mr-1 inline-block h-5 w-5" />
+            Agregar Pregunta
           </Button>
         </div>
       ))}

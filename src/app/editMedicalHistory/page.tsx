@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react' 
 import Menu from '@/components/Menu'
-import History from '@/components/form/CreateHistories'
+import EditHistory from '@/components/form/EditHistories'
 
 
-export default function CreateMedicalHistoryPage() {
+export default function EditMedicalHistoryPage() {
 
   return (
     <>
@@ -14,7 +14,7 @@ export default function CreateMedicalHistoryPage() {
         <h1 className="text-2xl font-bold">Historia Clínica</h1>
         <div className="mx-auto mt-4 w-full max-w-5xl">
           
-          <History />
+          <EditHistory />
         
         </div>
       </div>

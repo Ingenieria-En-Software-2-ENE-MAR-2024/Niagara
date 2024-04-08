@@ -91,6 +91,14 @@ export const routesInfo: RoutesInfo = {
     roles: ['admin'],
     test: fulfills_any_role,
   },
+  '/editMedicalHistory': {
+    roles: ['admin'],
+    test: fulfills_any_role,
+  },
+  '/medicalHistory': {
+    roles: ['admin'],
+    test: fulfills_any_role,
+  },
 }
 
 const routesInfoKeys: string[] = Object.keys(routesInfo)

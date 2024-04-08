@@ -3,17 +3,19 @@ import { Controller, useForm } from 'react-hook-form'
 import { getSession } from 'next-auth/react'
 import { Button } from '../Button'
 import AddIcon from '@mui/icons-material/Add'
+import DeleteIcon from '@mui/icons-material/Delete'
 import Swal from 'sweetalert2'
+import { v4 as uuidv4 } from 'uuid'
 
 interface Question {
-  type: string;
-  question: string;
-  section: string[];
-  options: string[];
+  type: string
+  question: string
+  section: string[]
+  options: string[]
 }
 
 interface TransformedData {
-  QuestionType: Question[];
+  QuestionType: Question[]
 }
 
 export default function History() {
@@ -22,9 +24,11 @@ export default function History() {
   const [form, setForm] = useState({
     sections: [
       {
+        id: uuidv4(),
         title: '',
         questions: [
           {
+            id: uuidv4(),
             question: '',
             type: '',
             answers: '',
@@ -41,9 +45,11 @@ export default function History() {
       sections: [
         ...form.sections,
         {
+          id: uuidv4(),
           title: '',
           questions: [
             {
+              id: uuidv4(),
               question: '',
               type: '',
               answers: '',
@@ -55,9 +61,21 @@ export default function History() {
     })
   }
 
+  const removeSection = (sectionId: string) => {
+    setForm((prevForm) => {
+      return {
+        ...prevForm,
+        sections: prevForm.sections.filter(
+          (section) => section.id !== sectionId,
+        ),
+      }
+    })
+  }
+
   const addQuestion = (sectionIndex: number) => {
     const newSections = [...form.sections]
     newSections[sectionIndex].questions.push({
+      id: uuidv4(),
       question: '',
       type: '',
       answers: '',
@@ -66,13 +84,31 @@ export default function History() {
     setForm({ ...form, sections: newSections })
   }
 
+  const removeQuestion = (sectionId: string, questionId: string) => {
+    setForm((prevForm) => {
+      const newSections = prevForm.sections.map((section) => {
+        if (section.id === sectionId) {
+          return {
+            ...section,
+            questions: section.questions.filter(
+              (question) => question.id !== questionId,
+            ),
+          }
+        } else {
+          return section
+        }
+      })
+      return { ...prevForm, sections: newSections }
+    })
+  }
+
   const onSubmit = async (form: any) => {
     const session = await getSession()
     const token = session?.user?.accessToken
 
     const transformedData: TransformedData = {
       QuestionType: [],
-    };
+    }
 
     // Extraer las claves del formulario
     const keys = Object.keys(form)
@@ -92,7 +128,8 @@ export default function History() {
         if (!sections[sectionIndex].questions[questionIndex]) {
           sections[sectionIndex].questions[questionIndex] = {
             type: '',
-            question: form.sections[sectionIndex].questions[questionIndex].question,
+            question:
+              form.sections[sectionIndex].questions[questionIndex].question,
             options: '',
           }
         }
@@ -138,14 +175,13 @@ export default function History() {
         timer: 1500,
       }).then(() => {
         console.log('Las preguntas del historial clínico se guardaron')
-
       })
     } catch (e) {
-      console.log('Ocurrió un error al guardar las preguntas del historial clínico')
+      console.log(
+        'Ocurrió un error al guardar las preguntas del historial clínico',
+      )
       return
     }
-
-
   }
 
   const handleTypeChange = (
@@ -162,38 +198,56 @@ export default function History() {
     <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
       {form.sections.map((section, sectionIndex) => (
         <div
-          key={sectionIndex}
+          key={section.id}
           className="space-y-2 border-b-2 border-gray-200 pb-4"
         >
-          <Controller
-            name={`section-${sectionIndex}`}
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-              <input
-                {...field}
-                type="text"
-                placeholder="Título de la sección"
-                className="mb-2 w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
-              />
-            )}
-          />
+          <div className="flex items-center justify-between">
+            <Controller
+              name={`section-${sectionIndex}`}
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type="text"
+                  placeholder="Título de la sección"
+                  className="mb-2 w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
+                />
+              )}
+            />
+            <Button
+              type="button"
+              onClick={() => removeSection(section.id)}
+              className="mb-2 ml-2 bg-red-500 p-1"
+            >
+              <DeleteIcon className="mr-1 inline-block h-5 w-5" />
+            </Button>
+          </div>
           <div className="grid grid-cols-2 gap-4">
             {section.questions.map((question, questionIndex) => (
-              <div key={questionIndex} className="w-full space-y-2">
-                <Controller
-                  name={`sections[${sectionIndex}].questions[${questionIndex}].question`}
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <input
-                      {...field}
-                      type="text"
-                      placeholder="Pregunta"
-                      className="w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
-                    />
-                  )}
-                />
+              <div key={question.id} className="w-full space-y-2">
+                <div className="flex items-center justify-between">
+                  <Controller
+                    name={`sections[${sectionIndex}].questions[${questionIndex}].question`}
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <input
+                        {...field}
+                        type="text"
+                        placeholder="Pregunta"
+                        className="w-full rounded-md border-2 border-gray-300 p-2 focus:border-blue-500"
+                      />
+                    )}
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => removeQuestion(section.id, question.id)}
+                    className="ml-2 bg-red-500 p-1"
+                  >
+                    <DeleteIcon className="mr-1 inline-block h-5 w-5" />
+                  </Button>
+                </div>
                 <div className="w-full">
                   <Controller
                     name={`section-${sectionIndex}-question-${questionIndex}-type`}

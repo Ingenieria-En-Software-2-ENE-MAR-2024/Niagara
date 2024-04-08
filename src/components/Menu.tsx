@@ -63,8 +63,8 @@ const Menu: React.FC = () => {
       } else if (userRole === 'admin') {
         items.push(
           {
-            title: 'Creación Historias Clínicas',
-            link: '/createMedicalHistory',
+            title: 'Historia Clínica',
+            link: '/medicalHistory',
           },
         )
       }

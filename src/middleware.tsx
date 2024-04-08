@@ -30,5 +30,7 @@ export const config = {
     '/profile/:path*',
     '/changePassword/:path*',
     '/createMedicalHistory/:path*',
+    '/editMedicalHistory/:path*',
+    '/medicalHistory/:path*',
   ],
 }
