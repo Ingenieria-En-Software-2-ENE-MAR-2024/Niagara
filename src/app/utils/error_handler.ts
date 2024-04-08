@@ -65,7 +65,9 @@ const error_message_dict: error_message_dictionary = {
   '0101': 'Access Token not found on request',
   '0200': 'Error sending email',
   '0300':'Error creating History Template',
-  '0400':'Error creating Medical History'
+  '0400':'Error creating Medical History',
+  '0401':'Error getting Medical History'
+
 }
 
 function get_message_for_code(code: string): string {

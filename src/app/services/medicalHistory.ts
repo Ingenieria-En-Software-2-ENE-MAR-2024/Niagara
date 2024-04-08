@@ -1,5 +1,6 @@
 import { Tmedic_history_create_body, validateQuestionnaire } from "../validators/questionary"
 import prisma from '../../../prisma/prisma'
+import { user_data } from "../interfaces/user";
 
 const create_medical_history = async (medic_id:number,body: Tmedic_history_create_body) => {
     try {
@@ -139,6 +140,48 @@ const obtain_medical_history = async () => {
     }
 }
 
+
+const medical_history_by_id = async (user: user_data, patient_id: number) => {
+  try {
+
+    const { id, role } = user
+    
+
+    if (role === 'patient') {
+      if (id != patient_id) {
+        throw new Error("Access to another individual's medical history is restricted.")
+      }
+    }
+
+    const patient = await prisma.patient.findFirst({
+      where: {
+        patient_id
+      }
+    })
+
+    if (!patient) {
+      throw new Error('patient does not exists')
+    }
+    
+    const read_medicalHistory= await prisma.patientHistory.findFirst({
+      where: {
+      patient_id
+    }, include: {
+      questionary: true
+      }
+    })
+
+    if (!read_medicalHistory) {
+      throw new Error('patient dont have medical history ')
+    } 
+
+    return read_medicalHistory
+
+    } catch (error) {
+      throw error
+    }
+}
+
 const update_medical_history = async (medic_id:number,body: Tmedic_history_create_body) => {
   try {
       const found_admin = await await prisma.medic.findFirst({
@@ -225,5 +268,6 @@ export const medicalHistoryTemplateService = {
     create_medical_history,
     obtain_medical_history,
     update_medical_history,
+    medical_history_by_id,
   }
   

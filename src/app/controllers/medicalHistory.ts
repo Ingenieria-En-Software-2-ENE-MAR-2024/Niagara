@@ -9,6 +9,7 @@ import { validator_history_template, validator_medic_history } from '../validato
 import { verifyJwt } from '@/helpers/jwt'
 import { historyTemplateService } from '../services/historyTemplate'
 import { medicalHistoryTemplateService } from '../services/medicalHistory'
+import {validator_user_data } from '../validators/user'
 
 
 
@@ -47,7 +48,7 @@ const post_medical_history = async (req: NextRequest) => {
 }
 
 
-const get_medical_history = async (req: NextRequest) => {
+const get_medical_history = async (req: NextRequest, patient_id: string) => {
     try {
         let accessToken = headers().get('access-token')
 
@@ -63,12 +64,14 @@ const get_medical_history = async (req: NextRequest) => {
                 handle_err.status,
             )
         }
+
         const user_payload = verifyJwt(accessToken);
-        const medical_history = await  medicalHistoryTemplateService.obtain_medical_history()
+        const user = validator_user_data(user_payload)
+        const medical_history = await  medicalHistoryTemplateService.medical_history_by_id(user, Number(patient_id))
 
         return medical_history
     } catch (error: any) {
-        const handle_err: error_object = handle_error_http_response(error, '0400')
+        const handle_err: error_object = handle_error_http_response(error, '0401')
         throw new custom_error(
             handle_err.error_message,
             handle_err.error_message_detail,
