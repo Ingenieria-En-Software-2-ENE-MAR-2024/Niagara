@@ -5,11 +5,6 @@ import { patientController } from '@/app/controllers/patient'
 
 export async function GET(req: NextRequest) {
   try {
-    const accessToken = req.headers.get('access-token')
-    if (!accessToken || !verifyJwt(accessToken)) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
-    }
-
     const patients = await patientController.getPatients(req)
     return NextResponse.json(patients, { status: 200 })
   } catch (err: any) {
