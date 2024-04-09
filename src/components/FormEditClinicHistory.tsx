@@ -124,7 +124,7 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
         });
 
         fetchData(id, token, setFormData, setOpen);
-    }, [id, token]); // Add dependencies
+    }, [id, token, setOpen]); // Add dependencies
 
     return (
         <>
