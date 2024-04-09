@@ -7,11 +7,20 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import Swal from 'sweetalert2'
 import { v4 as uuidv4 } from 'uuid'
 
+interface QuestionToShow {
+  id: string
+  type: string
+  question: string
+  section: string[]
+  options?: string[]
+  answers: string
+}
+
 interface Question {
   type: string
   question: string
   section: string[]
-  options: string[]
+  options?: string[]
 }
 
 interface TransformedData {
@@ -26,46 +35,101 @@ const OptionTypes: { [key: string]: string } = {
   MULTIPLE_SELECT: 'Selección Múltiple',
 }
 
+type FormState = {
+  sections: {
+    id: string
+    title: string
+    questions: QuestionToShow[]
+  }[]
+}
+
 export default function EditHistory() {
-  const [token, setToken] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
   const { control, handleSubmit } = useForm()
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     sections: [
       {
         id: uuidv4(),
-        title: 'Datos Personales',
+        title: '',
         questions: [
           {
             id: uuidv4(),
-            question: 'Nombre',
-            type: 'TEXT',
+            question: '',
+            type: '',
+            section: [],
             answers: '',
-            options: '',
-          },
-          {
-            id: uuidv4(),
-            question: 'Género',
-            type: 'SIMPLE_SELECT',
-            answers: '',
-            options: ['Masculino', 'Femenino', 'Otro'],
-          },
-        ],
-      },
-      {
-        id: uuidv4(),
-        title: 'Datos Laborales',
-        questions: [
-          {
-            id: uuidv4(),
-            question: 'Ocupación',
-            type: 'TEXT',
-            answers: '',
-            options: '',
+            options: [],
           },
         ],
       },
     ],
   })
+
+  // get the template from the API
+  useEffect(() => {
+    const getTemplate = async () => {
+      const session = await getSession()
+      const token = session?.user?.accessToken
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/historyTemplate`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'access-token': `Bearer ${token}`,
+            },
+          },
+        )
+
+        if (response.ok) {
+          const data = await response.json()
+          if (data.length > 0) {
+            // Agrupar las preguntas por sección
+            const sections: { [key: string]: QuestionToShow[] } =
+              data[0].questionsType.reduce(
+                (acc: any, question: any) => {
+                  const section = Array.isArray(question.section)
+                    ? question.section[0]
+                    : question.section
+                  ;(acc[section] = acc[section] || []).push({
+                    id: uuidv4(),
+                    question: question.question,
+                    type: question.type,
+                    answers: '',
+                    options: Array.isArray(question.options)
+                      ? question.options
+                      : [''],
+                  })
+                  return acc
+                },
+                {} as { [key: string]: QuestionToShow[] },
+              )
+
+            // Transform the sections object into an array
+            const transformedSections = Object.entries(sections).map(
+              ([title, questions]) => ({
+                id: uuidv4(),
+                title,
+                questions,
+              }),
+            )
+
+            setForm({ sections: transformedSections })
+            setLoading(false)
+          }
+        } else {
+          console.log('No se pudo obtener el template')
+        }
+
+      } catch (error) {
+        console.log('Error en la petición')
+      }
+    }
+
+    getTemplate()
+  }, [])
 
   const addSection = () => {
     setForm((prevForm) => ({
@@ -73,15 +137,16 @@ export default function EditHistory() {
       sections: [
         ...prevForm.sections,
         {
-          id: uuidv4(), 
+          id: uuidv4(),
           title: '',
           questions: [
             {
-              id: uuidv4(), 
+              id: uuidv4(),
               question: '',
               type: '',
+              section: [],
               answers: '',
-              options: '',
+              options: [],
             },
           ],
         },
@@ -104,16 +169,16 @@ export default function EditHistory() {
     setForm((prevForm) => {
       // Hacer una copia profunda del estado anterior
       const newForm = JSON.parse(JSON.stringify(prevForm))
-  
+
       // Agregar una nueva pregunta a la sección correspondiente
       newForm.sections[sectionIndex].questions.push({
         id: uuidv4(),
         question: '',
         type: '',
         answers: '',
-        options: '',
+        options: [],
       })
-  
+
       // Devolver el nuevo estado
       return newForm
     })
@@ -137,6 +202,7 @@ export default function EditHistory() {
     })
   }
 
+  // send data to API
   const onSubmit = async (form: any) => {
     const session = await getSession()
     const token = session?.user?.accessToken
@@ -144,6 +210,9 @@ export default function EditHistory() {
     const transformedData: TransformedData = {
       QuestionType: [],
     }
+
+    console.log(typeof('section-1-question-0-options'))
+    console.log(form)
 
     // Extraer las claves del formulario
     const keys = Object.keys(form)
@@ -179,18 +248,20 @@ export default function EditHistory() {
           type: question.type,
           question: question.question,
           section: [section.title],
-          options: question.options ? question.options.split(',') : [],
+          options: question.options ? question.options : [],
         })
       })
     })
 
-    // console.log(transformedData)
-    /*
+    console.log(typeof(transformedData.QuestionType[4].options))
+
+    console.log(transformedData)
+    
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/historyTemplate`,
         {
-          method: 'POST',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'access-token': `Bearer ${token}`,
@@ -199,24 +270,24 @@ export default function EditHistory() {
         },
       )
       if (!response.ok) {
-        console.log('Las preguntas del historial clínico no se pudieron enviar')
+        console.log('Las preguntas del historial clínico no se pudieron actualizar')
         return
       }
       Swal.fire({
         position: 'top-end',
         icon: 'success',
-        title: 'Las preguntas del historial clínico se enviaron correctamente',
+        title: 'Las preguntas del historial clínico se actualizaron correctamente',
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
-        console.log('Las preguntas del historial clínico se guardaron')
+        console.log('Las preguntas del historial clínico se actualizaron')
 
       })
     } catch (e) {
-      console.log('Ocurrió un error al guardar las preguntas del historial clínico')
+      console.log('Ocurrió un error al actualizar las preguntas del historial clínico')
       return
     }
-    */
+    
   }
 
   const handleTypeChange = (
@@ -227,6 +298,12 @@ export default function EditHistory() {
     const newSections = [...form.sections]
     newSections[sectionIndex].questions[questionIndex].type = type
     setForm({ ...form, sections: newSections })
+  }
+
+  // console.log(form.sections)
+
+  if (loading) {
+    return <div> Cargando... </div>
   }
 
   return (
@@ -278,7 +355,7 @@ export default function EditHistory() {
                   <Button
                     type="button"
                     onClick={() => removeQuestion(section.id, question.id)}
-                    className="bg-red-500 ml-2 p-1"
+                    className="ml-2 bg-red-500 p-1"
                   >
                     <DeleteIcon className="mr-1 inline-block h-5 w-5" />
                   </Button>
@@ -348,7 +425,7 @@ export default function EditHistory() {
       </Button>
       <div className="flex justify-center">
         <Button type="submit" className="bg-primary">
-          Enviar
+          Actualizar
         </Button>
       </div>
     </form>

@@ -1,41 +1,52 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Menu from '@/components/Menu'
 import { Template } from '@/components/form/HistoryTemplate'
 import { Question } from '@/components/form/HistoryTemplate'
 import EditIcon from '@mui/icons-material/Edit'
 import { Button } from '@mui/material'
 import { useRouter } from 'next/navigation'
+import { getSession } from 'next-auth/react'
 
 export default function MedicalHistoryPage() {
   const existTemplate = true
   const [edit, setEdit] = useState(false)
   const router = useRouter()
-  const [template, setTemplate] = useState([
-    {
-      type: 'TEXT',
-      section: ['Datos Personales'],
-      question: 'Nombre',
-    },
-    {
-      type: 'SIMPLE_SELECT',
-      section: ['Datos Personales'],
-      question: 'Género',
-      options: ['Masculino', 'Femenino', 'Otro'],
-    },
-    {
-      type: 'TEXT',
-      section: ['Datos Laborales'],
-      question: 'Ocupación',
-    },
-    {
-      type: 'SIMPLE_SELECT',
-      section: ['Antecedentes Clínicos'],
-      question: '¿Tiene alguna enfermedad crónica?',
-      options: ['Sí', 'No'],
-    },
-  ])
+  const [template, setTemplate] = useState([])
+
+  const getTemplate = async () => {
+    const session = await getSession()
+    const token = session?.user?.accessToken
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/historyTemplate`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'access-token': `Bearer ${token}`,
+          },
+        },
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.length > 0) {
+          setTemplate(data[0].questionsType)
+        }
+      } else {
+        console.log('No se pudo obtener el template')
+      }
+    } catch (error) {
+      console.log('Error en la petición')
+    }
+  }
+
+  useEffect(() => {
+    getTemplate()
+  }, [])
 
   const handleEditPage = () => {
     setEdit(true)
@@ -45,6 +56,8 @@ export default function MedicalHistoryPage() {
   const handleCreatePage = () => {
     router.push('/createMedicalHistory')
   }
+
+  // console.log(template)
 
   return (
     <>

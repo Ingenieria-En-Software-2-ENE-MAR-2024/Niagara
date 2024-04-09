@@ -66,7 +66,7 @@ export const Template: React.FC<TemplateProps> = ({ items }) => {
               >
                 La pregunta es de tipo {OptionTypes[question.type]}
               </Typography>
-              {question.options && (
+              {question.options && question.options.length > 0 && (
                 <Typography
                   variant="body2"
                   style={{ marginLeft: '20px', fontStyle: 'italic' }}
