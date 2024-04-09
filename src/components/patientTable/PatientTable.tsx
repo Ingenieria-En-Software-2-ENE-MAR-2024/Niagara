@@ -28,18 +28,26 @@ export interface ClinicHistory {
     actions: any,
 }
 
-interface ClinicHistoryTableProps {
+export interface Patient {
+    id: number,
+    fullName: string,
+    cedula: string,
+    email: string,
+    actions: any,
+}
+
+interface PatientTableProps {
     columns: string[]
-    filteredRows: ClinicHistory[]
-    clinicHistory: ClinicHistory[]
+    filteredRows: Patient[]
+    patients: Patient[]
     onPageChange?: (page: number) => void
     onSizeChange?: (pageSize: number) => void
 }
 
-export const ClinicHistoryTable: React.FC<ClinicHistoryTableProps> = ({
+export const PatientTable: React.FC<PatientTableProps> = ({
     columns,
     filteredRows,
-    clinicHistory,
+    patients,
     onPageChange = undefined,
     onSizeChange = undefined,
 }) => {
@@ -102,19 +110,16 @@ export const ClinicHistoryTable: React.FC<ClinicHistoryTableProps> = ({
                             filteredRows.map((row, index) => (
                                 <UserTableRowStyle key={index}>
                                     <UserTableCellStyle align="left">
-                                        {row.sections[0].questions[0].result}
+                                        {row.id}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.sections[0].questions[1].result}
+                                        {row.fullName}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.sections[0].questions[3].result}
+                                        {row.cedula}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.sections[0].questions[4].result}
-                                    </UserTableCellStyle>
-                                    <UserTableCellStyle align="left">
-                                        {row.sections[0].questions[10].result}
+                                        {row.email}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
                                         {row.actions}
@@ -135,7 +140,7 @@ export const ClinicHistoryTable: React.FC<ClinicHistoryTableProps> = ({
                 labelRowsPerPage={'Rows per page'}
                 labelDisplayedRows={({ from, to, count }) => `${from}-${to}`}
                 nextIconButtonProps={{
-                    disabled: clinicHistory.length < rowsPerPage,
+                    disabled: patients.length < rowsPerPage,
                 }}
             />
         </>

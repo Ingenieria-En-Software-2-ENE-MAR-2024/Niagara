@@ -18,6 +18,30 @@ import {
 } from '@mui/material'
 import { getSession } from 'next-auth/react'
 
+
+async function fetchData(id: any, token: any, setFormData: any, setOpen: any) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/medicalHistory/${id}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'access-token': `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('ClinicHistory could not be retrieved');
+        }
+
+        console.log('ClinicHistory model successfully retrieved');
+        const data = await response.json();
+        setFormData(data);
+    } catch (error) {
+        console.error('An error occurred while retrieving the Clinic History:', error);
+        setOpen(false);
+    }
+}
+
 export interface Question {
     question: string;
     type: string;
@@ -34,7 +58,7 @@ interface ModalUserProps {
     open: boolean
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
     edit: boolean
-    sections: Section[]
+    id: number
     onChange: any
 }
 
@@ -42,11 +66,11 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
     open,
     setOpen,
     edit,
-    sections,
+    id,
     onChange = undefined,
 }) => {
     const [activeTab, setActiveTab] = useState(0);
-    const [formData, setFormData] = useState<Section[]>(sections);
+    const [formData, setFormData] = useState<Section[]>([]);
 
     const [token, setToken] = useState<any>(null)
 
@@ -60,52 +84,47 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
         setActiveTab(newValue)
     };
 
-    const handleSubmitDialog = () => {
-        console.log(formData)
-        setOpen(false)
-    };
-
-    /*
     const handleSubmitDialog = async () => {
-      if (time === '' || description === '') {
-        console.log('Faltaron datos.')
-        return
-      }
-  
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/clinicHistory/${sections.id}`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'access-token': `Bearer ${token}`,
-            },
-            body: formData),
-          },
-        )
-  
-        if (!response.ok) {
-          // console.log(response)
-          console.log('ClinicHistory could not be edited')
-          return
+        // if (time === '' || description === '') {
+        //     console.log('Faltaron datos.')
+        //     return
+        // }
+
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_URL}/api/clinicHistory/${id}`,
+                {
+                    method: edit ? 'PUT' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'access-token': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(formData),
+                },
+            )
+
+            if (!response.ok) {
+                // console.log(response)
+                console.log('ClinicHistory could not be edited')
+                return
+            }
+            console.log('ClinicHistory edited')
+            if (onChange != undefined) onChange()
+        } catch (e) {
+            console.log('An error ocurred editing the Clinic History')
+            return
+        } finally {
+            setOpen(false)
         }
-        console.log('ClinicHistory edited')
-        if (onChange != undefined) onChange()
-      } catch (e) {
-        console.log('An error ocurred editing the Clinic History')
-        return
-      } finally {
-        setOpen(false)
-      }
     }
-  */
 
     useEffect(() => {
         getSession().then((result) => {
-            setToken(result?.user?.accessToken)
-        })
-    }, [])
+            setToken(result?.user?.accessToken);
+        });
+
+        fetchData(id, token, setFormData, setOpen);
+    }, [id]); // Add dependencies
 
     return (
         <>
@@ -181,12 +200,10 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)}>Cerrar</Button>
-                    {edit && (
-                        <Button onClick={handleSubmitDialog} autoFocus>
-                            Confirmar
-                        </Button>
-                    )}
+                    <Button onClick={() => setOpen(false)} style={{ backgroundColor: 'red', color: 'white' }}>Cerrar</Button>
+                    <Button onClick={handleSubmitDialog} style={{ backgroundColor: 'green', color: 'white' }}>
+                        Confirmar
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

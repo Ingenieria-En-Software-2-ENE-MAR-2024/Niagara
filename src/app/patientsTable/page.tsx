@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 import { Box, IconButton, Tooltip, Grid, Typography } from '@mui/material'
 import {
     ClinicHistory,
-    ClinicHistoryTable,
-} from '../../components/clinicHistoryTable/ClinicHistoryTable'
+    PatientTable,
+    Patient
+} from '../../components/patientTable/PatientTable'
 import { Edit, Visibility } from '@mui/icons-material'
-import ClinicHistoryFilter from '../../components/clinicHistoryTable/ClinicHistoryFilter'
+import PatientFilter from '../../components/patientTable/PatientFilter'
 import Swal from 'sweetalert2'
 import Menu from '@/components/Menu'
 import { useRouter } from 'next/router'
@@ -15,17 +16,19 @@ import { FormEditClinicHistory, Section } from '@/components/FormEditClinicHisto
 import { getSession } from 'next-auth/react'
 
 const createData = (
-    sections: Section[],
+    id: number,
+    fullName: string,
+    cedula: string,
+    email: string,
     actions: any,
-): ClinicHistory => {
-    return { sections, actions };
+): Patient => {
+    return { id, fullName, cedula, email, actions };
 }
 
 const columns: string[] = [
     'ID Paciente',
     'Nombre Paciente',
-    'Edad Paciente',
-    'Genero Paciente',
+    'Cedula Paciente',
     'Email Paciente',
     'Acciones',
 ]
@@ -33,22 +36,22 @@ const columnsToFilter: string[] = [columns[0], columns[1], columns[2]]
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
-export default function ClinicHistoryTablePage() {
+export default function PatientsTablePage() {
     const [open, setOpen] = useState<boolean>(false)
     const [edit, setEdit] = useState<boolean>(false)
     const [dataModal, setDataModal] = useState<any>(null)
-    const [clinicHistory, setClinicHistory] = useState<ClinicHistory[]>([])
-    const [filteredRows, setFilteredRows] = useState<ClinicHistory[]>(clinicHistory)
+    const [patients, setPatients] = useState<Patient[]>([])
+    const [filteredRows, setFilteredRows] = useState<Patient[]>(patients)
 
     const [page, setPage] = useState<number>(0)
     const [pageSize, setPageSize] = useState<number>(5)
 
     useEffect(() => {
-        const fetchClinicHistorys = async (page: number, pageSize: number) => {
+        const fetchPatients = async (page: number, pageSize: number) => {
             try {
                 const session = await getSession()
 
-                const response = await fetch(`${baseUrl}/api/clinicHistory`, {
+                const response = await fetch(`${baseUrl}/api/patientAll`, {
                     method: 'GET',
                     headers: {
                         'access-token': `Bearer ${session?.user.accessToken}`,
@@ -58,39 +61,44 @@ export default function ClinicHistoryTablePage() {
                 })
                 if (!response.ok) {
                     const errorText = await response.text()
-                    console.log('an error ocurred fetching the clinicHistory')
+                    console.log('an error ocurred fetching the patients')
                     console.log(errorText)
                     return
                 }
+                console.log(response)
+                
 
                 const startIndex = page * pageSize
                 const endIndex = startIndex + pageSize
                 const allAppoint = await response.json()
                 console.log(allAppoint)
-                const clinicHistorySliced = allAppoint.slice(startIndex, endIndex)
-                const clinicHistoryList = clinicHistorySliced.map(
-                    (clinicHistory: ClinicHistory) => {
+                const patientsSliced = allAppoint.slice(startIndex, endIndex)
+                const patientsList = patientsSliced.map(
+                    (patient: Patient) => {
                         return createData(
-                            clinicHistory.sections,
-                            createActionsComponent({ clinicHistory }),
+                            patient.id,
+                            patient.fullName,
+                            patient.cedula,
+                            patient.email,
+                            createActionsComponent({ patient }),
                         )
                     },
                 )
-                setClinicHistory(clinicHistoryList)
-                setFilteredRows(clinicHistoryList)
+                setPatients(patientsList)
+                setFilteredRows(patientsList)
             } catch (e) {
                 return
             }
         }
 
-        const handleModal = (clinicHistory: ClinicHistory, edit: boolean) => {
+        const handleModal = (patientId: number, edit: boolean) => {
             setEdit(edit)
-            setDataModal(clinicHistory.sections)
+            setDataModal(patientId)
             setOpen(true)
         }
 
-        const createActionsComponent: React.FC<{ clinicHistory: ClinicHistory }> = ({
-            clinicHistory,
+        const createActionsComponent: React.FC<{ patient: Patient }> = ({
+            patient,
         }) => {
             return (
                 <Grid container justifyContent="flex-start" columns={4} spacing={1.5}>
@@ -99,18 +107,18 @@ export default function ClinicHistoryTablePage() {
                             <IconButton
                                 color="primary"
                                 className="text-tertiary"
-                                onClick={() => handleModal(clinicHistory, true)}
+                                onClick={() => handleModal(patient.id, true)}
                             >
                                 <Edit />
                             </IconButton>
                         </Tooltip>
                     </Grid>
                     <Grid item xs={0} justifyContent="left">
-                        <Tooltip title="Ver historia clinica" arrow>
+                        <Tooltip title="Agregar historia clinica" arrow>
                             <IconButton
                                 color="primary"
                                 className="text-tertiary"
-                                onClick={() => handleModal(clinicHistory, false)}
+                                onClick={() => handleModal(patient.id, false)}
                             >
                                 <Visibility />
                             </IconButton>
@@ -120,7 +128,7 @@ export default function ClinicHistoryTablePage() {
             )
         }
 
-        //fetchClinicHistorys(page, pageSize)
+        fetchPatients(page, pageSize)
     }, [page, pageSize])
 
     return (
@@ -130,16 +138,16 @@ export default function ClinicHistoryTablePage() {
                 <FormEditClinicHistory
                     open={open}
                     setOpen={setOpen}
-                    sections={dataModal}
+                    id={dataModal}
                     edit={edit}
                     onChange={async () => setPageSize(pageSize + 1)}
                 />
             )}
             <Box className="box-content">
                 <Box sx={{ p: 4 }} className="pt-24">
-                    <ClinicHistoryFilter
+                    <PatientFilter
                         columns={columnsToFilter}
-                        rows={clinicHistory}
+                        rows={patients}
                         setFilteredRows={setFilteredRows}
                     />
                     <Grid
@@ -153,17 +161,17 @@ export default function ClinicHistoryTablePage() {
                                 variant="h5"
                                 className="welcome-text text-center text-white"
                             >
-                                Historia Clinica
+                                Pacientes
                             </Typography>
                         </Box>
                     </Grid>
                     <Grid item md={12}>
-                        <ClinicHistoryTable
+                        <PatientTable
                             filteredRows={filteredRows}
                             columns={columns}
                             onPageChange={setPage}
                             onSizeChange={setPageSize}
-                            clinicHistory={clinicHistory}
+                            patients={patients}
                         />
                     </Grid>
                 </Box>

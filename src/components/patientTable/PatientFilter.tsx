@@ -3,7 +3,6 @@ import { MenuItem, TextField, Button } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import Link from 'next/link'
-import { FormAddClinicHistory } from '../FormAddClinicHistory'
 
 interface TableFilterProps {
     columns: string[]
@@ -16,7 +15,6 @@ const TableFilter: React.FC<TableFilterProps> = ({
     rows,
     setFilteredRows,
 }) => {
-    const [open, setOpen] = useState<boolean>(false)
     const [filterColumn, setFilterColumn] = useState<string>('') // Column to filter
     const [filterText, setFilterText] = useState<string>('') // Text column to filter
 
@@ -36,20 +34,19 @@ const TableFilter: React.FC<TableFilterProps> = ({
     const handleFilter = () => {
         const tempKey =
             filterColumn === 'ID Paciente'
-                ? 0
+                ? 'id'
                 : filterColumn === 'Nombre Paciente'
-                    ? 1
-                    : filterColumn === 'Edad Paciente'
-                        ? 3
+                    ? 'fullName'
+                    : filterColumn === 'Cedula Paciente'
+                        ? 'cedula'
                         : ''
         if (filterColumn === '' || filterText === '') {
             setFilteredRows(rows)
         } else {
             const filteredRows = rows.filter(
                 (row) =>
-                    row.sections[0].questions[tempKey] &&
-                    row.sections[0].questions[tempKey].result &&
-                    row.sections[0].questions[tempKey].result.toLowerCase().includes(filterText.toLowerCase()),
+                    row[tempKey] &&
+                    row[tempKey].toLowerCase().includes(filterText.toLowerCase()),
             )
             setFilteredRows(filteredRows)
         }
@@ -57,12 +54,6 @@ const TableFilter: React.FC<TableFilterProps> = ({
 
     return (
         <>
-            {open && (
-                <FormAddClinicHistory
-                    open={open}
-                    setOpen={setOpen}
-                />
-            )}
             <div
                 style={{
                     marginTop: '0px',
@@ -107,18 +98,6 @@ const TableFilter: React.FC<TableFilterProps> = ({
                     }}
                 >
                     <SearchIcon />
-                </Button>
-                <Button
-                    className="bg-tertiary"
-                    variant="contained"
-                    style={{
-                        height: '50px',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                    onClick={() => setOpen(true)}
-                >
-                    <AddIcon />
                 </Button>
             </div>
         </>
