@@ -51,7 +51,7 @@ export const handle_error_http_response = (
 
 const error_message_dict: error_message_dictionary = {
   '0000': 'Error creating user',
-  '0001': 'Error readibng user',
+  '0001': 'Error reading user',
   '0002': 'Error listing users',
   '0003': 'Error updating user',
   '0004': 'Error deleting user',
@@ -64,6 +64,10 @@ const error_message_dict: error_message_dictionary = {
   '0100': 'Body not found on request',
   '0101': 'Access Token not found on request',
   '0200': 'Error sending email',
+  '0300':'Error creating History Template',
+  '0400':'Error creating Medical History',
+  '0401':'Error getting Medical History'
+
 }
 
 function get_message_for_code(code: string): string {

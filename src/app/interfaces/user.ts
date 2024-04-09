@@ -21,3 +21,8 @@ export interface user_body_update_password{
   newPassword: string
   compareNewPassword: string
 }
+
+export interface user_data {
+  id: number,
+  role: string,
+}

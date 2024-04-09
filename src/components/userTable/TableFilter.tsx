@@ -61,7 +61,7 @@ const TableFilter: React.FC<TableFilterProps> = ({ columns, rows, setFilteredRow
                 style={{ marginRight: "10px" }}
             />
             <Button
-                className="bg-blue-600"
+                className="bg-primary"
                 variant="contained"
                 onClick={handleFilter}
                 startIcon={<SearchIcon />}
@@ -70,12 +70,12 @@ const TableFilter: React.FC<TableFilterProps> = ({ columns, rows, setFilteredRow
             </Button>
             <Button
               variant="contained"
-              className="bg-blue-600 sm:ml-6 md:ml-16"
+              className="bg-primary sm:ml-6 md:ml-16"
               onClick={handleCreateUser}
               startIcon={<i className="bi bi-plus-circle "></i>}
             >
               <Typography variant="subtitle1" className="text-options-button">
-                Create User
+                Crear Usuario
               </Typography>
             </Button>
         </div>

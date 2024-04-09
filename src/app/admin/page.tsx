@@ -20,36 +20,26 @@ import {
 import TableFilter from '../../components/userTable/TableFilter'
 import { Edit, Delete } from '@mui/icons-material'
 import { signOut } from 'next-auth/react'
+import Menu from '@/components/Menu'
 
 export interface UserNoActions {
   id: number
   name: string
   email: string
   role: string
-  createdAt: string
-  updatedAt: string
 }
 
 const createData = (
   name: string,
   email: string,
   role: string,
-  createdAt: string,
-  updatedAt: string,
   deletedAt: string,
   actions: any,
 ): User => {
-  return { name, email, role, createdAt, updatedAt, deletedAt, actions }
+  return { name, email, role, deletedAt, actions }
 }
 
-const columns: string[] = [
-  'Name',
-  'Email',
-  'Role',
-  'CreatedAt',
-  'UpdatedAt',
-  'Actions',
-]
+const columns: string[] = ['Name', 'Email', 'Role', 'Actions']
 const columnsToFilter: string[] = [columns[0], columns[1], columns[2]]
 
 export default function AdminPage() {
@@ -120,8 +110,6 @@ export default function AdminPage() {
             user.name,
             user.email,
             user.role,
-            user.createdAt,
-            user.updatedAt,
             '',
             createActionsComponent({ user }),
           )
@@ -146,7 +134,11 @@ export default function AdminPage() {
         <Grid container justifyContent="center" columns={4} spacing={1.5}>
           <Grid item xs={1} justifyContent="right">
             <Tooltip title="Modify user" arrow>
-              <IconButton color="primary" onClick={() => modifyUser(user)}>
+              <IconButton
+                color="primary"
+                className="text-tertiary"
+                onClick={() => modifyUser(user)}
+              >
                 <Edit />
               </IconButton>
             </Tooltip>
@@ -155,6 +147,7 @@ export default function AdminPage() {
             <Tooltip title="Delete user" arrow>
               <IconButton
                 color="primary"
+                className="text-tertiary"
                 onClick={() => handleRemoveUser(user.id)}
               >
                 <Delete />
@@ -199,7 +192,7 @@ export default function AdminPage() {
         />
       )}
       <Box className="box-content">
-        <AppBar position="fixed">
+        {/* <AppBar position="fixed">
           <Toolbar className="navbar">
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               {`Administrator Dahsboard`}
@@ -211,8 +204,9 @@ export default function AdminPage() {
               Cerrar Sesión
             </Button>
           </Toolbar>
-        </AppBar>
-        <Box sx={{ p: 4 }} className="pt-24">
+        </AppBar> */}
+        <Menu />
+        <Box sx={{ p: 4 }} className="pt-8">
           <Grid
             container
             justifyContent="space-between"

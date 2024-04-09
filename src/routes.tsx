@@ -11,7 +11,7 @@ type RoutesInfo = {
 }
 
 const roleHierarchy: RoleHierarchy = {
-  Admin: ['Admin'],
+  Admin: ['admin'],
   Medic: ['Medic'],
   Patient: ['Medic', 'Patient'],
   User2: [],
@@ -19,7 +19,7 @@ const roleHierarchy: RoleHierarchy = {
 }
 
 function is_top(x: Role): boolean {
-  return x === 'Admin'
+  return x === 'admin'
 }
 
 export function has_role(x: Role, y: Role): boolean {
@@ -44,23 +44,23 @@ export const routesInfo: RoutesInfo = {
     test: public_route_test,
   },
   '/admin': {
-    roles: ['Admin'],
+    roles: ['admin'],
     test: fulfills_any_role,
   },
   '/homeAuth': {
-    roles: ['Admin'],
+    roles: ['admin'],
     test: fulfills_any_role,
   },
-  '/homeDummy1': {
+  '/homeMedic': {
     roles: ['Medic'],
     test: fulfills_any_role,
   },
   '/homeDummy2': {
-    roles: ['Admin'],
+    roles: ['admin'],
     test: fulfills_any_role,
   },
   '/homeDummy3': {
-    roles: ['Admin'],
+    roles: ['admin'],
     test: fulfills_any_role,
   },
   '/niagarahome': {
@@ -77,6 +77,26 @@ export const routesInfo: RoutesInfo = {
   },
   '/medicalCalendar': {
     roles: ['Medic'],
+    test: fulfills_any_role,
+  },
+  '/profile': {
+    roles: ['Patient', 'Medic'],
+    test: fulfills_any_role,
+  },
+  '/changePassword': {
+    roles: ['Patient', 'Medic'],
+    test: fulfills_any_role,
+  },
+  '/createMedicalHistory': {
+    roles: ['admin'],
+    test: fulfills_any_role,
+  },
+  '/editMedicalHistory': {
+    roles: ['admin'],
+    test: fulfills_any_role,
+  },
+  '/medicalHistory': {
+    roles: ['admin'],
     test: fulfills_any_role,
   },
 }

@@ -23,29 +23,50 @@ const Menu: React.FC = () => {
       const userRole = session?.user.role
 
       let items: MenuItem[] = [
-        {
-          title: 'Perfil',
-          subMenuItems: [
-            { title: 'Ver Perfil', link: '/profile'},
-            { title: 'Cambio de contraseña', link: '/changePassword' },
-          ],
-        },
+        // {
+        //   title: 'Perfil',
+        //   subMenuItems: [
+        //     { title: 'Ver Perfil', link: '/profile'},
+        //     { title: 'Cambio de contraseña', link: '/changePassword' },
+        //   ],
+        // },
       ]
 
       if (userRole === 'Medic') {
-        items.push({
-          title: 'Calendario Médico',
-          link: '/medicalCalendar'
-        })
+        items.push(
+          {
+            title: 'Perfil',
+            subMenuItems: [
+              { title: 'Ver Perfil', link: '/profile' },
+              { title: 'Cambio de contraseña', link: '/changePassword' },
+            ],
+          },
+          {
+            title: 'Calendario Médico',
+            link: '/medicalCalendar',
+          },
+        )
       } else if (userRole === 'Patient') {
-        items.push({
-          title: 'Gestión de Citas',
-          link: '/appointments',
-        })
-        items.push({
-          title: 'Ver historial clínico',
-          link: '/clinicHistory',
-        })
+        items.push(
+          {
+            title: 'Perfil',
+            subMenuItems: [
+              { title: 'Ver Perfil', link: '/profile' },
+              { title: 'Cambio de contraseña', link: '/changePassword' },
+            ],
+          },
+          {
+            title: 'Gestión de Citas',
+            link: '/appointments',
+          },
+        )
+      } else if (userRole === 'admin') {
+        items.push(
+          {
+            title: 'Historia Clínica',
+            link: '/medicalHistory',
+          },
+        )
       }
 
       setMenuItems(items)
