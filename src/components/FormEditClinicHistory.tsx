@@ -15,39 +15,9 @@ import {
   FormControlLabel,
   TextField,
   TabScrollButton,
+  Radio,
 } from '@mui/material'
 import { getSession } from 'next-auth/react'
-
-async function fetchData(id: string, token: any, setFormData: any, setOpen: any) {
-
-    console.log(typeof(id))
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/medicalHistory/${id}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'access-token': `Bearer ${token}`,
-        },
-      },
-    )
-
-    if (!response.ok) {
-      throw new Error('ClinicHistory could not be retrieved')
-    }
-
-    console.log('ClinicHistory model successfully retrieved')
-    const data = await response.json()
-    setFormData(data)
-  } catch (error) {
-    console.error(
-      'An error occurred while retrieving the Clinic History:',
-      error,
-    )
-    setOpen(false)
-  }
-}
 
 export interface Question {
   question: string
@@ -79,8 +49,6 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
   const [activeTab, setActiveTab] = useState(0)
   const [formData, setFormData] = useState<Section[]>([])
 
-  const [token, setToken] = useState<any>(null)
-
   const handleChange = (
     sectionIndex: number,
     questionIndex: number,
@@ -101,6 +69,8 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
     //     console.log('Faltaron datos.')
     //     return
     // }
+    const session = await getSession()
+    const token = session?.user?.accessToken
 
     try {
       const response = await fetch(
@@ -131,14 +101,65 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
   }
 
   useEffect(() => {
-    getSession().then((result) => {
-      setToken(result?.user?.accessToken)
-    })
+    const fetchData = async () => {
+      const session = await getSession()
+      const token = session?.user?.accessToken
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/medicalHistory/${id}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'access-token': `Bearer ${token}`,
+            },
+          },
+        )
 
-    
+        if (!response.ok) {
+          throw new Error('ClinicHistory could not be retrieved')
+        }
 
-    fetchData(id.toString(), token, setFormData, setOpen)
-  }, [id, token, setOpen]) // Add dependencies
+        console.log('ClinicHistory model successfully retrieved')
+        const data = await response.json()
+        //console.log(data)
+
+        // Transformar los datos del backend a la estructura de formData
+        const sectionsMap = new Map()
+        data.questionary.questionsType.forEach((questionType: any) => {
+          questionType.section.forEach((sectionTitle: any) => {
+            if (!sectionsMap.has(sectionTitle)) {
+              sectionsMap.set(sectionTitle, {
+                title: sectionTitle,
+                questions: [],
+              })
+            }
+
+            const section = sectionsMap.get(sectionTitle)
+            section.questions.push({
+              question: questionType.question,
+              type: questionType.type,
+              options: questionType.options.join(','),
+              result: '',
+            })
+          })
+        })
+
+        const newFormData = Array.from(sectionsMap.values())
+        setFormData(newFormData)
+      } catch (error) {
+        console.error(
+          'An error occurred while retrieving the Clinic History:',
+          error,
+        )
+        setOpen(false)
+      }
+    }
+
+    fetchData()
+  }, [id, setOpen]) // Add dependencies
+
+  console.log(formData)
 
   return (
     <>
@@ -170,7 +191,7 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
             {formData[activeTab] &&
               formData[activeTab].questions.map((question, questionIndex) => (
                 <div key={questionIndex} style={{ marginTop: '16px' }}>
-                  {question.type === 'short-text' && (
+                  {['TEXT', 'NUMBER'].includes(question.type) && (
                     <TextField
                       label={question.question}
                       value={question.result || ''}
@@ -182,7 +203,46 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
                       disabled={!edit}
                     />
                   )}
-                  {question.type === 'multiple-choice' && (
+                  {question.type === 'DATE' && (
+                    <TextField
+                      label={question.question}
+                      type="date"
+                      value={question.result || ''}
+                      onChange={(e) =>
+                        handleChange(activeTab, questionIndex, e.target.value)
+                      }
+                      fullWidth
+                      margin="normal"
+                      disabled={!edit}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
+                    />
+                  )}
+                  {question.type === 'SIMPLE_SELECT' && (
+                    <>
+                      <div>{question.question}</div>
+                      {question.options
+                        ?.split(',')
+                        .map((option, optionIndex) => (
+                          <FormControlLabel
+                            key={optionIndex}
+                            control={
+                              <Radio
+                                checked={question.result === option}
+                                onChange={(e) =>
+                                  handleChange(activeTab, questionIndex, option)
+                                }
+                                disabled={!edit}
+                              />
+                            }
+                            style={{ margin: '5px 0' }}
+                            label={option.trim()}
+                          />
+                        ))}
+                    </>
+                  )}
+                  {question.type === 'MULTIPLE_SELECT' && (
                     <>
                       <div>{question.question}</div>
                       {question.options
