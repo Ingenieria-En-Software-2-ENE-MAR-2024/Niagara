@@ -163,19 +163,30 @@ const medical_history_by_id = async (user: user_data, patient_id: number) => {
       throw new Error('patient does not exists')
     }
     
-    const read_medicalHistory= await prisma.patientHistory.findFirst({
+    const read_medicalHistory = await prisma.patientHistory.findFirst({
       where: {
-      patient_id
-    }, include: {
-      questionary: true
+        patient_id,
+      },
+      include: {
+        questionary: true,
       }
-    })
+    });
 
     if (!read_medicalHistory) {
-      throw new Error('patient dont have medical history ')
+      const latest_template = await prisma.questionary.findFirst({
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      if (!latest_template) throw new Error('patient dont have medical history and dont exist questionary templates')
+
+      return { patient_id, questionary: latest_template, questionsAnwsers: null}
     } 
 
-    return read_medicalHistory
+    const { questionsAnwsers, questionary } = read_medicalHistory;
+
+    return { patient_id, questionsAnwsers, questionary }
 
     } catch (error) {
       throw error
