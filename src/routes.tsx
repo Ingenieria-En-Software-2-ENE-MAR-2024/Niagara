@@ -11,9 +11,9 @@ type RoutesInfo = {
 }
 
 const roleHierarchy: RoleHierarchy = {
-  Admin: ['admin'],
-  Medic: ['Medic'],
-  Patient: ['Medic', 'Patient'],
+  admin: ['admin'],
+  medic: ['medic'],
+  patient: ['medic', 'patient'],
   User2: [],
   User: [],
 }
@@ -52,7 +52,7 @@ export const routesInfo: RoutesInfo = {
     test: fulfills_any_role,
   },
   '/homeMedic': {
-    roles: ['Medic'],
+    roles: ['medic'],
     test: fulfills_any_role,
   },
   '/homeDummy2': {
@@ -64,27 +64,27 @@ export const routesInfo: RoutesInfo = {
     test: fulfills_any_role,
   },
   '/niagarahome': {
-    roles: ['Patient'],
+    roles: ['patient'],
     test: fulfills_any_role,
   },
   '/appointmentForm': {
-    roles: ['Patient', 'Medic'],
+    roles: ['patient', 'medic'],
     test: fulfills_any_role,
   },
   '/appointments': {
-    roles: ['Patient'],
+    roles: ['patient'],
     test: fulfills_any_role,
   },
   '/medicalCalendar': {
-    roles: ['Medic'],
+    roles: ['medic'],
     test: fulfills_any_role,
   },
   '/profile': {
-    roles: ['Patient', 'Medic'],
+    roles: ['patient', 'medic'],
     test: fulfills_any_role,
   },
   '/changePassword': {
-    roles: ['Patient', 'Medic'],
+    roles: ['patient', 'medic'],
     test: fulfills_any_role,
   },
   '/createMedicalHistory': {

@@ -50,9 +50,9 @@ const NavigationMenu: React.FC<NavigationMenuProps> = ({ menuItems }) => {
 
   const getHomeRoute = () => {
     switch (userRole) {
-      case 'Patient':
+      case 'patient':
         return '/niagarahome'
-      case 'Medic':
+      case 'medic':
         return '/homeMedic'
       case 'admin':
         return '/admin'

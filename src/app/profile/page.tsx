@@ -53,9 +53,9 @@ export default function Profile() {
   return (
     <div>
       <Menu />
-      {role === 'Patient' ? (
+      {role === 'patient' ? (
         <PacientProfile user={{ name, ci, email}} data={data} />
-      ) : role === 'Medic' ? (
+      ) : role === 'medic' ? (
         <MedicProfile user={{ name, ci, email}} data={data}/>
       ) : null}
     </div>

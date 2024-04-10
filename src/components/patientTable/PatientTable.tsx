@@ -30,8 +30,8 @@ export interface ClinicHistory {
 
 export interface Patient {
     id: number,
-    fullName: string,
-    cedula: string,
+    name: string,
+    ci: string,
     email: string,
     actions: any,
 }
@@ -113,10 +113,10 @@ export const PatientTable: React.FC<PatientTableProps> = ({
                                         {row.id}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.fullName}
+                                        {row.name}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
-                                        {row.cedula}
+                                        {row.ci}
                                     </UserTableCellStyle>
                                     <UserTableCellStyle align="left">
                                         {row.email}

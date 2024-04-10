@@ -1,11 +1,12 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Menu from '@/components/Menu'
+import { getSession } from 'next-auth/react'
 
 interface Question {
   question: string
-  answer: string | number
+  answer: string | number | string[]
 }
 
 interface HistoryProps {
@@ -18,74 +19,45 @@ interface HistoryProps {
 }
 
 const History: React.FC = () => {
-  const data = {
-    patient_id: 2,
-    questionary_id: 1,
-    QuestionsAnwsers1: [
-      {
-        question: 'Nombre completo',
-        answer: 'Pepe',
-      },
-      {
-        question: 'Sexo',
-        answer: 'Masculino',
-      },
-      {
-        question: 'Edad',
-        answer: 25,
-      },
-      {
-        question: 'Fecha de Nacimiento',
-        answer: '1998-01-01',
-      },
-      {
-        question: 'Dirección',
-        answer: 'Calle Principal #123',
-      },
-      {
-        question: 'Teléfono',
-        answer: '123-456-7890',
-      },
-      {
-        question: 'Correo Electrónico',
-        answer: 'example@example.com',
-      },
-      {
-        question: 'Nombre del Contacto de Emergencia',
-        answer: 'Juan',
-      },
-      {
-        question: 'Teléfono del Contacto de Emergencia',
-        answer: '987-654-3210',
-      },
-    ],
-    QuestionsAnwsers2: [
-      {
-        question: 'Fecha de inicio',
-        answer: '2023-12-15',
-      },
-      {
-        question: 'Evolución',
-        answer: 'Mejorando gradualmente',
-      },
-      {
-        question: 'Sintomas',
-        answer: 'Dolor de cabeza',
-      },
-      {
-        question: 'Signos',
-        answer: 'Presión arterial alta',
-      },
-      {
-        question: 'Factores que agravan/mejoran los sintomas',
-        answer: 'El estrés agrava los síntomas',
-      },
-      {
-        question: 'Tratamientos previos',
-        answer: 'Analgésicos y descanso',
-      },
-    ],
-  }
+  const [data, setData] = useState<HistoryProps | null>(null)
+
+  // get the information from the api
+  useEffect(() => {
+    const getData = async () => {
+      const session = await getSession()
+      const token = session?.user?.accessToken
+      const id = session?.user?.id
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/medicalHistory/${id}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'access-token': `Bearer ${token}`,
+            },
+          },
+        )
+
+        if (!response.ok) {
+          throw new Error('ClinicHistory could not be retrieved')
+        }
+
+        console.log('ClinicHistory model successfully retrieved')
+        const data = await response.json()
+        setData(data)
+      } catch (error) {
+        console.error(
+          'An error occurred while retrieving the Clinic History:',
+          error,
+        )
+      }
+    }
+    getData()
+  }, [])
+
+  console.log(data)
 
   return (
     <>
@@ -94,13 +66,13 @@ const History: React.FC = () => {
         Historia Clínica
       </h1>
       <div className="mx-auto mt-10 flex max-w-full">
-        <div className="mr-2 ml-8 w-1/2 overflow-hidden rounded-lg bg-white shadow-md">
+        <div className="ml-8 mr-2 w-1/2 overflow-hidden rounded-lg bg-white shadow-md">
           <div className="border-b p-4">
             <h2 className="mb-2 text-center text-lg font-semibold">
               Datos Personales
             </h2>
             <div className="flex flex-wrap justify-between">
-              {data &&
+              {/* {data &&
                 data.QuestionsAnwsers1 &&
                 data.QuestionsAnwsers1.map((item, index) => (
                   <div
@@ -112,7 +84,7 @@ const History: React.FC = () => {
                     </p>
                     <p className="mb-0 text-sm">{item.answer}</p>
                   </div>
-                ))}
+                ))} */}
             </div>
           </div>
         </div>
@@ -122,7 +94,7 @@ const History: React.FC = () => {
               Enfermedad actual
             </h2>
             <div className="flex flex-wrap justify-between">
-              {data &&
+              {/* {data &&
                 data.QuestionsAnwsers2 &&
                 data.QuestionsAnwsers2.map((item, index) => (
                   <div
@@ -134,7 +106,7 @@ const History: React.FC = () => {
                     </p>
                     <p className="mb-0 text-sm">{item.answer}</p>
                   </div>
-                ))}
+                ))} */}
             </div>
           </div>
         </div>

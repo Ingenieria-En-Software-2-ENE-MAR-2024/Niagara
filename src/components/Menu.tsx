@@ -32,7 +32,7 @@ const Menu: React.FC = () => {
         // },
       ]
 
-      if (userRole === 'Medic') {
+      if (userRole === 'medic') {
         items.push(
           {
             title: 'Perfil',
@@ -45,8 +45,12 @@ const Menu: React.FC = () => {
             title: 'Calendario Médico',
             link: '/medicalCalendar',
           },
+          {
+            title: 'Historiales Clínicos',
+            link: '/patientsTable',
+          }
         )
-      } else if (userRole === 'Patient') {
+      } else if (userRole === 'patient') {
         items.push(
           {
             title: 'Perfil',
@@ -59,6 +63,10 @@ const Menu: React.FC = () => {
             title: 'Gestión de Citas',
             link: '/appointments',
           },
+          {
+            title: 'Historia Clínica',
+            link: '/clinicHistory',
+          }
         )
       } else if (userRole === 'admin') {
         items.push(
