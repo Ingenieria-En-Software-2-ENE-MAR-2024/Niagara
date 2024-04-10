@@ -46,7 +46,31 @@ const History: React.FC = () => {
 
         console.log('ClinicHistory model successfully retrieved')
         const data = await response.json()
-        setData(data)
+
+        // Agrupar las preguntas por sección
+        const sections = data.questionary.questionsType.reduce(
+          (acc: any, questionType: any) => {
+            questionType.section.forEach((sectionTitle: any) => {
+              if (!acc[sectionTitle]) {
+                acc[sectionTitle] = []
+              }
+
+              const answer = data.questionsAnwsers.find(
+                (qa: any) => qa.question === questionType.question,
+              )
+
+              acc[sectionTitle].push({
+                question: questionType.question,
+                answer: answer ? answer.answer : '',
+              })
+            })
+
+            return acc
+          },
+          {},
+        )
+
+        setData(sections)
       } catch (error) {
         console.error(
           'An error occurred while retrieving the Clinic History:',
@@ -66,50 +90,38 @@ const History: React.FC = () => {
         Historia Clínica
       </h1>
       <div className="mx-auto mt-10 flex max-w-full">
-        <div className="ml-8 mr-2 w-1/2 overflow-hidden rounded-lg bg-white shadow-md">
-          <div className="border-b p-4">
-            <h2 className="mb-2 text-center text-lg font-semibold">
-              Datos Personales
-            </h2>
-            <div className="flex flex-wrap justify-between">
-              {/* {data &&
-                data.QuestionsAnwsers1 &&
-                data.QuestionsAnwsers1.map((item, index) => (
-                  <div
-                    key={index}
-                    className="mb-4 flex w-full items-center justify-between"
-                  >
-                    <p className="mb-0 text-sm font-semibold">
-                      {item.question}:
-                    </p>
-                    <p className="mb-0 text-sm">{item.answer}</p>
-                  </div>
-                ))} */}
+        {data &&
+          Object.entries(data).map(([sectionTitle, questions], index) => (
+            <div
+              key={index}
+              className={`${
+                index % 2 === 0 ? 'ml-8 mr-2' : 'ml-2 mr-8'
+              } w-1/2 overflow-hidden rounded-lg bg-white shadow-md`}
+            >
+              <div className="border-b p-4">
+                <h2 className="mb-2 text-center text-lg font-semibold">
+                  {sectionTitle}
+                </h2>
+                <div className="flex flex-wrap justify-between">
+                  {questions.map((item: any, index: any) => (
+                    <div
+                      key={index}
+                      className="mb-4 flex w-full items-center justify-between"
+                    >
+                      <p className="mb-0 text-sm font-semibold">
+                        {item.question}:
+                      </p>
+                      <p className="mb-0 text-sm">
+                        {Array.isArray(item.answer)
+                          ? item.answer.join(', ')
+                          : item.answer}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="ml-2 mr-8 w-1/2 overflow-hidden rounded-lg bg-white shadow-md">
-          <div className="border-b p-4">
-            <h2 className="mb-2 text-center text-lg font-semibold">
-              Enfermedad actual
-            </h2>
-            <div className="flex flex-wrap justify-between">
-              {/* {data &&
-                data.QuestionsAnwsers2 &&
-                data.QuestionsAnwsers2.map((item, index) => (
-                  <div
-                    key={index}
-                    className="mb-4 flex w-full items-center justify-between"
-                  >
-                    <p className="mb-0 text-sm font-semibold">
-                      {item.question}:
-                    </p>
-                    <p className="mb-0 text-sm">{item.answer}</p>
-                  </div>
-                ))} */}
-            </div>
-          </div>
-        </div>
+          ))}
       </div>
     </>
   )
