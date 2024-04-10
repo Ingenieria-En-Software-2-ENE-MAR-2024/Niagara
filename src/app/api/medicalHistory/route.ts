@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   export async function PUT(req: NextRequest) {
     try {
       const updated_medical_history = await medicalHistoryController.put_medical_history(req);
-      return NextResponse.json(updated_medical_history, { status: 200 })
+      return NextResponse.json(updated_medical_history, { status: 201 })
     } catch (err: any) {
       const error_json = {
         error_message: err.error_message,
