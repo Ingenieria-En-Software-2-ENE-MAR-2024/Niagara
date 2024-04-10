@@ -17,12 +17,12 @@ import { getSession } from 'next-auth/react'
 
 const createData = (
     id: number,
-    fullName: string,
-    cedula: string,
+    name: string,
+    ci: string,
     email: string,
     actions: any,
 ): Patient => {
-    return { id, fullName, cedula, email, actions };
+    return { id, name, ci, email, actions };
 }
 
 const columns: string[] = [
@@ -65,20 +65,20 @@ export default function PatientsTablePage() {
                     console.log(errorText)
                     return
                 }
-                console.log(response)
+                //console.log(response)
                 
 
                 const startIndex = page * pageSize
                 const endIndex = startIndex + pageSize
                 const allAppoint = await response.json()
-                console.log(allAppoint)
+                //console.log(allAppoint)
                 const patientsSliced = allAppoint.slice(startIndex, endIndex)
                 const patientsList = patientsSliced.map(
                     (patient: Patient) => {
                         return createData(
                             patient.id,
-                            patient.fullName,
-                            patient.cedula,
+                            patient.name,
+                            patient.ci,
                             patient.email,
                             createActionsComponent({ patient }),
                         )
@@ -144,7 +144,7 @@ export default function PatientsTablePage() {
                 />
             )}
             <Box className="box-content">
-                <Box sx={{ p: 4 }} className="pt-24">
+                <Box sx={{ p: 4 }} className="pt-8">
                     <PatientFilter
                         columns={columnsToFilter}
                         rows={patients}
