@@ -18,6 +18,7 @@ import {
   Radio,
 } from '@mui/material'
 import { getSession } from 'next-auth/react'
+import Swal from 'sweetalert2'
 
 export interface Question {
   question: string
@@ -39,6 +40,11 @@ interface ModalUserProps {
   onChange: any
 }
 
+interface QuestionAnswer {
+  question: string
+  answer: string | number | string[]
+}
+
 export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
   open,
   setOpen,
@@ -48,11 +54,15 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState(0)
   const [formData, setFormData] = useState<Section[]>([])
+  const [isQuestionsAnwsersNull, setIsQuestionsAnwsersNull] =
+    useState<boolean>(true)
+  const [patientID, setPatientID] = useState<number>(0)
+  const [questionaryID, setQuestionaryID] = useState<number>(0)
 
   const handleChange = (
     sectionIndex: number,
     questionIndex: number,
-    newValue: string | boolean,
+    newValue: string | boolean | string[],
   ) => {
     const updatedFormData = [...formData]
     updatedFormData[sectionIndex].questions[questionIndex].result =
@@ -64,32 +74,53 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
     setActiveTab(newValue)
   }
 
+  // submit the form
   const handleSubmitDialog = async () => {
-    // if (time === '' || description === '') {
-    //     console.log('Faltaron datos.')
-    //     return
-    // }
     const session = await getSession()
     const token = session?.user?.accessToken
 
+    // transform the data to the backend format
+    const transformedData = {
+      patient_id: patientID,
+      questionary_id: questionaryID,
+      QuestionsAnwsers: formData.flatMap((section) =>
+        section.questions.map((question) => ({
+          question: question.question,
+          answer: question.type === 'MULTIPLE_SELECT' 
+            ? question.result?.split(',') 
+            : question.type === 'NUMBER' 
+              ? Number(question.result) 
+              : question.result,
+        })),
+      ),
+    }
+
+    console.log(transformedData)
+
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/clinicHistory/${id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/medicalHistory`,
         {
-          method: edit ? 'PUT' : 'POST',
+          method: isQuestionsAnwsersNull ? 'POST' : 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'access-token': `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(transformedData),
         },
       )
 
       if (!response.ok) {
-        // console.log(response)
         console.log('ClinicHistory could not be edited')
         return
       }
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Hecho!',
+        text: isQuestionsAnwsersNull ? 'Historial clínico creado con éxito.' : 'Historial clínico editado con éxito.',
+      })
+      
       console.log('ClinicHistory edited')
       if (onChange != undefined) onChange()
     } catch (e) {
@@ -100,6 +131,7 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
     }
   }
 
+  // get the data from the backend
   useEffect(() => {
     const fetchData = async () => {
       const session = await getSession()
@@ -122,10 +154,22 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
 
         console.log('ClinicHistory model successfully retrieved')
         const data = await response.json()
-        //console.log(data)
+        console.log(data)
+
+        setPatientID(data.patient_id)
+        setQuestionaryID(data.questionary.id)
 
         // Transformar los datos del backend a la estructura de formData
         const sectionsMap = new Map()
+
+        let answersMap: { [key: string]: string | number | string[] } = {}
+        if (data.questionsAnwsers) {
+          setIsQuestionsAnwsersNull(false)
+          data.questionsAnwsers.forEach((qa: QuestionAnswer) => {
+            answersMap[qa.question] = qa.answer
+          })
+        }
+
         data.questionary.questionsType.forEach((questionType: any) => {
           questionType.section.forEach((sectionTitle: any) => {
             if (!sectionsMap.has(sectionTitle)) {
@@ -140,7 +184,7 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
               question: questionType.question,
               type: questionType.type,
               options: questionType.options.join(','),
-              result: '',
+              result: answersMap[questionType.question] || '',
             })
           })
         })
@@ -159,7 +203,7 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
     fetchData()
   }, [id, setOpen]) // Add dependencies
 
-  console.log(formData)
+  //console.log(formData)
 
   return (
     <>
@@ -191,7 +235,7 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
             {formData[activeTab] &&
               formData[activeTab].questions.map((question, questionIndex) => (
                 <div key={questionIndex} style={{ marginTop: '16px' }}>
-                  {['TEXT', 'NUMBER'].includes(question.type) && (
+                  {['TEXT'].includes(question.type) && (
                     <TextField
                       label={question.question}
                       value={question.result || ''}
@@ -201,6 +245,22 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
                       fullWidth
                       margin="normal"
                       disabled={!edit}
+                    />
+                  )}
+                  {question.type === 'NUMBER' && (
+                    <TextField
+                      label={question.question}
+                      type="number"
+                      value={question.result || ''}
+                      onChange={(e) =>
+                        handleChange(activeTab, questionIndex, e.target.value)
+                      }
+                      fullWidth
+                      margin="normal"
+                      disabled={!edit}
+                      InputLabelProps={{
+                        shrink: true,
+                      }}
                     />
                   )}
                   {question.type === 'DATE' && (
@@ -247,43 +307,48 @@ export const FormEditClinicHistory: React.FC<ModalUserProps> = ({
                       <div>{question.question}</div>
                       {question.options
                         ?.split(',')
-                        .map((option, optionIndex) => (
-                          <FormControlLabel
-                            key={optionIndex}
-                            control={
-                              <Checkbox
-                                checked={
-                                  question.result
-                                    ? question.result
-                                        .split(',')
-                                        .includes(option)
-                                    : false
-                                }
-                                onChange={(e) => {
-                                  const newOptions = question.result
-                                    ? question.result.split(',')
-                                    : []
-                                  if (e.target.checked) {
-                                    newOptions.push(option)
-                                  } else {
-                                    const index = newOptions.indexOf(option)
-                                    if (index !== -1) {
-                                      newOptions.splice(index, 1)
+                        .map((option, optionIndex) => {
+                          let result: string | string[] = Array.isArray(question.result)
+                            ? question.result
+                            : typeof question.result === 'string'
+                              ? question.result.split(',')
+                              : []
+                          let isChecked = result.includes(option.trim())
+                          return (
+                            <FormControlLabel
+                              key={optionIndex}
+                              control={
+                                <Checkbox
+                                  checked={isChecked}
+                                  onChange={(e) => {
+                                    let newOptions: string[] = Array.isArray(result)
+                                      ? result
+                                      : typeof result === 'string'
+                                      ? result.split(',')
+                                      : [];
+                                    if (e.target.checked) {
+                                      newOptions.push(option.trim());
+                                    } else {
+                                      const index = newOptions.indexOf(option.trim());
+                                      if (index !== -1) {
+                                        newOptions.splice(index, 1);
+                                      }
                                     }
-                                  }
-                                  handleChange(
-                                    activeTab,
-                                    questionIndex,
-                                    newOptions.join(','),
-                                  )
-                                }}
-                                disabled={!edit}
-                              />
-                            }
-                            style={{ margin: '5px 0' }}
-                            label={option.trim()}
-                          />
-                        ))}
+                                    // Aquí es donde actualizas el estado con las nuevas opciones
+                                    handleChange(
+                                      activeTab,
+                                      questionIndex,
+                                      newOptions.filter(Boolean).join(','),
+                                    );
+                                  }}
+                                  disabled={!edit}
+                                />
+                              }
+                              style={{ margin: '5px 0' }}
+                              label={option.trim()}
+                            />
+                          )
+                        })}
                     </>
                   )}
                 </div>

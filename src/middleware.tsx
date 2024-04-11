@@ -32,5 +32,6 @@ export const config = {
     '/createMedicalHistory/:path*',
     '/editMedicalHistory/:path*',
     '/medicalHistory/:path*',
+    '/patientsTable/:path*',
   ],
 }

@@ -87,25 +87,26 @@ export default function EditHistory() {
           const data = await response.json()
           if (data.length > 0) {
             // Agrupar las preguntas por sección
-            const sections: { [key: string]: QuestionToShow[] } =
-              data[0].questionsType.reduce(
-                (acc: any, question: any) => {
-                  const section = Array.isArray(question.section)
-                    ? question.section[0]
-                    : question.section
-                  ;(acc[section] = acc[section] || []).push({
-                    id: uuidv4(),
-                    question: question.question,
-                    type: question.type,
-                    answers: '',
-                    options: Array.isArray(question.options)
-                      ? question.options
-                      : [''],
-                  })
-                  return acc
-                },
-                {} as { [key: string]: QuestionToShow[] },
-              )
+            const sections: { [key: string]: QuestionToShow[] } = data[
+              data.length - 1
+            ].questionsType.reduce(
+              (acc: any, question: any) => {
+                const section = Array.isArray(question.section)
+                  ? question.section[0]
+                  : question.section
+                ;(acc[section] = acc[section] || []).push({
+                  id: uuidv4(),
+                  question: question.question,
+                  type: question.type,
+                  answers: '',
+                  options: Array.isArray(question.options)
+                    ? question.options
+                    : [''],
+                })
+                return acc
+              },
+              {} as { [key: string]: QuestionToShow[] },
+            )
 
             // Transform the sections object into an array
             const transformedSections = Object.entries(sections).map(
@@ -122,7 +123,6 @@ export default function EditHistory() {
         } else {
           console.log('No se pudo obtener el template')
         }
-
       } catch (error) {
         console.log('Error en la petición')
       }
@@ -185,22 +185,21 @@ export default function EditHistory() {
   }
 
   const removeQuestion = (sectionId: string, questionId: string) => {
+    console.log(questionId)
     setForm((prevForm) => {
       const newSections = prevForm.sections.map((section) => {
         if (section.id === sectionId) {
-          return {
-            ...section,
-            questions: section.questions.filter(
-              (question) => question.id !== questionId,
-            ),
-          }
-        } else {
-          return section
+          const newQuestions = section.questions.filter(
+            (question) => question.id !== questionId,
+          );
+          return { ...section, questions: newQuestions };
         }
-      })
-      return { ...prevForm, sections: newSections }
-    })
-  }
+        return section;
+      });
+      return { sections: newSections };
+    });
+    console.log(form)
+  };
 
   // send data to API
   const onSubmit = async (form: any) => {
@@ -211,8 +210,7 @@ export default function EditHistory() {
       QuestionType: [],
     }
 
-    console.log(typeof('section-1-question-0-options'))
-    console.log(form)
+    //console.log(form)
 
     // Extraer las claves del formulario
     const keys = Object.keys(form)
@@ -243,20 +241,26 @@ export default function EditHistory() {
 
     // Transformar las secciones y preguntas al formato requerido
     Object.values(sections).forEach((section: any) => {
-      section.questions.forEach((question: any) => {
-        transformedData.QuestionType.push({
-          type: question.type,
-          question: question.question,
-          section: [section.title],
-          options: question.options ? question.options : [],
-        })
-      })
-    })
-
-    console.log(typeof(transformedData.QuestionType[4].options))
+      section.questions
+        .filter((question: any) => question.question.trim() !== '')
+        .forEach((question: any) => {
+          let options;
+          if (typeof question.options === 'string') {
+            options = question.options.split(',').map((option: string) => option.trim());
+          } else {
+            options = question.options;
+          }
+          transformedData.QuestionType.push({
+            type: question.type,
+            question: question.question,
+            section: [section.title],
+            options: options ? options : [],
+          });
+        });
+    });
 
     console.log(transformedData)
-    
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/historyTemplate`,
@@ -270,24 +274,27 @@ export default function EditHistory() {
         },
       )
       if (!response.ok) {
-        console.log('Las preguntas del historial clínico no se pudieron actualizar')
+        console.log(
+          'Las preguntas del historial clínico no se pudieron actualizar',
+        )
         return
       }
       Swal.fire({
         position: 'top-end',
         icon: 'success',
-        title: 'Las preguntas del historial clínico se actualizaron correctamente',
+        title:
+          'Las preguntas del historial clínico se actualizaron correctamente',
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
         console.log('Las preguntas del historial clínico se actualizaron')
-
       })
     } catch (e) {
-      console.log('Ocurrió un error al actualizar las preguntas del historial clínico')
+      console.log(
+        'Ocurrió un error al actualizar las preguntas del historial clínico',
+      )
       return
     }
-    
   }
 
   const handleTypeChange = (

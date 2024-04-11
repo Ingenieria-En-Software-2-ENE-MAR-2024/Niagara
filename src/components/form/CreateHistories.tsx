@@ -144,12 +144,12 @@ export default function History() {
           type: question.type,
           question: question.question,
           section: [section.title],
-          options: question.options ? question.options.split(',') : [],
+          options: question.options ? question.options.split(',').map((option: string) => option.trim()) : [],
         })
       })
     })
 
-    // console.log(transformedData)
+    console.log(transformedData)
 
     try {
       const response = await fetch(

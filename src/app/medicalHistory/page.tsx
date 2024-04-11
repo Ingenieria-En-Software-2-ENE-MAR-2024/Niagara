@@ -34,7 +34,7 @@ export default function MedicalHistoryPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.length > 0) {
-          setTemplate(data[0].questionsType)
+          setTemplate(data[data.length - 1].questionsType)
         }
       } else {
         console.log('No se pudo obtener el template')
@@ -65,22 +65,9 @@ export default function MedicalHistoryPage() {
       <div className="flex w-full flex-col items-center justify-center py-2">
         <h1 className="text-2xl font-bold">Historia Clínica</h1>
         <div className="mx-auto mt-4 w-full max-w-5xl">
-          {existTemplate && (
+          {template.length > 0 ? (
             <>
               <div className="flex justify-end">
-                <Button
-                  variant="contained"
-                  startIcon={<EditIcon />}
-                  style={{
-                    minWidth: 'auto',
-                    backgroundColor: '#1e1b4b',
-                    borderRadius: '5px',
-                    marginBottom: '0%',
-                  }}
-                  onClick={() => handleCreatePage()}
-                >
-                  Crear Template
-                </Button>
                 <Button
                   variant="contained"
                   startIcon={<EditIcon />}
@@ -98,6 +85,22 @@ export default function MedicalHistoryPage() {
               </div>
               <Template items={template as Question[]} />
             </>
+          ) : (
+            <div className="flex justify-end">
+              <Button
+                variant="contained"
+                startIcon={<EditIcon />}
+                style={{
+                  minWidth: 'auto',
+                  backgroundColor: '#1e1b4b',
+                  borderRadius: '5px',
+                  marginBottom: '0%',
+                }}
+                onClick={() => handleCreatePage()}
+              >
+                Crear Template
+              </Button>
+            </div>
           )}
         </div>
       </div>

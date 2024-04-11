@@ -103,7 +103,7 @@ export default function PatientsTablePage() {
             return (
                 <Grid container justifyContent="flex-start" columns={4} spacing={1.5}>
                     <Grid item xs={1} justifyContent="left">
-                        <Tooltip title="Editar historia clinica" arrow>
+                        <Tooltip title="Añadir/Editar historia clinica" arrow>
                             <IconButton
                                 color="primary"
                                 className="text-tertiary"
@@ -114,7 +114,7 @@ export default function PatientsTablePage() {
                         </Tooltip>
                     </Grid>
                     <Grid item xs={0} justifyContent="left">
-                        <Tooltip title="Agregar historia clinica" arrow>
+                        <Tooltip title="Ver historia clinica" arrow>
                             <IconButton
                                 color="primary"
                                 className="text-tertiary"
