@@ -3,6 +3,14 @@
 import React, { useEffect, useState } from 'react'
 import Menu from '@/components/Menu'
 import { getSession } from 'next-auth/react'
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  PDFDownloadLink,
+} from '@react-pdf/renderer'
 
 interface Question {
   question: string
@@ -17,6 +25,65 @@ interface HistoryProps {
     QuestionsAnwsers2: Question[]
   }
 }
+
+// Estilos para el documento
+const styles = StyleSheet.create({
+  page: {
+    padding: 30,
+  },
+  section: {
+    margin: 2,
+    padding: 1,
+    flexGrow: 1,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  question: {
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  answer: {
+    fontSize: 10,
+  },
+})
+
+// Componente para generar el PDF
+const MyDocument = ({ data }: { data: HistoryProps }) => (
+  <Document>
+    <Page style={styles.page}>
+      {Object.entries(data).map(([sectionTitle, questions], index) => (
+        <View key={index} style={styles.section}>
+          <Text style={styles.sectionTitle}>{sectionTitle}</Text>
+          {questions.map((item: any, index: any) => (
+            <Text key={index} style={styles.question}>
+              {item.question}:{" "}
+              <Text style={styles.answer}>
+                {Array.isArray(item.answer) ? item.answer.join(', ') : item.answer}
+              </Text>
+            </Text>
+          ))}
+        </View>
+      ))}
+    </Page>
+  </Document>
+)
+
+// Componente para descargar el PDF
+const DownloadPDFButton = ({ data }: { data: HistoryProps }) => (
+  <div className="mt-4 flex justify-center">
+    <PDFDownloadLink
+      document={<MyDocument data={data} />}
+      fileName="historia_clinica.pdf"
+      className="rounded bg-primary px-4 py-2 text-white transition-colors hover:bg-tertiary"
+    >
+      {({ blob, url, loading, error }) =>
+        loading ? 'Cargando documento...' : 'Descargar Historia Clínica'
+      }
+    </PDFDownloadLink>
+  </div>
+)
 
 const History: React.FC = () => {
   const [data, setData] = useState<HistoryProps | null>(null)
@@ -123,6 +190,7 @@ const History: React.FC = () => {
             </div>
           ))}
       </div>
+      {data && <DownloadPDFButton data={data} />}
     </>
   )
 }
