@@ -45,14 +45,11 @@ export const MedicProfile: React.FC<MedicProps> = ({ user, data }) => {
   const handleModal = (data: MedicProps) => {
     setDataModal(data)
     setOpen(true)
-    window.location.reload()
   }
 
   const handleEditProfile = (data: MedicProps) => {
     handleModal(data)
   }
-
-
 
   return (
     <>

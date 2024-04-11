@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import { getSession } from 'next-auth/react'
 import { useForm, Controller } from 'react-hook-form'
-
+import Swal from 'sweetalert2'
 
 enum EdLevelDisplay {
   NONE = 'Ninguna educación',
@@ -70,6 +70,17 @@ export const FormEditProfile: React.FC<ModalUserProps> = ({
         console.error('Error:', response.status, response.statusText)
         return
       }
+
+      Swal.fire({
+        title: 'Perfil actualizado',
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload()
+        }
+      })
+
     } catch (e) {
       console.error('Error:', e)
       return
@@ -81,9 +92,9 @@ export const FormEditProfile: React.FC<ModalUserProps> = ({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     await handleSubmitDialog()
-    console.log('Formulario enviado')
-    console.log(formData)
-    setOpen(false)
+    // console.log('Formulario enviado')
+    // console.log(formData)
+    // setOpen(false)
   }
 
   
